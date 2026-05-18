@@ -1,0 +1,258 @@
+import { z } from "zod";
+import { REMOTION_LAYOUT_PRESETS } from "./layout-presets";
+
+export const PlanSchema = z.object({
+  title: z.string(),
+  angle: z.string(),
+  targetAudience: z.string(),
+  learningObjectives: z.array(z.string()),
+  sceneCount: z.number().int().positive(),
+  estimatedDuration: z.number().positive(),
+});
+
+export const SceneSchema = z.object({
+  sceneNumber: z.number().int().positive(),
+  startSecond: z.number(),
+  endSecond: z.number(),
+  narration: z.string(),
+  visualDescription: z.string(),
+  codeSnippet: z.string().nullable(),
+  animationType: z.enum([
+    "code",
+    "array",
+    "graph",
+    "memory",
+    "terminal",
+    "diagram",
+    "analogy",
+  ]),
+});
+
+export const ScriptSchema = z.object({
+  title: z.string(),
+  hook: z.string(),
+  fullNarration: z.string(),
+  scenes: z.array(SceneSchema),
+});
+
+/** Curated Lucide React exports (PascalCase) — renderer resolves via lucide-react */
+export const LucideIconNameSchema = z.enum([
+  "Cpu",
+  "Database",
+  "Server",
+  "Cloud",
+  "Globe",
+  "Wifi",
+  "Layers",
+  "Package",
+  "GitBranch",
+  "GitCommit",
+  "Terminal",
+  "Code2",
+  "Brackets",
+  "Zap",
+  "Sparkles",
+  "Lightbulb",
+  "BookOpen",
+  "GraduationCap",
+  "Shield",
+  "Lock",
+  "Key",
+  "Users",
+  "User",
+  "ArrowRight",
+  "ArrowDown",
+  "ArrowUpRight",
+  "CircleDot",
+  "TriangleAlert",
+  "BarChart3",
+  "PieChart",
+  "Clock",
+  "Timer",
+  "Search",
+  "Settings",
+  "Wrench",
+  "FolderOpen",
+  "FileCode",
+  "Share2",
+  "Link",
+  "Brain",
+  "Puzzle",
+  "Network",
+  "Workflow",
+  "ScrollText",
+  "Binary",
+]);
+
+export type RemotionLucideIconName = z.infer<typeof LucideIconNameSchema>;
+
+export const REMOTION_LUCIDE_ICON_NAMES = LucideIconNameSchema.options;
+
+const animEnum = z.enum(["fade", "slide", "scale", "highlight", "none"]);
+
+export const RemotionLayoutPresetSchema = z.enum(REMOTION_LAYOUT_PRESETS);
+
+/** How scene elements are laid out on screen */
+export const RemotionElementPlacementSchema = z.enum([
+  "canvas_absolute",
+  "one_at_a_time_centered",
+  /** elements[0] = copy column (left), elements[1] = diagram/code/image (right). Single-element scenes center full-width. */
+  "split_text_left_window_right",
+  /** elements[0] = diagram/code/image (left), elements[1] = copy (right). Single-element scenes center full-width. */
+  "split_window_left_text_right",
+  /** Two visuals side-by-side: elements[0] left pane, elements[1] right pane (mermaid, code, image, icons, etc.). */
+  "split_side_by_side_figures",
+]);
+
+/**
+ * Flat shape — OpenAI structured outputs forbid JSON Schema `oneOf` (used by z.discriminatedUnion).
+ * Non-icon elements use `"iconName": null`; icons use a Lucide name from the allow-list.
+ * Non-Mermaid elements use `"width": null` and `"height": null`; `mermaid` uses width/height for the diagram viewport (pixels). Prefer large dimensions (e.g. 1240×720 split; up to ~1560×820 hero); null uses renderer defaults (~1320×760).
+ * For `type: "text"`, `content` may include markdown-style bullet or numbered lists (lines starting with `- `, `* `, `• `, or `1.` / `1)`).
+ */
+export const RemotionElementSchema = z.object({
+  type: z.enum([
+    "text",
+    "code",
+    "box",
+    "arrow",
+    "circle",
+    "image",
+    "icon",
+    "mermaid",
+  ]),
+  content: z.string(),
+  iconName: z.union([LucideIconNameSchema, z.null()]),
+  width: z.union([z.number(), z.null()]),
+  height: z.union([z.number(), z.null()]),
+  x: z.number(),
+  y: z.number(),
+  animation: animEnum,
+  /**
+   * Optional internal-only field set by the deterministic spec builder.
+   *
+   * For `mermaid` elements: a URL (or static path) the renderer can swap in
+   * when Mermaid parsing fails. Priority order in the renderer:
+   *   React-drawn flowchart (from `content`) → stock image (this) → Mermaid.
+   *
+   * Not produced by the LLM — `RemotionSpecGenerationSchema` covers this with
+   * the rest of the optional fields. Always present; `null` means "no fallback".
+   */
+  fallbackImageUrl: z.union([z.string(), z.null()]).optional(),
+});
+
+export const RemotionSceneSchema = z.object({
+  fromFrame: z.number(),
+  durationInFrames: z.number(),
+  background: z.string(),
+  /** Structural template — drives prompt cookbook + optional on-screen badge */
+  layoutPreset: RemotionLayoutPresetSchema,
+  elements: z.array(RemotionElementSchema),
+});
+
+/** Paths relative to Next/Remotion `public/` — use with Remotion `staticFile()` */
+export const RemotionVoiceSegmentSchema = z.object({
+  fromFrame: z.number(),
+  durationInFrames: z.number(),
+  staticPath: z.string(),
+});
+
+/** LLM output only — no `voice` (OpenAI structured outputs require every property in `required`; voice is added server-side). */
+export const RemotionSpecGenerationSchema = z.object({
+  composition: z.object({
+    /** Landscape 1920×1080 OR portrait 1080×1920. */
+    width: z.union([z.literal(1920), z.literal(1080)]),
+    height: z.union([z.literal(1920), z.literal(1080)]),
+    fps: z.literal(30),
+    durationInFrames: z.number(),
+    elementPlacement: RemotionElementPlacementSchema,
+  }),
+  scenes: z.array(RemotionSceneSchema),
+});
+
+export const RemotionSpecSchema = RemotionSpecGenerationSchema.extend({
+  voice: z.array(RemotionVoiceSegmentSchema).optional(),
+});
+
+export const MetadataSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  tags: z.array(z.string()),
+  thumbnailPrompt: z.string(),
+  category: z.string(),
+  language: z.string(),
+});
+
+export const BrandedSceneTemplateSchema = z.enum([
+  "left_diagram_right_text",
+  "right_diagram_left_text",
+  "list",
+  "image",
+  "image_hero",
+  "image_left",
+  "code_focus",
+  /** Big headline + supporting body — use when a single number/word is the point. */
+  "stat_callout",
+  /** Pull-quote layout — short body, optionally attributed. */
+  "quote",
+]);
+
+export const SceneFocusModeSchema = z.enum([
+  "highlight",
+  "dim_others",
+  "pulse",
+  "zoom",
+  "trace",
+]);
+
+export const SceneFocusTargetSchema = z.enum([
+  "title",
+  "body",
+  "list",
+  "diagram",
+  "image",
+  "code",
+]);
+
+export const SceneFocusBeatSchema = z.object({
+  startSecond: z.number().nonnegative(),
+  endSecond: z.number().positive(),
+  target: SceneFocusTargetSchema,
+  mode: SceneFocusModeSchema,
+  /** Short on-screen cue for this beat (OpenAI structured outputs: required; use ""). */
+  caption: z.string(),
+  /** Mermaid node/class IDs for this beat (use [] when not applicable). */
+  mermaidTargets: z.array(z.string()),
+});
+
+export const BrandedSceneSchema = z.object({
+  sceneNumber: z.number().int().positive(),
+  template: BrandedSceneTemplateSchema,
+  headline: z.string(),
+  body: z.string(),
+  /** Use [] when the template does not use bullets. */
+  listItems: z.array(z.string()),
+  /** Raw Mermaid when using diagram templates; otherwise "". */
+  diagramMermaid: z.string(),
+  imageSearchQuery: z.string(),
+  codeSnippet: z.string(),
+  focusBeats: z.array(SceneFocusBeatSchema),
+});
+
+export const BrandedSceneSpecSchema = z.object({
+  visualStyle: z.string(),
+  scenes: z.array(BrandedSceneSchema),
+});
+
+export type Plan = z.infer<typeof PlanSchema>;
+export type Script = z.infer<typeof ScriptSchema>;
+export type Scene = z.infer<typeof SceneSchema>;
+export type RemotionVoiceSegment = z.infer<typeof RemotionVoiceSegmentSchema>;
+export type RemotionElementPlacement = z.infer<
+  typeof RemotionElementPlacementSchema
+>;
+export type RemotionSpec = z.infer<typeof RemotionSpecSchema>;
+export type VideoMetadata = z.infer<typeof MetadataSchema>;
+export type BrandedSceneTemplate = z.infer<typeof BrandedSceneTemplateSchema>;
+export type SceneFocusBeat = z.infer<typeof SceneFocusBeatSchema>;
+export type BrandedSceneSpec = z.infer<typeof BrandedSceneSpecSchema>;

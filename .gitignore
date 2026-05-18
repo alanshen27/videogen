@@ -33,6 +33,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# generated TTS (ElevenLabs job output)
+/public/audio-jobs
+
+# generated reference images
+/public/reference-images
+
 # vercel
 .vercel
 

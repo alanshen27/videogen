@@ -1,0 +1,220 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 1073,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 257,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  u[User] --> g[Gateway]\n  g --> api[API Layer]\n  api --> next[Next Step]\n\n  classDef base fill:#171717,stroke:#525252,color:#ffffff,stroke-width:2px;\n  classDef active fill:#6d28d9,stroke:#f97316,color:#ffffff,stroke-width:3px;\n  classDef muted fill:#262626,stroke:#404040,color:#a3a3a3,stroke-width:1px;\n  class u,g base;\n  class api active;\n  class next muted;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Request Enters the Stack\n\nA user question hits the gateway, then moves into the API layer to start the flow.\n\n- User sends a question\n- Gateway receives it\n- API layer starts processing",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Request Enters the Stack",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 257,
+        "durationInFrames": 246,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Prompt Assembly\n\nThe API combines instructions and the user message into one conversation package.\n\n- System context\n- User message\n- Single assembled prompt",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  sys[System Context] --> asm[Assembled Prompt]\n  msg[User Message] --> asm\n  asm --> model[Claude Model]\n\n  classDef base fill:#171717,stroke:#525252,color:#ffffff,stroke-width:2px;\n  classDef active fill:#6d28d9,stroke:#f97316,color:#ffffff,stroke-width:3px;\n  classDef muted fill:#262626,stroke:#404040,color:#a3a3a3,stroke-width:1px;\n  class sys,msg base;\n  class asm active;\n  class model muted;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Prompt Assembly",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 503,
+        "durationInFrames": 162,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  asm[Assembled Prompt] --> infer[Inference]\n  infer --> tok[Output Tokens]\n  tok --> reply[Model Reply]\n\n  subgraph cm[Claude Model]\n    infer\n    tok\n  end\n\n  classDef base fill:#171717,stroke:#525252,color:#ffffff,stroke-width:2px;\n  classDef active fill:#6d28d9,stroke:#f97316,color:#ffffff,stroke-width:3px;\n  classDef muted fill:#262626,stroke:#404040,color:#a3a3a3,stroke-width:1px;\n  class asm,reply muted;\n  class infer,tok active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Inference Happens\n\nClaude reads the assembled prompt, predicts tokens, and streams the answer back.\n\n- Prompt enters the model\n- Inference generates tokens\n- Tokens become the reply",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Inference Happens",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 665,
+        "durationInFrames": 246,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Response Comes Back\n\nThe API shapes the model output into a clean response, then the gateway returns it to the user.\n\n- Model reply returns\n- API formats response\n- Gateway sends it back",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph RL\n  model[Claude Model] --> api[API Layer]\n  api --> fmt[Response Formatting]\n  fmt --> g[Gateway]\n  g --> u[User]\n\n  classDef base fill:#171717,stroke:#525252,color:#ffffff,stroke-width:2px;\n  classDef active fill:#6d28d9,stroke:#f97316,color:#ffffff,stroke-width:3px;\n  classDef muted fill:#262626,stroke:#404040,color:#a3a3a3,stroke-width:1px;\n  class model,g,u muted;\n  class api,fmt active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Response Comes Back",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 911,
+        "durationInFrames": 162,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Debug These Three First\n\nWhen Claude feels broken, start with the boring parts of the pipeline.\n\n- API Layer: auth, rate limits, request shape\n- Prompt Assembly: missing context or bad instructions\n- Model Latency: slow inference or overloaded calls",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Debug These Three First",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1440,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 257,
+        "staticPath": "audio-jobs/cmpbjaka3001i8aoqjd3lakn8/0.mp3"
+      },
+      {
+        "fromFrame": 257,
+        "durationInFrames": 246,
+        "staticPath": "audio-jobs/cmpbjaka3001i8aoqjd3lakn8/1.mp3"
+      },
+      {
+        "fromFrame": 503,
+        "durationInFrames": 162,
+        "staticPath": "audio-jobs/cmpbjaka3001i8aoqjd3lakn8/2.mp3"
+      },
+      {
+        "fromFrame": 665,
+        "durationInFrames": 246,
+        "staticPath": "audio-jobs/cmpbjaka3001i8aoqjd3lakn8/3.mp3"
+      },
+      {
+        "fromFrame": 911,
+        "durationInFrames": 162,
+        "staticPath": "audio-jobs/cmpbjaka3001i8aoqjd3lakn8/4.mp3"
+      }
+    ]
+  }
+}

@@ -1,0 +1,345 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2700,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  Client[\"Mobile app\"] -->|\"POST /feed\"| Gateway[\"API gateway\"]\n  Gateway --> Services[\"Internal services\"]\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef hot fill:#0f172a,stroke:#38bdf8,color:#ffffff,stroke-width:3px;\n  class Client,Gateway,Services base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Request Starts Here\n\nEvery action begins on the phone and enters through one front door: the gateway.\n\n- Mobile app sends HTTPS request\n- Gateway is the public entry point\n- Routes requests to internal services",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Request Starts Here",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 300,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The Gateway Guards the Door\n\nBefore routing deeper, the gateway checks whether the request is allowed to continue.\n\n- Rate limit protects capacity\n- Auth checks the token\n- Bad traffic stops early",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  Client[\"Mobile app\"] --> Gateway[\"API gateway\"]\n  Gateway --> RateLimiter[\"Rate limiter\"]\n  Gateway --> AuthService[\"Auth service\"]\n  RateLimiter --> Decision[\"Allow or block\"]\n  AuthService --> Decision\n  Decision --> AppServices[\"App services\"]\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef guard fill:#1e1b4b,stroke:#a78bfa,color:#ffffff,stroke-width:3px;\n  class Client,Gateway,RateLimiter,AuthService,Decision,AppServices base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "The Gateway Guards the Door",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 600,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph TD\n  Gateway[\"API gateway\"] --> Token[\"Access token\"]\n  Token --> AuthService[\"Auth service\"]\n  AuthService -->|\"valid\"| Identity[\"User identity\"]\n  AuthService -->|\"invalid\"| Deny[\"Deny response\"]\n  Identity --> NextService[\"Next service\"]\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef success fill:#052e16,stroke:#22c55e,color:#ffffff,stroke-width:3px;\n  classDef danger fill:#450a0a,stroke:#ef4444,color:#ffffff,stroke-width:3px;\n  class Gateway,Token,AuthService,Identity,Deny,NextService base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Auth Turns Tokens Into Identity\n\nA valid token becomes user identity. An invalid token gets rejected before touching product data.\n\n- Token is verified\n- User ID is attached\n- Invalid requests are denied",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Auth Turns Tokens Into Identity",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 900,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Creating a Post\n\nThe post service writes durable data, stores media separately, then announces that something changed.\n\n- Text goes to the database\n- Images/videos go to object storage\n- An event updates downstream systems",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  Gateway[\"API gateway\"] --> PostService[\"Post service\"]\n  PostService --> PostDB[\"Post database\"]\n  PostService --> MediaStorage[\"Object storage\"]\n  PostService --> EventBus[\"Event stream\"]\n  EventBus --> FeedBuilder[\"Feed builder\"]\n  EventBus --> Notifications[\"Notifications\"]\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef write fill:#431407,stroke:#fb923c,color:#ffffff,stroke-width:3px;\n  class Gateway,PostService,PostDB,MediaStorage,EventBus,FeedBuilder,Notifications base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Creating a Post",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1200,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  Client[\"Mobile app\"] --> Gateway[\"API gateway\"]\n  Gateway --> FeedService[\"Feed service\"]\n  FeedService --> Cache[\"Feed cache\"]\n  FeedService --> PostDB[\"Post database\"]\n  Cache --> FeedService\n  PostDB --> FeedService\n  FeedService --> Response[\"Feed response\"]\n  Response --> Client\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef cache fill:#083344,stroke:#22d3ee,color:#ffffff,stroke-width:3px;\n  class Client,Gateway,FeedService,Cache,PostDB,Response base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Reading the Feed\n\nFeeds need to feel instant, so the service checks fast storage before doing heavier database work.\n\n- Cache handles hot feeds\n- Database is the source of truth\n- Service assembles the response",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Reading the Feed",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1500,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Data Shapes the Product\n\nUsers, posts, comments, and follows form the core graph behind the feed.\n\n- Indexes speed common lookups\n- Follows decide relevance\n- Comments attach to posts",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph TD\n  UserTable[\"Users\"] -->|\"writes\"| PostTable[\"Posts\"]\n  UserTable -->|\"writes\"| CommentTable[\"Comments\"]\n  CommentTable -->|\"belongs to\"| PostTable\n  UserTable -->|\"follows\"| FollowTable[\"Follows\"]\n  FollowTable --> FeedQuery[\"Feed query\"]\n  PostTable --> FeedQuery\n  Indexes[\"Indexes\"] --> FeedQuery\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef data fill:#172554,stroke:#60a5fa,color:#ffffff,stroke-width:3px;\n  class UserTable,PostTable,CommentTable,FollowTable,FeedQuery,Indexes base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Data Shapes the Product",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1800,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  MediaStorage[\"Object storage\"] --> CDN[\"Content delivery network\"]\n  CDN --> EdgeUS[\"Edge server\"]\n  CDN --> EdgeEU[\"Edge server\"]\n  EdgeUS --> Client[\"Mobile app\"]\n  EdgeEU --> Client\n  Realtime[\"Real-time updates\"] --> Client\n  PostService[\"Post service\"] --> MediaStorage\n  PostService --> Realtime\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef media fill:#422006,stroke:#facc15,color:#ffffff,stroke-width:3px;\n  class MediaStorage,CDN,EdgeUS,EdgeEU,Client,Realtime,PostService base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Media Takes the Fast Lane\n\nImages and videos avoid the app servers when possible and ship from edge locations close to the user.\n\n- Object storage holds originals\n- CDN edge serves copies\n- Live updates notify the client",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Media Takes the Fast Lane",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2100,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Scale Without Melting\n\nStateless services can be duplicated, while queues absorb spikes and retries avoid lost work.\n\n- Multiple identical instances\n- Queue smooths traffic bursts\n- Idempotency prevents duplicates",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  Gateway[\"API gateway\"] --> LoadBalancer[\"Load balancer\"]\n  LoadBalancer --> ServiceA[\"Service instance\"]\n  LoadBalancer --> ServiceB[\"Service instance\"]\n  LoadBalancer --> ServiceC[\"Service instance\"]\n  ServiceA --> Queue[\"Work queue\"]\n  ServiceB --> Queue\n  ServiceC --> Queue\n  Queue --> Worker[\"Background worker\"]\n  Worker --> Store[\"Database\"]\n  Worker -.\"retry safely\".-> Queue\n\n  classDef base fill:#111827,stroke:#334155,color:#e5e7eb,stroke-width:1px;\n  classDef scale fill:#064e3b,stroke:#34d399,color:#ffffff,stroke-width:3px;\n  class Gateway,LoadBalancer,ServiceA,ServiceB,ServiceC,Queue,Worker,Store base;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Scale Without Melting",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2400,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Production Checklist\n\nA social app is fast when the architecture is boring in the right places.\n\n- Deploy across regions for lower latency\n- Monitor errors, latency, and traffic spikes\n- Use canary rollouts before full releases\n- Keep auth and rate limiting strict",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Production Checklist",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1440,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      }
+    ]
+  }
+}

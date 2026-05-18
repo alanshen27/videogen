@@ -1,0 +1,115 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 480,
+      "elementPlacement": "split_text_left_window_right"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Anatomy of a request\n\n- User pings the gateway\n- Gateway forwards to the service\n- Service writes to the store",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"User\"] --> B[\"Gateway\"]\n  B --> C[\"Service\"]\n  C --> D[(\"Store\")]\n  classDef hi fill:#7c2d4a,stroke:#fb7185,color:#fff1f2,stroke-width:3px;\n  class B,C hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 720,
+            "y": 160,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 120,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.05) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  User[\"User\"] --> LB[\"Load Balancer\"]\n  subgraph vpc [VPC]\n    LB --> API[\"API Server\"]\n    API --> Cache[(\"Redis\")]\n    API --> DB[(\"Postgres\")]\n  end\n  API --> S3[(\"S3 Bucket\")]\n  classDef hi fill:#000,stroke:#000;\n  class API hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 160,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Inside the VPC\n\nThe API server fans out to Redis for hot reads and Postgres for state. Everything outside the dotted box lives on the public internet.\n\n1. Hit the load balancer\n2. API picks a backing store\n3. Static assets bypass the API",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 1100,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 240,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Three things to check\n\n- Cold start: rare but expensive\n- Lock contention: hides as latency\n- Bad index: silent until it isn't",
+            "iconName": "TriangleAlert",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 120,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 360,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Real syntax highlighting\n\nShiki tokenises every snippet with the vesper theme so the colour matches the rest of the UI — no rainbow puke, no fake terminal chrome.",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 150,
+            "animation": "fade"
+          },
+          {
+            "type": "code",
+            "content": "```typescript\nexport async function handler(req: Request) {\n  const { id } = await req.json();\n  const user = await db.user.findUnique({ where: { id } });\n  if (!user) return new Response('not found', { status: 404 });\n  return Response.json({ user });\n}\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 720,
+            "y": 160,
+            "animation": "highlight"
+          }
+        ]
+      }
+    ]
+  }
+}

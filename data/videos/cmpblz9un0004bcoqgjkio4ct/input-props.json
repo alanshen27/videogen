@@ -1,0 +1,220 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 872,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 193,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  CODE[\"Your JS Code\"] --> ENGINE[\"JavaScript Engine\"]\n  ENGINE --> BROWSER[\"Browser Page\"]\n\n  classDef active fill:#ff3b30,stroke:#ff9f0a,color:#fff,stroke-width:3px;\n  classDef normal fill:#1f2937,stroke:#4b5563,color:#fff,stroke-width:2px;\n  class CODE,ENGINE,BROWSER normal;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "JavaScript Lives in the Browser\n\nYour browser has a JavaScript engine that reads code and executes it.\n\n- Code enters the browser\n- The engine reads it\n- Work happens instantly",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "JavaScript Lives in the Browser",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 193,
+        "durationInFrames": 141,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "function add(a, b) {\n  return a + b;\n}\n\nadd(2, 3); // 5",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "A Function Is a Tiny Machine\n\nGive it values. It returns a result.\n\n- Give it values\n- It returns a result",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "A Function Is a Tiny Machine",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 1110,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 334,
+        "durationInFrames": 172,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  INPUT[\"Input\\n2, 3\"] --> FN[\"add(a, b)\"]\n  FN --> RESULT[\"Result\\n5\"]\n\n  classDef active fill:#ff3b30,stroke:#ff9f0a,color:#fff,stroke-width:3px;\n  classDef normal fill:#111827,stroke:#4b5563,color:#fff,stroke-width:2px;\n  class INPUT,FN,RESULT normal;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Input → Work → Result\n\nThe engine runs the function with your input, then produces the output.\n\n- Input: 2 and 3\n- Process: add them\n- Result: 5",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Input → Work → Result",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 506,
+        "durationInFrames": 162,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Then It Updates the Page\n\nJavaScript can take that result and change what the user sees.\n\n- Find an element\n- Set its text\n- The page updates",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "graph LR\n  RESULT[\"Result\\n5\"] --> DOM[\"Page Element\\n#out\"]\n  DOM --> SCREEN[\"Visible Text\\n5\"]\n\n  classDef active fill:#ff3b30,stroke:#ff9f0a,color:#fff,stroke-width:3px;\n  classDef normal fill:#1f2937,stroke:#4b5563,color:#fff,stroke-width:2px;\n  class RESULT,DOM,SCREEN normal;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Then It Updates the Page",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 668,
+        "durationInFrames": 204,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "JavaScript in 10 Seconds\n\nTiny script. Browser engine. Visible result.\n\n- Runs inside the browser\n- Uses functions to process input\n- Returns output fast\n- Can update the page instantly",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "JavaScript in 10 Seconds",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1440,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 193,
+        "staticPath": "audio-jobs/cmpblz9un0004bcoqgjkio4ct/0.mp3"
+      },
+      {
+        "fromFrame": 193,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpblz9un0004bcoqgjkio4ct/1.mp3"
+      },
+      {
+        "fromFrame": 334,
+        "durationInFrames": 172,
+        "staticPath": "audio-jobs/cmpblz9un0004bcoqgjkio4ct/2.mp3"
+      },
+      {
+        "fromFrame": 506,
+        "durationInFrames": 162,
+        "staticPath": "audio-jobs/cmpblz9un0004bcoqgjkio4ct/3.mp3"
+      },
+      {
+        "fromFrame": 668,
+        "durationInFrames": 204,
+        "staticPath": "audio-jobs/cmpblz9un0004bcoqgjkio4ct/4.mp3"
+      }
+    ]
+  }
+}

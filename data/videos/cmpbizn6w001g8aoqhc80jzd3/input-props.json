@@ -1,0 +1,236 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2988,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 604,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Prompt] --> G[API Gateway]\n  G --> R[Router]\n  R --> I[Model Interface]\n  I --> C[Claude Model]\n  C --> B[Response Builder]\n  B --> U2[User Reply]\n  M[(Context Store)] -. context .-> I\n  B -. save turn .-> M\n\n  classDef active fill:#d97706,stroke:#fff7ed,color:#fff,stroke-width:2px;\n  classDef base fill:#1f2937,stroke:#475569,color:#f8fafc;\n  classDef store fill:#3b2f2f,stroke:#f59e0b,color:#fff7ed;\n  class U,G,R,I,C,B,U2 base;\n  class M store;\n  class G active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Claude Code in 90 Seconds\n\nA prompt enters, gets routed, reaches Claude, uses context, and comes back as a reply.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 604,
+        "durationInFrames": 404,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "First Stop: The Gateway\n\nThe API gateway checks identity, permissions, and rate limits before handing the request to routing.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Prompt] --> G[API Gateway]\n  G --> A{Auth OK?}\n  A -->|yes| L{Within Limit?}\n  A -->|no| X[Reject Request]\n  L -->|yes| R[Router]\n  L -->|no| Y[Slow Down]\n\n  classDef active fill:#d97706,stroke:#fff7ed,color:#fff,stroke-width:2px;\n  classDef decision fill:#312e81,stroke:#818cf8,color:#eef2ff;\n  classDef base fill:#1f2937,stroke:#475569,color:#f8fafc;\n  classDef reject fill:#7f1d1d,stroke:#fca5a5,color:#fff;\n  class U,R base;\n  class G active;\n  class A,L decision;\n  class X,Y reject;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1008,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "sequenceDiagram\n  participant R as Router\n  participant S as Service Layer\n  participant I as Model Interface\n  participant MR as Model Runner\n  participant C as Claude Model\n\n  R->>S: route request\n  S->>I: format prompt payload\n  I->>MR: submit model call\n  MR->>C: run inference\n  C-->>MR: generated tokens\n  MR-->>I: model response\n  I-->>S: normalized answer\n\n  %% IDs for animation targets: R,S,I,MR,C",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "The Model Interface\n\nThe service formats the prompt, sends it to a runner, and gets Claude’s generated answer back.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1368,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Memory = Conversation Context\n\nPast turns are stored so the next request can refer back without rebuilding everything from zero.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  T1[Turn 1] --> M[(Memory Store)]\n  T2[Turn 2] --> M\n  T3[Current Prompt] --> C[Context Pack]\n  M --> C\n  C --> I[Model Interface]\n  I --> B[Response Builder]\n  B -. save latest turn .-> M\n\n  classDef active fill:#d97706,stroke:#fff7ed,color:#fff,stroke-width:2px;\n  classDef base fill:#1f2937,stroke:#475569,color:#f8fafc;\n  classDef store fill:#3b2f2f,stroke:#f59e0b,color:#fff7ed;\n  classDef context fill:#064e3b,stroke:#34d399,color:#ecfdf5;\n  class T1,T2,T3,I,B base;\n  class M store;\n  class C active,context;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1728,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  G[API Gateway] --> P[Parser]\n  P --> V[Validator]\n  V --> O[Orchestrator]\n  O --> I[Model Interface]\n  I --> RB[Response Builder]\n  RB --> OUT[Final Reply]\n\n  classDef active fill:#d97706,stroke:#fff7ed,color:#fff,stroke-width:2px;\n  classDef base fill:#1f2937,stroke:#475569,color:#f8fafc;\n  classDef reply fill:#0f766e,stroke:#5eead4,color:#ecfeff;\n  class G,I base;\n  class P,V,O,RB active;\n  class OUT reply;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Service Layer: The Glue\n\nParsing, validation, orchestration, and response building happen here before the answer reaches you.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2088,
+        "durationInFrames": 450,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Security + Reliability\n\nAuth, rate limits, logs, and retries keep the system safer and easier to debug when things break.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  REQ[Incoming Request] --> AUTH[Authentication]\n  AUTH --> LIMIT[Rate Limit]\n  LIMIT --> CALL[Service Call]\n  CALL --> OK{Success?}\n  OK -->|yes| LOG[Write Logs]\n  OK -->|no| RETRY[Retry or Fail Safe]\n  RETRY --> LOG\n  LOG --> RESP[Return Response]\n\n  classDef active fill:#d97706,stroke:#fff7ed,color:#fff,stroke-width:2px;\n  classDef base fill:#1f2937,stroke:#475569,color:#f8fafc;\n  classDef decision fill:#312e81,stroke:#818cf8,color:#eef2ff;\n  classDef safety fill:#7c2d12,stroke:#fdba74,color:#fff7ed;\n  class REQ,CALL,RESP base;\n  class AUTH,LIMIT,LOG safety;\n  class OK decision;\n  class RETRY active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2538,
+        "durationInFrames": 450,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The Whole Path\n\nClaude’s code path is modular: gateway, router, model interface, memory, and response builder.\n\n- Prompt enters the API gateway\n- Router chooses the request path\n- Model interface talks to Claude\n- Memory adds conversation context\n- Response builder sends the answer back",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 604,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/0.mp3"
+      },
+      {
+        "fromFrame": 604,
+        "durationInFrames": 404,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/1.mp3"
+      },
+      {
+        "fromFrame": 1008,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/2.mp3"
+      },
+      {
+        "fromFrame": 1368,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/3.mp3"
+      },
+      {
+        "fromFrame": 1728,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/4.mp3"
+      },
+      {
+        "fromFrame": 2088,
+        "durationInFrames": 450,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/5.mp3"
+      },
+      {
+        "fromFrame": 2538,
+        "durationInFrames": 450,
+        "staticPath": "audio-jobs/cmpbizn6w001g8aoqhc80jzd3/6.mp3"
+      }
+    ]
+  }
+}

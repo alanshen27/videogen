@@ -1,0 +1,402 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 2700,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[You] --> APP[Client App]\n  APP --> GW[API Gateway]\n  GW --> ORCH[Orchestrator]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef focus fill:#fb923c,stroke:#fed7aa,color:#111827,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class GW focus;\n  class U,APP,ORCH dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Prompt Enters the System\n\nYour message leaves the app and hits the front door of the Claude-style backend: the API gateway.\n\n- Client app sends the request\n- Gateway receives the payload\n- Routing starts here",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Prompt Enters the System",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 300,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The Gateway Does Bouncer Work\n\nBefore the request goes deeper, the gateway checks identity, limits abuse, and sends traffic to the right place.\n\n- Validate auth token\n- Apply rate limits\n- Route to orchestration",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  APP[Client App] --> GW[API Gateway]\n  GW --> AUTH[Identity Check]\n  GW --> RATE[Rate Limit]\n  AUTH --> ROUTE[Routing Logic]\n  RATE --> ROUTE\n  ROUTE --> ORCH[Orchestrator]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef focus fill:#22d3ee,stroke:#a5f3fc,color:#0f172a,stroke-width:3px;\n  classDef orange fill:#fb923c,stroke:#fed7aa,color:#111827,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class GW orange;\n  class AUTH,RATE,ROUTE focus;\n  class APP,ORCH dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "The Gateway Does Bouncer Work",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 600,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  ORCH[Orchestrator] --> POLICY[Policy Engine]\n  POLICY -->|Approved| CTX[Context Builder]\n  POLICY -->|Flagged| REVIEW[Safe Handling]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef safety fill:#10b981,stroke:#bbf7d0,color:#052e16,stroke-width:3px;\n  classDef warn fill:#ef4444,stroke:#fecaca,color:#111827,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class POLICY safety;\n  class REVIEW warn;\n  class ORCH,CTX dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Safety Runs Early\n\nThe prompt gets scanned before expensive model work begins, so risky requests can be blocked or handled safely.\n\n- Policy signals are detected\n- Unsafe patterns get flagged\n- Approved prompts continue",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Safety Runs Early",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 900,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Context Gets Assembled\n\nThe model does not see only your latest sentence. It gets a packaged prompt with instructions and recent conversation state.\n\n- Your message\n- System instructions\n- Recent chat history\n- Relevant context bundle",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  MSG[Your Message] --> CTX[Context Builder]\n  SYS[System Instructions] --> CTX\n  HIST[Chat History] --> CTX\n  CTX --> PACK[Final Prompt Package]\n  PACK --> MODEL[Model Server]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef focus fill:#a78bfa,stroke:#ddd6fe,color:#111827,stroke-width:3px;\n  classDef source fill:#334155,stroke:#94a3b8,color:#f8fafc,stroke-width:2px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class CTX,PACK focus;\n  class MSG,SYS,HIST source;\n  class MODEL dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Context Gets Assembled",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1200,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  PACK[Prompt Package] --> TOK[Tokenizer]\n  TOK --> MODEL[Model Server]\n  MODEL --> GPU[GPU Cluster]\n  GPU --> GEN[Token Generator]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef compute fill:#f97316,stroke:#fed7aa,color:#111827,stroke-width:3px;\n  classDef cyan fill:#22d3ee,stroke:#a5f3fc,color:#0f172a,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class TOK cyan;\n  class MODEL,GPU,GEN compute;\n  class PACK dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "The Model Starts Thinking\n\nThe packaged prompt is broken into tokens, pushed through model servers, and accelerated on GPUs.\n\n- Text becomes tokens\n- Tokens enter the model\n- GPUs run the math\n- New tokens are predicted",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "The Model Starts Thinking",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1500,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Tokens Stream Back\n\nThe answer usually returns piece by piece, which is why text can appear before the whole response is finished.\n\n- Model emits token chunks\n- Pipeline relays them back\n- Client renders live text",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart RL\n  GEN[Token Generator] --> MODEL[Model Server]\n  MODEL --> ORCH[Orchestrator]\n  ORCH --> GW[API Gateway]\n  GW --> APP[Client App]\n  APP --> U[You]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef stream fill:#22d3ee,stroke:#a5f3fc,color:#0f172a,stroke-width:3px;\n  classDef focus fill:#fb923c,stroke:#fed7aa,color:#111827,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class GEN,MODEL,ORCH,GW,APP stream;\n  class U focus;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Tokens Stream Back",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1800,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  GEN[Generated Text] --> OUTSAFE[Output Safety Pass]\n  OUTSAFE -->|Clear| FMT[Formatter]\n  OUTSAFE -->|Needs handling| SAFE[Safe Response]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef safety fill:#10b981,stroke:#bbf7d0,color:#052e16,stroke-width:3px;\n  classDef warn fill:#ef4444,stroke:#fecaca,color:#111827,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class OUTSAFE safety;\n  class SAFE warn;\n  class GEN,FMT dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Output Gets Re-Checked\n\nBefore the response leaves, a second safety pass reviews the generated text for last-mile issues.\n\n- Generated answer is scanned\n- Edge cases can be caught\n- Safe output continues",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Output Gets Re-Checked",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2100,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The Answer Gets Packaged\n\nThe formatter turns raw generated text into the clean response you see, including structure like lists, code blocks, or citations.\n\n- Apply message formatting\n- Add code blocks if needed\n- Attach citations when available",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  RAW[Raw Answer] --> FMT[Formatter]\n  FMT --> TEXT[Readable Text]\n  FMT --> CODE[Code Block]\n  FMT --> CITE[Citations]\n  TEXT --> FINAL[Final Message]\n  CODE --> FINAL\n  CITE --> FINAL\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef format fill:#a78bfa,stroke:#ddd6fe,color:#111827,stroke-width:3px;\n  classDef output fill:#22d3ee,stroke:#a5f3fc,color:#0f172a,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class FMT format;\n  class TEXT,CODE,CITE,FINAL output;\n  class RAW dim;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "The Answer Gets Packaged",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2400,
+        "durationInFrames": 300,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  FINAL[Final Message] --> GW[API Gateway]\n  GW --> APP[Client App]\n  APP --> U[You]\n  GW --> LOG[Logging]\n  GW --> METRICS[Telemetry]\n  METRICS --> LAT[Latency]\n  METRICS --> TPS[Throughput]\n\n  classDef default fill:#1f2937,stroke:#64748b,color:#f8fafc,stroke-width:1px;\n  classDef delivery fill:#fb923c,stroke:#fed7aa,color:#111827,stroke-width:3px;\n  classDef observe fill:#22d3ee,stroke:#a5f3fc,color:#0f172a,stroke-width:3px;\n  classDef dim fill:#111827,stroke:#334155,color:#94a3b8;\n  class FINAL,GW,APP,U delivery;\n  class LOG,METRICS,LAT,TPS observe;",
+            "iconName": null,
+            "width": 960,
+            "height": 720,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Response Delivered\n\nThe answer reaches the app while telemetry watches system health in the background.\n\n- User receives the response\n- Latency is measured\n- Throughput is tracked\n- Errors are logged",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Response Delivered",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/0.mp3"
+      },
+      {
+        "fromFrame": 300,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/1.mp3"
+      },
+      {
+        "fromFrame": 600,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/2.mp3"
+      },
+      {
+        "fromFrame": 900,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/3.mp3"
+      },
+      {
+        "fromFrame": 1200,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/4.mp3"
+      },
+      {
+        "fromFrame": 1500,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/5.mp3"
+      },
+      {
+        "fromFrame": 1800,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/6.mp3"
+      },
+      {
+        "fromFrame": 2100,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/7.mp3"
+      },
+      {
+        "fromFrame": 2400,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbkauoj0002bcoqz2ixxwy9/8.mp3"
+      }
+    ]
+  }
+}

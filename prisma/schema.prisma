@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum JobStatus {
+  PENDING
+  PLANNING
+  SCRIPTING
+  ASSETS
+  RENDERING
+  COMPLETED
+  FAILED
+}
+
+enum AudienceLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum Style {
+  FIRESHIP
+  BYTEBYTEGO
+  THREE_BLUE_ONE_BROWN
+  CUSTOM
+}
+
+enum Orientation {
+  LANDSCAPE
+  PORTRAIT
+}
+
+model Job {
+  id              String      @id @default(cuid())
+  topic           String
+  instructions    String      @default("")
+  durationSeconds Int         @default(90)
+  audienceLevel   AudienceLevel @default(BEGINNER)
+  style           Style       @default(FIRESHIP)
+  orientation     Orientation @default(LANDSCAPE)
+  status          JobStatus   @default(PENDING)
+  progress        Int         @default(0)
+  error           String?
+  includeImages   Boolean     @default(false)
+  generateThumbnail Boolean   @default(true)
+  renderVideo     Boolean     @default(true)
+  voiceOver       Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  logs      JobLog[]
+  artifacts JobArtifact[]
+}
+
+model JobLog {
+  id        String   @id @default(cuid())
+  jobId     String
+  level     String   @default("info")
+  message   String
+  createdAt DateTime @default(now())
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+enum ArtifactType {
+  PLAN
+  SCRIPT
+  STORYBOARD
+  SCENE_SPEC
+  ASSETS
+  REMOTION_SPEC
+  VOICE_TIMELINE
+  METADATA
+  VIDEO
+  THUMBNAIL
+  IMAGE
+  LOGS
+}
+
+model JobArtifact {
+  id          String       @id @default(cuid())
+  jobId       String
+  type        ArtifactType
+  contentJson Json?
+  filePath    String?
+  createdAt   DateTime     @default(now())
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}

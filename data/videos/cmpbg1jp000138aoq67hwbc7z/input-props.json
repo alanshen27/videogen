@@ -1,0 +1,246 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2700,
+      "elementPlacement": "split_text_left_window_right"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 360,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Where JavaScript Runs\n\n- Browser for web pages\n- Node.js on servers\n- Runtime executes your code\n- Built-in APIs come from the environment",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  CODE[\"JavaScript Code\"] --> RT[\"Runtime<br/>• engine<br/>• built-in APIs<br/>• environment\"]\n  RT --> B[\"Browser<br/>Web APIs\"]\n  RT --> N[\"Node.js<br/>server APIs\"]\n  RT --> E[\"Engine<br/>executes code\"]\n\n  classDef active fill:#00E5FF,stroke:#7CFFB2,color:#061018,stroke-width:4px;\n  classDef secondary fill:#17213A,stroke:#506080,color:#DCE8FF,stroke-width:2px;\n  class CODE,RT,E active;\n  class B,N secondary;",
+            "iconName": null,
+            "width": 1280,
+            "height": 740,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 360,
+        "durationInFrames": 300,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Single Thread, One Stack\n\n- One task runs at a time\n- Function calls push onto the stack\n- Returns pop back off\n- The top frame is running now",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  TOP[\"Currently Running\"] --> BAR[\"bar()\"]\n  BAR --> FOO[\"foo()\"]\n  FOO --> MAIN[\"main()\"]\n  MAIN --> BASE[\"Call Stack\"]\n\n  classDef active fill:#FFD166,stroke:#FF3D81,color:#111827,stroke-width:4px;\n  classDef stack fill:#17213A,stroke:#5F6F95,color:#EAF2FF,stroke-width:2px;\n  class TOP,BAR active;\n  class FOO,MAIN,BASE stack;",
+            "iconName": null,
+            "width": 1180,
+            "height": 740,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 660,
+        "durationInFrames": 360,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Async Work Leaves the Stack\n\n- Timers and network calls run outside the engine\n- Finished callbacks wait in a queue\n- The event loop moves queued work back when the stack is empty",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  CODE[\"JavaScript Code\"] --> STACK[\"Call Stack\"]\n  STACK --> API[\"Web APIs<br/>timers, network\"]\n  API --> TASKQ[\"Task Queue<br/>callbacks\"]\n  TASKQ --> LOOP[\"Event Loop\"]\n  LOOP --> STACK\n\n  classDef active fill:#00E5FF,stroke:#7CFFB2,color:#061018,stroke-width:4px;\n  classDef inactive fill:#17213A,stroke:#506080,color:#DCE8FF,stroke-width:2px;\n  class API,TASKQ,LOOP active;\n  class CODE,STACK inactive;\n  linkStyle 1 stroke:#00E5FF,stroke-width:4px;\n  linkStyle 2 stroke:#00E5FF,stroke-width:4px;\n  linkStyle 3 stroke:#00E5FF,stroke-width:4px;\n  linkStyle 4 stroke:#00E5FF,stroke-width:4px;",
+            "iconName": null,
+            "width": 1280,
+            "height": 740,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1020,
+        "durationInFrames": 360,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Predict the Output\n\n1. start\n2. end\n3. promise\n4. timeout\n\nSynchronous logs run first. Promise callbacks beat timer callbacks.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "code",
+            "content": "console.log('start');\nsetTimeout(() => console.log('timeout'), 0);\nPromise.resolve().then(() => console.log('promise'));\nconsole.log('end');",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1380,
+        "durationInFrames": 420,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Trace the Sample\n\n- `start` runs on the stack\n- `setTimeout` registers with Web APIs\n- the Promise queues a microtask\n- `end` finishes the main script\n- microtask runs before timer callback",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  CODE[\"Main Script<br/>start → end\"] --> STACK[\"Call Stack\"]\n  STACK --> API[\"Web APIs<br/>setTimeout\"]\n  STACK --> MICRO[\"Microtask Queue<br/>Promise callback\"]\n  API --> TASKQ[\"Task Queue<br/>timer callback\"]\n  MICRO --> LOOP[\"Event Loop\"]\n  TASKQ --> LOOP\n  LOOP --> STACK\n\n  classDef active fill:#B8FF4D,stroke:#00E5FF,color:#061018,stroke-width:4px;\n  classDef warm fill:#FFD166,stroke:#FF3D81,color:#111827,stroke-width:4px;\n  classDef inactive fill:#17213A,stroke:#506080,color:#DCE8FF,stroke-width:2px;\n  class CODE,STACK active;\n  class MICRO,LOOP warm;\n  class API,TASKQ inactive;\n  linkStyle 0 stroke:#B8FF4D,stroke-width:4px;\n  linkStyle 2 stroke:#FFD166,stroke-width:4px;\n  linkStyle 4 stroke:#FFD166,stroke-width:4px;\n  linkStyle 6 stroke:#B8FF4D,stroke-width:4px;",
+            "iconName": null,
+            "width": 1280,
+            "height": 760,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1800,
+        "durationInFrames": 450,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Environment Changes the APIs\n\n- Browser exposes Web APIs\n- Node.js uses libuv for I/O\n- The event loop concept stays\n- Task timing depends on the runtime",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  subgraph BR[\"Browser Runtime\"]\n    BJS[\"JavaScript\"] --> BAPI[\"Web APIs\"]\n    BAPI --> BLOOP[\"Event Loop\"]\n  end\n\n  subgraph ND[\"Node.js Runtime\"]\n    NJS[\"JavaScript\"] --> LIB[\"libuv I/O\"]\n    LIB --> NLOOP[\"Event Loop\"]\n  end\n\n  BLOOP --> OUT[\"Callbacks Resume\"]\n  NLOOP --> OUT\n\n  classDef active fill:#00E5FF,stroke:#7CFFB2,color:#061018,stroke-width:4px;\n  classDef node fill:#FFD166,stroke:#FF3D81,color:#111827,stroke-width:4px;\n  classDef inactive fill:#17213A,stroke:#506080,color:#DCE8FF,stroke-width:2px;\n  class BAPI,BLOOP active;\n  class LIB,NLOOP node;\n  class BJS,NJS,OUT inactive;",
+            "iconName": null,
+            "width": 1280,
+            "height": 760,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2250,
+        "durationInFrames": 450,
+        "background": "#0B1020",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "JavaScript in 90 Seconds\n\n- Runs in the browser or Node.js\n- Uses one call stack\n- Async work waits in queues\n- The event loop connects everything\n\nTrace a snippet, then predict the order.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  CHEF[\"Main Thread<br/>one order at a time\"] --> HELPERS[\"Helpers<br/>timers and I/O\"]\n  HELPERS --> QUEUE[\"Ready Queue<br/>callbacks\"]\n  QUEUE --> LOOP[\"Event Loop\"]\n  LOOP --> CHEF\n  CHEF --> OUT[\"Output Order<br/>start, end, promise, timeout\"]\n\n  classDef active fill:#B8FF4D,stroke:#00E5FF,color:#061018,stroke-width:4px;\n  classDef inactive fill:#17213A,stroke:#506080,color:#DCE8FF,stroke-width:2px;\n  class CHEF,QUEUE,LOOP active;\n  class HELPERS,OUT inactive;",
+            "iconName": null,
+            "width": 1280,
+            "height": 740,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/0.mp3"
+      },
+      {
+        "fromFrame": 360,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/1.mp3"
+      },
+      {
+        "fromFrame": 660,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/2.mp3"
+      },
+      {
+        "fromFrame": 1020,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/3.mp3"
+      },
+      {
+        "fromFrame": 1380,
+        "durationInFrames": 420,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/4.mp3"
+      },
+      {
+        "fromFrame": 1800,
+        "durationInFrames": 450,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/5.mp3"
+      },
+      {
+        "fromFrame": 2250,
+        "durationInFrames": 450,
+        "staticPath": "audio-jobs/cmpbg1jp000138aoq67hwbc7z/6.mp3"
+      }
+    ]
+  }
+}

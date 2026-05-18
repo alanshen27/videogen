@@ -1,0 +1,306 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2712,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 372,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef support fill:#181818,stroke:#444444,color:#bbbbbb;\n  class API,VAL active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "API Intake\n\nA Claude request starts as plain user input, then gets normalized before the deeper system touches it.\n\n- Receive the user request\n- Check required fields\n- Reject malformed input",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "API Intake",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 372,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Gateway + Auth\n\nThe gateway acts like the front door: prove who you are, then route the request correctly.\n\n- Verify identity\n- Attach user context\n- Choose the next route",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef support fill:#181818,stroke:#444444,color:#bbbbbb;\n  class GW,AUTH,ROUTE active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Gateway + Auth",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 732,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef caution fill:#ffd166,stroke:#ffffff,stroke-width:3px,color:#000000;\n  class SYS,Q,HIST,PB active;\n  class SAFE caution;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Prompt Assembly\n\nClaude does not receive only your latest sentence. The system builds a full prompt package first.\n\n- System instructions\n- Current user question\n- Relevant chat history\n- Safety screening",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Prompt Assembly",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1092,
+        "durationInFrames": 540,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Model Inference\n\nIf the prompt passes safety, Claude turns text into tokens, works inside a context window, and runs compute to produce raw output.\n\n- Tokenize the prompt\n- Use the context window\n- Run GPU compute\n- Produce raw text",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef engine fill:#8b5cf6,stroke:#ffffff,stroke-width:3px,color:#ffffff;\n  class MR engine;\n  class TOK,CTX,GPU,RAW active;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Model Inference",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1632,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef check fill:#22c55e,stroke:#ffffff,stroke-width:3px,color:#000000;\n  class RAW,PP,FMT active;\n  class POL check;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Post-Processing\n\nThe raw answer gets shaped into something useful: readable, structured, and policy-compliant.\n\n- Clean up the response\n- Apply formatting\n- Check policy compliance",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Post-Processing",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1500,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1992,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Delivery + Ops\n\nThe final answer returns through the API while the platform records what happened and watches for issues.\n\n- Send the answer back\n- Write logs\n- Track metrics\n- Handle errors",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[User Request] --> API[API Layer]\n  API --> VAL[Input Validation]\n  VAL --> GW[Gateway]\n  GW --> AUTH[Authentication]\n  AUTH --> ROUTE[Routing Rules]\n  ROUTE --> PB[Prompt Builder]\n  SYS[System Instructions] --> PB\n  Q[User Question] --> PB\n  HIST[Chat History] --> PB\n  PB --> SAFE{Safety Filters}\n  SAFE -->|approved| MR[Claude Engine]\n  SAFE -->|blocked| BLK[Blocked]\n  MR --> TOK[Tokenization]\n  TOK --> CTX[Context Window]\n  CTX --> GPU[GPU Compute]\n  GPU --> RAW[Raw Output]\n  RAW --> PP[Post Processor]\n  PP --> POL[Policy Check]\n  POL --> FMT[Formatted Reply]\n  FMT --> DEL[API Delivery]\n  DEL --> U\n  DEL --> LOG[Logs]\n  DEL --> MET[Metrics]\n  DEL --> ERR[Error Handling]\n  classDef active fill:#ff5c00,stroke:#ffffff,stroke-width:3px,color:#000000;\n  classDef ops fill:#0ea5e9,stroke:#ffffff,stroke-width:3px,color:#000000;\n  class FMT,DEL,U active;\n  class LOG,MET,ERR ops;",
+            "iconName": null,
+            "width": 1120,
+            "height": 760,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "icon",
+            "content": "Delivery + Ops",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 170,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2352,
+        "durationInFrames": 360,
+        "background": "radial-gradient(circle at 16% 18%, #1f2937 0%, #0b1020 46%, #080b14 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Claude Code Path: 7 Steps\n\nThe beginner mental model is simple: input comes in, the system prepares it, Claude runs, and the answer comes back.\n\n- User input enters the API\n- Validation and auth protect the system\n- Prompt construction adds context\n- Safety filters screen the request\n- Claude generates raw output",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Claude Code Path: 7 Steps",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 1440,
+            "y": 84,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 372,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/0.mp3"
+      },
+      {
+        "fromFrame": 372,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/1.mp3"
+      },
+      {
+        "fromFrame": 732,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/2.mp3"
+      },
+      {
+        "fromFrame": 1092,
+        "durationInFrames": 540,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/3.mp3"
+      },
+      {
+        "fromFrame": 1632,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/4.mp3"
+      },
+      {
+        "fromFrame": 1992,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/5.mp3"
+      },
+      {
+        "fromFrame": 2352,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpbk46mx0000bcoqy4qct4zj/6.mp3"
+      }
+    ]
+  }
+}

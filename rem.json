@@ -1,0 +1,29 @@
+{
+  "composition": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "durationInFrames": 120,
+    "elementPlacement": "one_at_a_time_centered"
+  },
+  "scenes": [
+    {
+      "fromFrame": 0,
+      "durationInFrames": 120,
+      "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+      "layoutPreset": "title_hero_and_canvas",
+      "elements": [
+        {
+          "type": "text",
+          "content": "videogen",
+          "iconName": "Sparkles",
+          "width": null,
+          "height": null,
+          "x": 120,
+          "y": 120,
+          "animation": "fade"
+        }
+      ]
+    }
+  ]
+}
