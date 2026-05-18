@@ -442,6 +442,7 @@ export const VideoFromSpec: React.FC<VideoFromSpecProps> = ({
               sceneIndex={sceneIdx}
               sceneCount={data.scenes.length}
               layoutPreset={normalizeLayoutPreset(scene.layoutPreset)}
+              sceneDurationInFrames={scene.durationInFrames}
             >
               {sceneBodyForPlacement(
                 placementForScene(scene, defaultPlacement, portrait),

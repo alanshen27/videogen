@@ -147,6 +147,85 @@ function classifyText(content: string): "hero" | "lead" | "body" {
   return "lead";
 }
 
+/** Detects "stat callout" content — a short headline number / token plus an
+ * optional caption underneath separated by a blank line. e.g.
+ *   `10x\n\nfaster than baseline`
+ *   `$2.4M\n\nARR after one quarter`
+ *   `ZERO\n\nruntime dependencies`
+ * We don't try to be clever — stats are short, the caption is the rest.
+ */
+function parseStatCallout(
+  content: string
+): { value: string; caption: string | null } | null {
+  const trimmed = content.trim();
+  if (!trimmed) return null;
+  const firstLine = trimmed.split("\n")[0]?.trim() ?? "";
+  if (firstLine.length === 0 || firstLine.length > 14) return null;
+  /* Allow digits, decimal points, common units / currency, ALL CAPS short words. */
+  const numberLike = /^[\$\u20ac\u00a3]?\d+(?:[.,]\d+)?(?:[a-zA-Z%+]{1,4})?[+x]?$/.test(
+    firstLine
+  );
+  const letters = firstLine.replace(/[^a-zA-Z]/g, "");
+  const shortAllCaps =
+    letters.length >= 3 &&
+    letters.length <= 10 &&
+    letters === letters.toUpperCase();
+  if (!numberLike && !shortAllCaps) return null;
+  const rest = trimmed.slice(firstLine.length).replace(/^\s+/, "");
+  return { value: firstLine, caption: rest.length > 0 ? rest : null };
+}
+
+/** Detects "quote" content. Two accepted shapes:
+ *   `“Some quote.”\n— Attribution`
+ *   `> Some quote.\n— Attribution` (single `>` blockquote)
+ */
+function parseQuote(
+  content: string
+): { body: string; attribution: string | null } | null {
+  const trimmed = content.trim();
+  if (trimmed.length < 12) return null;
+
+  const lines = trimmed.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 0) return null;
+
+  let body: string | null = null;
+  let attribution: string | null = null;
+
+  /* `>` blockquote form */
+  if (lines[0].startsWith(">")) {
+    const quoteLines: string[] = [];
+    for (const line of lines) {
+      if (line.startsWith(">")) {
+        quoteLines.push(line.replace(/^>\s?/, ""));
+      } else {
+        if (line.startsWith("—") || line.startsWith("-")) {
+          attribution = line.replace(/^[—-]\s?/, "");
+        }
+      }
+    }
+    body = quoteLines.join(" ").trim();
+  }
+
+  /* Smart-quote form */
+  if (
+    !body &&
+    (trimmed.startsWith("\u201c") ||
+      trimmed.startsWith('"') ||
+      trimmed.startsWith("\u2018"))
+  ) {
+    const closing = /[\u201d"\u2019]/.exec(trimmed);
+    if (closing) {
+      body = trimmed.slice(1, closing.index).trim();
+      const after = trimmed.slice(closing.index + 1).trim();
+      const attrMatch = /^[—-]\s?(.+)$/m.exec(after);
+      if (attrMatch) attribution = attrMatch[1].trim();
+    }
+  }
+
+  if (!body || body.length < 12) return null;
+  return { body, attribution };
+}
+
 type TextTypo = {
   fontSize: number;
   fontWeight: 400 | 500 | 600 | 700 | 800 | 900;
@@ -269,6 +348,13 @@ function FireshipBullet(_props: { palette: FireshipPalette }) {
 }
 
 export function SpecText({ el }: { el: SceneEl }) {
+  /* Specialised renderers — stat callout + quote — catch high-signal short
+   * content before the generic markdown/list parser runs. */
+  const stat = parseStatCallout(el.content);
+  if (stat) return <SpecStatCallout el={el} stat={stat} />;
+  const quote = parseQuote(el.content);
+  if (quote) return <SpecQuote quote={quote} />;
+
   const variant = classifyText(el.content);
   const typo = typoForVariant(variant);
   const blocks = parseTextBlocks(el.content);
@@ -507,6 +593,181 @@ export function SpecText({ el }: { el: SceneEl }) {
   );
 }
 
+/** Big-number stat block — ideal for hooks and impact beats. */
+function SpecStatCallout({
+  el,
+  stat,
+}: {
+  el: SceneEl;
+  stat: { value: string; caption: string | null };
+}) {
+  const HeaderIcon =
+    el.iconName && el.iconName in REMOTION_ICON_MAP
+      ? REMOTION_ICON_MAP[el.iconName]
+      : null;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 22,
+        fontFamily: specTokens.sans,
+        maxWidth: 980,
+      }}
+    >
+      {HeaderIcon ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: "rgba(99, 102, 241, 0.06)",
+              border: "1px solid rgba(129, 140, 248, 0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HeaderIcon size={18} strokeWidth={1.6} color="#c7d2fe" />
+          </div>
+          <span
+            style={{
+              fontFamily: specTokens.mono,
+              fontSize: 14,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: specTokens.ink.subtle,
+            }}
+          >
+            {el.iconName}
+          </span>
+        </div>
+      ) : null}
+      <div
+        style={{
+          fontFamily: specTokens.display,
+          fontSize: 220,
+          fontWeight: 700,
+          lineHeight: 0.92,
+          letterSpacing: "-0.055em",
+          color: specTokens.ink.primary,
+          textShadow: specTokens.shadow.textHero,
+          background:
+            "linear-gradient(180deg, #fafafa 0%, #c7d2fe 95%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        {stat.value}
+      </div>
+      {stat.caption ? (
+        <div
+          style={{
+            fontSize: 36,
+            fontWeight: 500,
+            lineHeight: 1.22,
+            letterSpacing: "-0.02em",
+            color: specTokens.ink.muted,
+            maxWidth: 760,
+          }}
+        >
+          {stat.caption}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Pull-quote layout — large body + indigo opening glyph + attribution rule. */
+function SpecQuote({
+  quote,
+}: {
+  quote: { body: string; attribution: string | null };
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 28,
+        fontFamily: specTokens.sans,
+        maxWidth: 980,
+        position: "relative",
+      }}
+    >
+      <span
+        aria-hidden
+        style={{
+          fontFamily: specTokens.display,
+          fontSize: 180,
+          lineHeight: 0.7,
+          color: "rgba(165, 180, 252, 0.35)",
+          marginLeft: -8,
+          fontWeight: 700,
+          letterSpacing: "-0.04em",
+        }}
+      >
+        “
+      </span>
+      <div
+        style={{
+          fontFamily: specTokens.display,
+          fontSize: 54,
+          fontWeight: 600,
+          lineHeight: 1.18,
+          letterSpacing: "-0.028em",
+          color: specTokens.ink.primary,
+          textShadow: specTokens.shadow.textHero,
+          marginTop: -32,
+        }}
+      >
+        {quote.body}
+      </div>
+      {quote.attribution ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            marginTop: 4,
+          }}
+        >
+          <span
+            style={{
+              display: "inline-block",
+              width: 32,
+              height: 1,
+              background: "rgba(165, 180, 252, 0.45)",
+            }}
+          />
+          <span
+            style={{
+              fontFamily: specTokens.mono,
+              fontSize: 18,
+              fontWeight: 500,
+              letterSpacing: "0.04em",
+              color: specTokens.ink.accentSoft,
+            }}
+          >
+            {quote.attribution}
+          </span>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function SpecCode({ el }: { el: SceneEl }) {
   /* Pull a leading ```lang fence hint out of the content if present. */
   const raw = el.content ?? "";
@@ -524,12 +785,12 @@ export function SpecBox({ el }: { el: SceneEl }) {
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
+        justifyContent: "flex-start",
+        textAlign: "left",
         minWidth: 200,
         minHeight: 72,
         maxWidth: 520,
-        padding: "16px 22px",
+        padding: "16px 22px 16px 26px",
         boxSizing: "border-box",
         fontFamily: specTokens.sans,
         fontSize: 18,
@@ -538,13 +799,28 @@ export function SpecBox({ el }: { el: SceneEl }) {
         lineHeight: 1.28,
         overflowWrap: "break-word",
         wordBreak: "break-word",
-        background: "transparent",
+        background: "rgba(99, 102, 241, 0.025)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
         borderRadius: 8,
         letterSpacing: "-0.005em",
+        overflow: "hidden",
       }}
     >
-      {el.content}
+      {/* Indigo accent rail down the left edge — a tiny hint of brand colour
+       * without crossing into Fireship rainbow territory. */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background:
+            "linear-gradient(180deg, rgba(165, 180, 252, 0.85) 0%, rgba(99, 102, 241, 0.35) 100%)",
+        }}
+      />
+      <span style={{ position: "relative", zIndex: 1 }}>{el.content}</span>
     </div>
   );
 }
@@ -585,28 +861,35 @@ export function SpecArrow({ el }: { el: SceneEl }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        gap: 10,
+        gap: 12,
         maxWidth: 520,
       }}
     >
       <svg
-        width={260}
-        height={20}
-        viewBox="0 0 260 20"
+        width={320}
+        height={22}
+        viewBox="0 0 320 22"
         aria-hidden
         style={{ overflow: "visible" }}
       >
+        <defs>
+          <linearGradient id="arrow-stroke" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgba(165, 180, 252, 0.25)" />
+            <stop offset="100%" stopColor="rgba(165, 180, 252, 0.95)" />
+          </linearGradient>
+        </defs>
         <line
           x1="2"
-          y1="10"
-          x2="232"
-          y2="10"
-          stroke="rgba(129, 140, 248, 0.65)"
-          strokeWidth="1.25"
+          y1="11"
+          x2="288"
+          y2="11"
+          stroke="url(#arrow-stroke)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
         <polygon
-          points="246,10 232,4 232,16"
-          fill="rgba(129, 140, 248, 0.65)"
+          points="306,11 286,2 286,20"
+          fill="rgba(165, 180, 252, 0.95)"
         />
       </svg>
       <span
@@ -615,10 +898,10 @@ export function SpecArrow({ el }: { el: SceneEl }) {
           fontSize: 14,
           fontWeight: 500,
           color: specTokens.ink.muted,
-          backgroundColor: "transparent",
-          border: "1px solid rgba(255, 255, 255, 0.09)",
+          background: "rgba(99, 102, 241, 0.045)",
+          border: "1px solid rgba(129, 140, 248, 0.3)",
           borderRadius: 6,
-          padding: "6px 10px",
+          padding: "6px 12px",
           maxWidth: 440,
           overflowWrap: "break-word",
           wordBreak: "break-word",
