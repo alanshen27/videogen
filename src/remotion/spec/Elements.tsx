@@ -206,17 +206,19 @@ function parseQuote(
     body = quoteLines.join(" ").trim();
   }
 
-  /* Smart-quote form */
+  /* Smart-quote form. The regex must skip the opening quote at index 0 —
+   * otherwise it would match the opening glyph itself and produce an empty body. */
   if (
     !body &&
     (trimmed.startsWith("\u201c") ||
       trimmed.startsWith('"') ||
       trimmed.startsWith("\u2018"))
   ) {
-    const closing = /[\u201d"\u2019]/.exec(trimmed);
-    if (closing) {
-      body = trimmed.slice(1, closing.index).trim();
-      const after = trimmed.slice(closing.index + 1).trim();
+    const rest = trimmed.slice(1);
+    const closingMatch = /[\u201d"\u2019]/.exec(rest);
+    if (closingMatch) {
+      body = rest.slice(0, closingMatch.index).trim();
+      const after = rest.slice(closingMatch.index + 1).trim();
       const attrMatch = /^[—-]\s?(.+)$/m.exec(after);
       if (attrMatch) attribution = attrMatch[1].trim();
     }
