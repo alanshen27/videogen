@@ -4,12 +4,30 @@
       "width": 1920,
       "height": 1080,
       "fps": 30,
-      "durationInFrames": 480,
+      "durationInFrames": 1440,
       "elementPlacement": "split_text_left_window_right"
     },
     "scenes": [
       {
         "fromFrame": 0,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.08) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Inside the request lifecycle\n\nA quick tour through the components that turn a click into a response — and back again.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 120,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 120,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_text_left_canvas_right",
@@ -37,7 +55,7 @@
         ]
       },
       {
-        "fromFrame": 120,
+        "fromFrame": 240,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.05) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_canvas_left_text_right",
@@ -65,7 +83,25 @@
         ]
       },
       {
-        "fromFrame": 240,
+        "fromFrame": 360,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "10x\n\nfaster cold starts when you keep the runtime warm.",
+            "iconName": "Zap",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 480,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
@@ -83,7 +119,7 @@
         ]
       },
       {
-        "fromFrame": 360,
+        "fromFrame": 600,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_text_left_canvas_right",
@@ -107,6 +143,144 @@
             "x": 720,
             "y": 160,
             "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 720,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "\"Simplicity is the soul of efficiency.\"\n— Austin Freeman",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 840,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_dual_figure",
+        "elements": [
+          {
+            "type": "icon",
+            "content": "Edge cache",
+            "iconName": "Globe",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 240,
+            "animation": "fade"
+          },
+          {
+            "type": "icon",
+            "content": "Origin server",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1100,
+            "y": 240,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 960,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  Q[\"Producer\"] --> Topic[\"events.orders\"]\n  Topic --> W1[\"Worker A\"]\n  Topic --> W2[\"Worker B\"]\n  Topic --> W3[\"Worker C\"]\n  W1 --> DB[(\"Postgres\")]\n  W2 --> DB\n  W3 --> DB\n  classDef hi fill:#000,stroke:#000;\n  class Topic hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 140,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Fan-out, one topic\n\nThe topic decouples the producer from the worker pool — add a fourth worker, the producer never knows.",
+            "iconName": "Share2",
+            "width": null,
+            "height": null,
+            "x": 1100,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1080,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```sql\nSELECT user_id, COUNT(*) AS pageviews\nFROM events\nWHERE created_at >= now() - interval '7 days'\nGROUP BY user_id\nORDER BY pageviews DESC\nLIMIT 25;\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 160,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Cheapest aggregation that still tells you something\n\n- One scan, one group\n- Index on `created_at` skips old rows\n- LIMIT keeps the response payload tiny",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 1100,
+            "y": 160,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1200,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "ZERO\n\nruntime dependencies on the hot path.",
+            "iconName": "Shield",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 160,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1320,
+        "durationInFrames": 120,
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Where to go next\n\n1. Trace a single request end to end\n2. Pick one slow query and rewrite it\n3. Cap your tail latency, not your average",
+            "iconName": "ArrowUpRight",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 120,
+            "animation": "fade"
           }
         ]
       }
