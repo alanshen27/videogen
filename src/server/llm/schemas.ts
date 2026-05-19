@@ -139,6 +139,23 @@ export const RemotionElementSchema = z.object({
    * the rest of the optional fields. Always present; `null` means "no fallback".
    */
   fallbackImageUrl: z.union([z.string(), z.null()]).optional(),
+  /**
+   * Optional internal-only field — animated node highlights for `mermaid`
+   * elements. The renderer reads `useCurrentFrame()` and applies the
+   * matching beat's `targets` as the `active` emphasis set (everything else
+   * becomes `muted` so the highlight pops). Frame numbers are SCENE-RELATIVE
+   * (0 = scene start). Built by `branded-scene-spec` from
+   * `BrandedScene.focusBeats` where `target === "diagram"`.
+   */
+  diagramBeats: z
+    .array(
+      z.object({
+        fromFrame: z.number(),
+        durationInFrames: z.number(),
+        targets: z.array(z.string()),
+      })
+    )
+    .optional(),
 });
 
 export const RemotionSceneSchema = z.object({

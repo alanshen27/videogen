@@ -1,0 +1,239 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2792,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 240,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Shortest path\n\nDijkstra answers one question: what is the cheapest way to get from a start point to everything else?",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 240,
+        "durationInFrames": 300,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "reference-images/scene-2-1779174582798-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Graphs have costs\n\nA graph is just points connected by edges. Each edge has a weight, like time, distance, or money.\n\n- Nodes are places\n- Edges are connections\n- Weights are costs\n- Goal is cheapest route",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 540,
+        "durationInFrames": 300,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The greedy rule\n\nDijkstra does not guess the whole path at once. It makes one safe choice, then repeats.\n\n- Pick the closest unfinished node\n- Lock in that distance\n- Check its neighbors\n- Keep the best updates",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 840,
+        "durationInFrames": 425,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "A tiny test graph\n\nStart at A. The direct route to B costs 5, but going through C can be cheaper. Dijkstra will prove it step by step.\n\n- A → B costs 5\n- A → C costs 1\n- C → D costs 1\n- Best A → D is 2",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "image",
+            "content": "reference-images/scene-4-1779174585843-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 726,
+            "y": 166,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1265,
+        "durationInFrames": 480,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nimport heapq\n\ndef dijkstra(graph, start):\n    dist = {n: float(\"inf\") for n in graph}\n    prev = {n: None for n in graph}\n    dist[start] = 0\n    pq = [(0, start)]\n\n    while pq:\n        d, u = heapq.heappop(pq)\n        if d > dist[u]:\n            continue\n        for v, w in graph[u].items():\n            new = d + w\n            if new < dist[v]:\n                dist[v], prev[v] = new, u\n                heapq.heappush(pq, (new, v))\n    return dist, prev\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Python version\n\nUse a dictionary for the graph, a distance table for the best known cost, and a heap for the next closest node.\n\n- Use a dictionary for the graph\n- a distance table for the best known cost\n- and a heap for the next closest node.",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1745,
+        "durationInFrames": 420,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "reference-images/scene-6-1779174589397-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 92,
+            "y": 166,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Relax the neighbors\n\nRelax means: try a route through the current node. If it is cheaper than what we had, replace the old distance.\n\n- Pop A at distance 0\n- Update B to 5\n- Update C to 1\n- C becomes next",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2165,
+        "durationInFrames": 360,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "O((V + E) log V)\n\nWith a heap, Dijkstra is efficient for many real graphs. The catch is simple: edge weights must be zero or positive.",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2525,
+        "durationInFrames": 267,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Dijkstra in six steps\n\nThe final shortest route from A to D is A → C → D, with total cost 2.\n\n- Start with infinity\n- Set start to zero\n- Pick the closest node\n- Relax each neighbor\n- Mark it finished",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 240,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/0.mp3"
+      },
+      {
+        "fromFrame": 240,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/1.mp3"
+      },
+      {
+        "fromFrame": 540,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/2.mp3"
+      },
+      {
+        "fromFrame": 840,
+        "durationInFrames": 425,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/3.mp3"
+      },
+      {
+        "fromFrame": 1265,
+        "durationInFrames": 480,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/4.mp3"
+      },
+      {
+        "fromFrame": 1745,
+        "durationInFrames": 420,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/5.mp3"
+      },
+      {
+        "fromFrame": 2165,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/6.mp3"
+      },
+      {
+        "fromFrame": 2525,
+        "durationInFrames": 267,
+        "staticPath": "audio-jobs/cmpcajscv0000ueoqulcm6s94/7.mp3"
+      }
+    ]
+  }
+}

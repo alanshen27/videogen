@@ -5,6 +5,7 @@ import type {
   RemotionSpec,
   Script,
 } from "../llm/schemas";
+import type { BrandedSceneTemplate, SceneFocusBeat } from "../llm/schemas";
 import { parseMermaidFlowchart } from "../../remotion/spec/mermaid-parse";
 
 type RemotionSpecGeneration = Omit<RemotionSpec, "voice">;
@@ -37,6 +38,55 @@ function chooseAnimationForTarget(target?: string): "fade" | "highlight" {
     return "highlight";
   }
   return "fade";
+}
+
+/**
+ * Convert the scene's `focusBeats` (script-time, in seconds) into
+ * frame-relative `diagramBeats` that the renderer can drive an animation
+ * timeline from. Beats that don't target the diagram (or have no
+ * `mermaidTargets`) are dropped.
+ */
+function buildDiagramBeats(
+  focusBeats: SceneFocusBeat[],
+  sceneStartSecond: number,
+  sceneDurationFrames: number
+): { fromFrame: number; durationInFrames: number; targets: string[] }[] {
+  const beats: {
+    fromFrame: number;
+    durationInFrames: number;
+    targets: string[];
+  }[] = [];
+  for (const fb of focusBeats) {
+    if (fb.target !== "diagram") continue;
+    if (!fb.mermaidTargets || fb.mermaidTargets.length === 0) continue;
+    const startRel = Math.max(0, fb.startSecond - sceneStartSecond);
+    const endRel = Math.max(startRel, fb.endSecond - sceneStartSecond);
+    const fromFrame = Math.round(startRel * FPS);
+    const endFrame = Math.min(
+      sceneDurationFrames,
+      Math.max(fromFrame + 6, Math.round(endRel * FPS))
+    );
+    beats.push({
+      fromFrame,
+      durationInFrames: Math.max(6, endFrame - fromFrame),
+      targets: fb.mermaidTargets.slice(0, 12),
+    });
+  }
+  return beats;
+}
+
+/**
+ * Whenever the LLM emitted a parseable diagram, it wins over a downloaded
+ * image. The labelled structure of a flowchart carries more pedagogical
+ * value than any stock screenshot for an explainer. Image stays attached
+ * as `fallbackImageUrl` so we don't blank-screen if parsing later fails.
+ */
+function diagramWinsForScene(
+  _template: BrandedSceneTemplate,
+  _focusBeats: SceneFocusBeat[],
+  mermaidParseable: boolean
+): boolean {
+  return mermaidParseable;
 }
 
 function listContent(headline: string, body: string, listItems: string[] = []): string {
@@ -118,11 +168,20 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
   let fromFrame = 0;
 
   const scenes: RemotionSpecGeneration["scenes"] = sceneSpec.scenes.map((scene) => {
+    const scriptScene = script.scenes.find(
+      (s) => s.sceneNumber === scene.sceneNumber
+    );
+    const sceneStartSecond = scriptScene?.startSecond ?? 0;
     const durationInFrames = toFrames(
       sceneDurationSecondsFromScript(script, scene.sceneNumber)
     );
     const primaryFocus = scene.focusBeats[0]?.target;
     const emphasisAnimation = chooseAnimationForTarget(primaryFocus);
+    const diagramBeats = buildDiagramBeats(
+      scene.focusBeats,
+      sceneStartSecond,
+      durationInFrames
+    );
 
     const leftTextX = portrait ? 64 : 116;
     const rightTextX = portrait ? 64 : 1044;
@@ -153,8 +212,17 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
         return !!(parsed && parsed.nodes.length > 0 && parsed.nodes.length <= 24);
       })();
 
-    const preferImage = downloadedImage.length > 0;
-    void mermaidParseable;
+    /**
+     * Diagram beats the image when the LLM specifically authored a labelled
+     * walkthrough — see `diagramWinsForScene`. Otherwise the downloaded
+     * image wins.
+     */
+    const diagramWins = diagramWinsForScene(
+      scene.template,
+      scene.focusBeats,
+      mermaidParseable
+    );
+    const preferImage = downloadedImage.length > 0 && !diagramWins;
 
     const sceneIcon = sceneIconName(scene);
 
@@ -183,6 +251,7 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
             animation: emphasisAnimation,
             fallbackImageUrl:
               downloadedImage.length > 0 ? downloadedImage : null,
+            diagramBeats: diagramBeats.length > 0 ? diagramBeats : undefined,
           }
         : scene.codeSnippet
           ? {

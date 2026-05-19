@@ -1126,9 +1126,16 @@ export function SpecImage({ el }: { el: SceneEl }) {
 export function RenderSpecElement({
   el,
   iconVariant = "compact",
+  availableWidth,
+  availableHeight,
 }: {
   el: SceneEl;
   iconVariant?: "compact" | "hero";
+  /** Pane dimensions the renderer knows it has — diagrams use these to
+   *  fit exactly without overflowing. Optional; renderers fall back to
+   *  conservative defaults. */
+  availableWidth?: number;
+  availableHeight?: number;
 }) {
   switch (el.type) {
     case "text":
@@ -1148,7 +1155,13 @@ export function RenderSpecElement({
         <SpecIcon el={el as IconSceneEl} variant={iconVariant} />
       );
     case "mermaid":
-      return <SpecMermaidOrFallback el={el as MermaidSceneEl} />;
+      return (
+        <SpecMermaidOrFallback
+          el={el as MermaidSceneEl}
+          availableWidth={availableWidth}
+          availableHeight={availableHeight}
+        />
+      );
     default:
       return null;
   }
@@ -1161,15 +1174,33 @@ export function RenderSpecElement({
  *   3. Mermaid runtime renderer — last resort, only if React parse fails AND no
  *      fallback image is available.
  */
-function SpecMermaidOrFallback({ el }: { el: MermaidSceneEl }) {
+function SpecMermaidOrFallback({
+  el,
+  availableWidth,
+  availableHeight,
+}: {
+  el: MermaidSceneEl;
+  availableWidth?: number;
+  availableHeight?: number;
+}) {
   const parsed: ParsedGraph | null = React.useMemo(
     () => parseMermaidFlowchart(el.content ?? ""),
     [el.content]
   );
+  const beats = (el as MermaidSceneEl & {
+    diagramBeats?: {
+      fromFrame: number;
+      durationInFrames: number;
+      targets: string[];
+    }[];
+  }).diagramBeats;
 
   if (parsed && parsed.nodes.length > 0 && parsed.nodes.length <= 24) {
-    const maxW = el.width ?? 900;
-    const maxH = el.height ?? 540;
+    /* Prefer the actual pane size handed down by VideoFromSpec. Fall back to
+     * the (possibly stale) el.width/height, then to safe-small defaults so
+     * the diagram never overflows. */
+    const maxW = availableWidth ?? el.width ?? 720;
+    const maxH = availableHeight ?? el.height ?? 460;
     return (
       <div
         style={{
@@ -1179,7 +1210,12 @@ function SpecMermaidOrFallback({ el }: { el: MermaidSceneEl }) {
           alignItems: "center",
         }}
       >
-        <SpecDiagram graph={parsed} maxWidth={maxW} maxHeight={maxH} />
+        <SpecDiagram
+          graph={parsed}
+          maxWidth={maxW}
+          maxHeight={maxH}
+          beats={beats}
+        />
       </div>
     );
   }

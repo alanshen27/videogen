@@ -1,0 +1,221 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 559,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 67,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "JavaScript, fast",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 88,
+            "animation": "fade"
+          },
+          {
+            "type": "image",
+            "content": "reference-images/scene-1-1779175985323-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 180,
+            "y": 224,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 67,
+        "durationInFrames": 109,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[\"User click\"] --> B[\"Browser\"]\n  B --> JS[\"JavaScript\"]\n  JS --> DOM[\"Page tree\"]\n  DOM --> P[\"Updated page\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "U",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "JS"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "DOM",
+                  "P"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Pages react\n\nA click enters the browser, JavaScript runs, then the page updates without needing a whole new page load.\n\n- User clicks\n- JavaScript runs\n- Page changes",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 176,
+        "durationInFrames": 172,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```javascript\nlet count = 0;\ncount++;\ndocument.body.textContent = 'Count: ' + count;\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Code changes data\n\nA variable stores a value. One small action updates it, then writes the result back to the page.\n\n- A variable stores a value\n- One small action updates it, then writes the result back to the page",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 348,
+        "durationInFrames": 151,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Data plus action\n\nA variable remembers a name. A function takes that name and returns a greeting.\n\n- Variable: stores data\n- Function: performs action\n- Result: new text",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  V[\"Variable\"] --> F[\"Function\"]\n  N[\"Ada\"] --> F\n  F --> R[\"Hi Ada\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779175987951-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "V",
+                  "N"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "F"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "R"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 499,
+        "durationInFrames": 60,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Interactive pages\n\nThat is JavaScript in one sentence: it lets a page respond when you do something.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 67,
+        "staticPath": "audio-jobs/cmpcbeey30004ueoqd0jslzca/0.mp3"
+      },
+      {
+        "fromFrame": 67,
+        "durationInFrames": 109,
+        "staticPath": "audio-jobs/cmpcbeey30004ueoqd0jslzca/1.mp3"
+      },
+      {
+        "fromFrame": 176,
+        "durationInFrames": 172,
+        "staticPath": "audio-jobs/cmpcbeey30004ueoqd0jslzca/2.mp3"
+      },
+      {
+        "fromFrame": 348,
+        "durationInFrames": 151,
+        "staticPath": "audio-jobs/cmpcbeey30004ueoqd0jslzca/3.mp3"
+      },
+      {
+        "fromFrame": 499,
+        "durationInFrames": 60,
+        "staticPath": "audio-jobs/cmpcbeey30004ueoqd0jslzca/4.mp3"
+      }
+    ]
+  }
+}

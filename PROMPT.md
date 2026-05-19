@@ -104,25 +104,28 @@ right_diagram_left_text → stat_callout → image → quote → list`.
 
 When a scene needs a visual, the renderer picks **in this order**:
 
-1. **Downloaded image** (logo, screenshot, photo). If we have a real image,
-   it always wins.
-2. **React-drawn diagram** (parsed from your Mermaid, redrawn in our
-   ghost-tile style). Only triggers if the Mermaid is simple enough
-   (≤8 nodes, LR/TB, basic shapes, no subgraphs, no sequence/state/ER).
+1. **React-drawn diagram** (the LLM's Mermaid, redrawn in our ghost-tile
+   style). **Whenever you emit a parseable `diagramMermaid`, it wins.**
+   Diagrams carry labelled structure that no stock screenshot can match.
+2. **Downloaded image** (logo, screenshot, photo) — used when no diagram
+   was authored for the scene.
 3. **Stock image fallback** (the downloaded image, if any, used as fallback
    when Mermaid parsing fails).
 4. **Raw Mermaid** (last resort — it'll look out of place).
 
 ### Implication for your prompts
 
-- **Always prefer images for named things.** If a scene mentions Claude,
+- **Diagrams beat images, always.** If a scene benefits from a labelled
+  flow at all, write a `diagramMermaid` for it — don't emit one *and* an
+  image hoping the image wins. It won't. Use `focusBeats[].mermaidTargets`
+  to walk the viewer through the diagram one node at a time (see §9).
+- **Use images when there is no flow.** Brand reveals, product
+  screenshots, photographic mood beats, and named-thing reveals (Claude,
   OpenAI, React, AWS, Postgres, Vercel, GitHub, Linear, ChatGPT, Docker,
-  Stripe, … set `template` to `image` / `image_hero` / `image_left` and
-  write a tight `imageSearchQuery`.
-- **Diagrams are for systems, not concepts.** Use a diagram only when the
-  flow, hierarchy, or relationship genuinely IS the point (request paths,
-  data flow, deployment topology, queue fan-out). Don't draw a diagram of
-  "the three pillars of X" — that's a `list`.
+  Stripe, …) → set `template` to `image` / `image_hero` / `image_left`
+  with a tight `imageSearchQuery`, and leave `diagramMermaid` empty.
+- **Lists for "the three pillars of X."** Don't draw a diagram for
+  enumerated concepts — that's a `list`.
 
 ---
 
@@ -280,14 +283,46 @@ even when unused. Use the empty defaults shown.
   javascript, jsx, json, bash, python, go, rust, java, kotlin, swift, c,
   cpp, csharp, sql, yaml, html, css, markdown.
 
-### Focus beats
+### Focus beats — driving animated diagrams
 
-`focusBeats` drives the per-second emphasis animation.
+`focusBeats` is the **animation timeline**. Each beat is `[startSecond,
+endSecond]` and points at one target. Beats with `target === "diagram"` are
+special: they drive the per-node highlight animation in the rendered graph.
 
-- Each beat points at **one** target (`title | body | list | diagram | image | code`).
+- `target`: one of `title | body | list | diagram | image | code`.
 - `mode`: `highlight` (default), `dim_others`, `pulse`, `zoom`, `trace`.
-- For diagram walkthroughs, set `target: "diagram"` and list the node IDs
-  in `mermaidTargets`.
+- `caption`: short on-screen cue (or `""`).
+- `mermaidTargets`: array of node IDs (matching IDs from `diagramMermaid`)
+  that should be lit up during this beat. Everything else dims to muted.
+
+**Diagram walkthrough pattern.** When narrating a flow node-by-node,
+author one `focusBeats` row per spoken beat, and have each one point at
+the node(s) currently being discussed:
+
+```jsonc
+{
+  "template": "left_diagram_right_text",
+  "diagramMermaid": "flowchart LR\n  U[\"User\"] --> G[\"Gateway\"]\n  G --> A[\"Auth\"]\n  A --> Q[(\"Queue\")]\n  Q --> W[\"Worker\"]\n  W --> DB[(\"Postgres\")]",
+  "focusBeats": [
+    { "startSecond": 0,   "endSecond": 1.4, "target": "title",   "mode": "highlight", "caption": "",        "mermaidTargets": [] },
+    { "startSecond": 1.4, "endSecond": 3.0, "target": "diagram", "mode": "highlight", "caption": "request", "mermaidTargets": ["U", "G"] },
+    { "startSecond": 3.0, "endSecond": 4.6, "target": "diagram", "mode": "highlight", "caption": "auth",    "mermaidTargets": ["A"] },
+    { "startSecond": 4.6, "endSecond": 6.2, "target": "diagram", "mode": "highlight", "caption": "queue",   "mermaidTargets": ["Q", "W"] },
+    { "startSecond": 6.2, "endSecond": 8.0, "target": "diagram", "mode": "highlight", "caption": "persist", "mermaidTargets": ["DB"] }
+  ]
+}
+```
+
+This produces an animated diagram: at second 1.4 the renderer highlights
+`U` and `G` (everything else dims), at second 3.0 it shifts to `A`, etc.
+Narration timing should line up — when you say "the request hits the auth
+service", that's when the `["A"]` beat should be active.
+
+Rules:
+- `mermaidTargets` IDs must match the IDs in `diagramMermaid` exactly.
+- Keep beats short (1–2.5 seconds each) — viewers track one move at a time.
+- Always cover the full scene. The last beat holds to the end of the scene.
+- Use `mermaidTargets: []` on non-diagram beats; the renderer ignores them.
 
 ---
 

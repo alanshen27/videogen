@@ -62,13 +62,19 @@
         "elements": [
           {
             "type": "mermaid",
-            "content": "flowchart LR\n  User[\"User\"] --> LB[\"Load Balancer\"]\n  subgraph vpc [VPC]\n    LB --> API[\"API Server\"]\n    API --> Cache[(\"Redis\")]\n    API --> DB[(\"Postgres\")]\n  end\n  API --> S3[(\"S3 Bucket\")]\n  classDef hi fill:#000,stroke:#000;\n  class API hi;",
+            "content": "flowchart LR\n  User[\"User\"] --> LB[\"Load Balancer\"]\n  subgraph vpc [VPC]\n    LB --> API[\"API Server\"]\n    API --> Cache[(\"Redis\")]\n    API --> DB[(\"Postgres\")]\n  end\n  API --> S3[(\"S3 Bucket\")]",
             "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
             "y": 160,
-            "animation": "highlight"
+            "animation": "highlight",
+            "diagramBeats": [
+              { "fromFrame": 0, "durationInFrames": 30, "targets": ["User"] },
+              { "fromFrame": 30, "durationInFrames": 30, "targets": ["User", "LB"] },
+              { "fromFrame": 60, "durationInFrames": 30, "targets": ["API"] },
+              { "fromFrame": 90, "durationInFrames": 30, "targets": ["Cache", "DB", "S3"] }
+            ]
           },
           {
             "type": "text",

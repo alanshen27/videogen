@@ -1,4 +1,5 @@
 import React, { useId, useMemo } from "react";
+import { useCurrentFrame } from "remotion";
 import {
   BarChart3,
   Binary,
@@ -289,7 +290,14 @@ function computeLayout(graph: ParsedGraph): LayoutResult {
     maxX = Math.max(maxX, p.left + p.width);
     maxY = Math.max(maxY, p.top + p.height);
   }
-  if (!Number.isFinite(minX)) {
+  /* Reserve a small extra band for edge labels — they sit between layers
+   * and can extend ~70px above/below the midline. Without this the layout
+   * bbox is tile-tight and labels overflow the diagram envelope. */
+  const labelBand = 24;
+  if (Number.isFinite(minX)) {
+    minY -= labelBand;
+    maxY += labelBand;
+  } else {
     minX = 0;
     minY = 0;
     maxX = 0;
@@ -518,11 +526,11 @@ function EdgeLine({
       {edge.label ? (
         <g transform={`translate(${labelMid.x} ${labelMid.y})`}>
           <rect
-            x={-Math.min(edge.label.length * 4.5 + 12, 200) / 2}
+            x={-Math.min(edge.label.length * 4.2 + 12, 140) / 2}
             y={-10}
             rx={4}
             ry={4}
-            width={Math.min(edge.label.length * 4.5 + 12, 200)}
+            width={Math.min(edge.label.length * 4.2 + 12, 140)}
             height={20}
             fill={DIAGRAM.edgeLabelBg}
             stroke={DIAGRAM.edgeLabelBorder}
@@ -538,7 +546,7 @@ function EdgeLine({
             letterSpacing="-0.005em"
             fill={DIAGRAM.edgeLabelColor}
           >
-            {edge.label.length > 36 ? `${edge.label.slice(0, 34)}…` : edge.label}
+            {edge.label.length > 26 ? `${edge.label.slice(0, 24)}…` : edge.label}
           </text>
         </g>
       ) : null}
@@ -546,13 +554,52 @@ function EdgeLine({
   );
 }
 
+export type SpecDiagramBeat = {
+  /** Scene-relative frame the beat starts on. */
+  fromFrame: number;
+  /** Length of the beat, in frames. */
+  durationInFrames: number;
+  /** Node IDs to highlight (`active`); everything else becomes `muted`. */
+  targets: string[];
+};
+
 export type SpecDiagramProps = {
   graph: ParsedGraph;
   /** Optional maximum width — graph scales down if its intrinsic size exceeds this. */
   maxWidth?: number;
   /** Optional maximum height — graph scales down if its intrinsic size exceeds this. */
   maxHeight?: number;
+  /**
+   * Optional per-beat emphasis timeline. When provided, the renderer uses
+   * `useCurrentFrame()` to flip the active node set as the scene advances,
+   * driving the "highlight as we explain it" animation. Falls back to the
+   * static emphasis from the parsed `class` directives when no beat is
+   * active for the current frame.
+   */
+  beats?: SpecDiagramBeat[];
 };
+
+/**
+ * Pick the beat that owns the current frame. Beats are sorted ascending by
+ * `fromFrame`; we use the last one whose start is ≤ frame.
+ */
+function activeBeat(
+  beats: SpecDiagramBeat[] | undefined,
+  frame: number
+): SpecDiagramBeat | undefined {
+  if (!beats || beats.length === 0) return undefined;
+  let pick: SpecDiagramBeat | undefined;
+  for (const b of beats) {
+    if (b.fromFrame <= frame) pick = b;
+    else break;
+  }
+  if (!pick) return undefined;
+  if (frame >= pick.fromFrame + pick.durationInFrames) {
+    /* Hold the last beat through to the end of the scene so the highlight
+     * doesn't snap back to "everything default" between beats. */
+  }
+  return pick;
+}
 
 /**
  * Minimal React/SVG flowchart renderer.
@@ -564,19 +611,40 @@ export type SpecDiagramProps = {
  */
 export function SpecDiagram({
   graph,
-  maxWidth = 900,
-  maxHeight = 540,
+  maxWidth = 720,
+  maxHeight = 440,
+  beats,
 }: SpecDiagramProps) {
   const uid = useId().replace(/:/g, "");
   const arrowId = `fs-arrow-${uid}`;
   const arrowMutedId = `fs-arrow-muted-${uid}`;
   const arrowActiveId = `fs-arrow-active-${uid}`;
+  const frame = useCurrentFrame();
 
-  const layout = useMemo(() => computeLayout(graph), [graph]);
-  const isLR = graph.direction === "LR";
+  /* Apply the active beat as a dynamic emphasis override:
+   *   - Targets become `active`
+   *   - Every other node becomes `muted` (so the active set pops)
+   *   - The original `emphasis` from `class` directives is used as the base
+   *     when there is no active beat.
+   */
+  const animatedGraph: ParsedGraph = useMemo(() => {
+    const beat = activeBeat(beats, frame);
+    if (!beat) return graph;
+    const targets = new Set(beat.targets);
+    return {
+      ...graph,
+      nodes: graph.nodes.map((n) => ({
+        ...n,
+        emphasis: targets.has(n.id) ? "active" : "muted",
+      })),
+    };
+  }, [graph, beats, frame]);
+
+  const layout = useMemo(() => computeLayout(animatedGraph), [animatedGraph]);
+  const isLR = animatedGraph.direction === "LR";
   const groupBoxes = useMemo(
-    () => computeGroupBoxes(graph, layout),
-    [graph, layout]
+    () => computeGroupBoxes(animatedGraph, layout),
+    [animatedGraph, layout]
   );
 
   /* Make sure group padding doesn't get clipped at the diagram edges. */
@@ -594,7 +662,12 @@ export function SpecDiagram({
   const offsetY = extraTop;
   const naturalW = Math.max(1, layout.width + extraLeft + extraRight);
   const naturalH = Math.max(1, layout.height + extraTop + extraBottom);
-  const scale = Math.min(1, maxWidth / naturalW, maxHeight / naturalH);
+  /* Always reserve a small inner gutter so wide edge labels / hover glints
+   * never touch the pane edge — sharper, more designed look. */
+  const safetyMargin = 16;
+  const fitW = Math.max(1, maxWidth - safetyMargin);
+  const fitH = Math.max(1, maxHeight - safetyMargin);
+  const scale = Math.min(1, fitW / naturalW, fitH / naturalH);
 
   return (
     <div
@@ -698,7 +771,7 @@ export function SpecDiagram({
               <path d="M0,0 L12,6 L0,12 Z" fill={DIAGRAM.edgeMuted} />
             </marker>
           </defs>
-          {graph.edges.map((edge, i) => {
+          {animatedGraph.edges.map((edge, i) => {
             const a = layout.placed.get(edge.from);
             const b = layout.placed.get(edge.to);
             if (!a || !b) return null;

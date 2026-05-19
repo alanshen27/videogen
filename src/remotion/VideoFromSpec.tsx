@@ -43,11 +43,15 @@ function SceneElement({
   sceneDuration,
   layout,
   iconVariant = "compact",
+  availableWidth,
+  availableHeight,
 }: {
   el: SceneEl;
   sceneDuration: number;
   layout: "absolute" | "focused";
   iconVariant?: "compact" | "hero";
+  availableWidth?: number;
+  availableHeight?: number;
 }) {
   const frame = useCurrentFrame();
   const snap = 8;
@@ -62,7 +66,12 @@ function SceneElement({
 
   const inner = (
     <Anim frame={frame} durationInFrames={sceneDuration}>
-      <RenderSpecElement el={el} iconVariant={iconVariant} />
+      <RenderSpecElement
+        el={el}
+        iconVariant={iconVariant}
+        availableWidth={availableWidth}
+        availableHeight={availableHeight}
+      />
     </Anim>
   );
 
@@ -109,6 +118,39 @@ function focusedMaxWidthForType(
       : el.type === "icon"
         ? 620
         : 820;
+}
+
+/** Vertical budget for a focused element in a single-element scene. */
+function focusedMaxHeightForType(
+  el: SceneEl,
+  canvasHeight: number,
+  portrait: boolean
+): number {
+  /* Outer scene padding eats the rest. These mirror the padding values used
+   * in `SequentialFocusedScene` / `SplitTwoPanelScene` so the diagram
+   * actually fits the pane it lives in, instead of overflowing the bottom. */
+  const yPad = portrait ? 168 + 136 : 112 + 112;
+  const usable = Math.max(120, canvasHeight - yPad);
+  if (el.type === "mermaid") return Math.min(560, usable);
+  if (el.type === "code") return Math.min(720, usable);
+  if (el.type === "image") return Math.min(720, usable);
+  return usable;
+}
+
+function splitMaxHeightForType(
+  el: SceneEl,
+  canvasHeight: number,
+  portrait: boolean
+): number {
+  const yPad = portrait ? 168 + 136 : 88 + 96;
+  /* In portrait the panes stack so each pane gets ~half. */
+  const usable = portrait
+    ? Math.max(120, (canvasHeight - yPad) / 2)
+    : Math.max(120, canvasHeight - yPad);
+  if (el.type === "mermaid") return Math.min(540, usable);
+  if (el.type === "code") return Math.min(620, usable);
+  if (el.type === "image") return Math.min(620, usable);
+  return usable;
 }
 
 /** One visible element; timeline slices scene evenly across elements[]. */
@@ -162,6 +204,8 @@ function SequentialFocusedScene({
           sceneDuration={segmentLen}
           layout="focused"
           iconVariant={el.type === "icon" ? "hero" : "compact"}
+          availableWidth={focusedMaxWidthForType(el, false, portrait)}
+          availableHeight={focusedMaxHeightForType(el, height, portrait)}
         />
       </div>
     </div>
@@ -269,6 +313,8 @@ function SplitTwoPanelScene({
           iconVariant={
             dual || mode === "text_right" ? "hero" : "compact"
           }
+          availableWidth={focusedMaxWidthForType(leftEl, dual, portrait)}
+          availableHeight={splitMaxHeightForType(leftEl, height, portrait)}
         />
       </div>
     </div>
@@ -297,6 +343,8 @@ function SplitTwoPanelScene({
             iconVariant={
               dual || mode === "text_left" ? "hero" : "compact"
             }
+            availableWidth={focusedMaxWidthForType(rightEl, dual, portrait)}
+            availableHeight={splitMaxHeightForType(rightEl, height, portrait)}
           />
         </div>
       </div>
