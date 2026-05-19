@@ -16,8 +16,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "Inside the request lifecycle\n\nA quick tour through the components that turn a click into a response — and back again.",
-            "iconName": "Sparkles",
+            "content": "Where the 47ms went\n\nWe traced a single request from the load balancer to Postgres and back. Here is what we found.",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -34,8 +34,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "Anatomy of a request\n\n- User pings the gateway\n- Gateway forwards to the service\n- Service writes to the store",
-            "iconName": "Network",
+            "content": "The path of a POST\n\n- TLS terminates at the ALB\n- Fastify on Node 20 picks it up\n- Prisma writes one row, reads three",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -44,7 +44,7 @@
           },
           {
             "type": "mermaid",
-            "content": "flowchart LR\n  A[\"User\"] --> B[\"Gateway\"]\n  B --> C[\"Service\"]\n  C --> D[(\"Store\")]\n  classDef hi fill:#7c2d4a,stroke:#fb7185,color:#fff1f2,stroke-width:3px;\n  class B,C hi;",
+            "content": "flowchart LR\n  Client[\"Client\"] --> ALB[\"ALB (TLS)\"]\n  ALB --> API[\"Fastify\"]\n  API --> PG[(\"Postgres\")]\n  classDef hi fill:#7c2d4a,stroke:#fb7185,color:#fff1f2,stroke-width:3px;\n  class API,PG hi;",
             "iconName": null,
             "width": null,
             "height": null,
@@ -62,7 +62,7 @@
         "elements": [
           {
             "type": "mermaid",
-            "content": "flowchart LR\n  User[\"User\"] --> LB[\"Load Balancer\"]\n  subgraph vpc [VPC]\n    LB --> API[\"API Server\"]\n    API --> Cache[(\"Redis\")]\n    API --> DB[(\"Postgres\")]\n  end\n  API --> S3[(\"S3 Bucket\")]",
+            "content": "flowchart LR\n  Client[\"Client\"] --> ALB[\"ALB\"]\n  subgraph vpc [VPC us-east-1]\n    ALB --> API[\"Fastify\"]\n    API --> Cache[(\"Redis\")]\n    API --> PG[(\"Postgres\")]\n  end\n  API --> S3[(\"S3 receipts\")]",
             "iconName": null,
             "width": null,
             "height": null,
@@ -70,16 +70,16 @@
             "y": 160,
             "animation": "highlight",
             "diagramBeats": [
-              { "fromFrame": 0, "durationInFrames": 30, "targets": ["User"] },
-              { "fromFrame": 30, "durationInFrames": 30, "targets": ["User", "LB"] },
+              { "fromFrame": 0, "durationInFrames": 30, "targets": ["Client"] },
+              { "fromFrame": 30, "durationInFrames": 30, "targets": ["Client", "ALB"] },
               { "fromFrame": 60, "durationInFrames": 30, "targets": ["API"] },
-              { "fromFrame": 90, "durationInFrames": 30, "targets": ["Cache", "DB", "S3"] }
+              { "fromFrame": 90, "durationInFrames": 30, "targets": ["Cache", "PG", "S3"] }
             ]
           },
           {
             "type": "text",
-            "content": "Inside the VPC\n\nThe API server fans out to Redis for hot reads and Postgres for state. Everything outside the dotted box lives on the public internet.\n\n1. Hit the load balancer\n2. API picks a backing store\n3. Static assets bypass the API",
-            "iconName": "Workflow",
+            "content": "Inside the VPC\n\nRedis answers the hot reads in under a millisecond; Postgres handles the writes. S3 holds the PDF receipts so the API never has to ship megabytes.\n\n1. ALB terminates the TLS\n2. Fastify picks Redis or Postgres\n3. Receipts go to S3, not the API",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 1100,
@@ -96,8 +96,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "10x\n\nfaster cold starts when you keep the runtime warm.",
-            "iconName": "Zap",
+            "content": "47ms\n\np99 latency on the POST /orders endpoint, measured from the ALB.",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -114,8 +114,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "Three things to check\n\n- Cold start: rare but expensive\n- Lock contention: hides as latency\n- Bad index: silent until it isn't",
-            "iconName": "TriangleAlert",
+            "content": "Where the time goes\n\n- 6ms TLS handshake (already amortised)\n- 12ms in our handler\n- 22ms waiting on Postgres\n- 7ms shipping the response back",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -132,8 +132,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "Real syntax highlighting\n\nShiki tokenises every snippet with the vesper theme so the colour matches the rest of the UI — no rainbow puke, no fake terminal chrome.",
-            "iconName": "Code2",
+            "content": "One handler, one trip\n\nThe handler does exactly one round-trip to Postgres. No N+1, no pre-warming, no lazy hydrate. We tested it with k6 at 4k RPS.",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -142,7 +142,7 @@
           },
           {
             "type": "code",
-            "content": "```typescript\nexport async function handler(req: Request) {\n  const { id } = await req.json();\n  const user = await db.user.findUnique({ where: { id } });\n  if (!user) return new Response('not found', { status: 404 });\n  return Response.json({ user });\n}\n```",
+            "content": "```typescript\nexport async function POST(req: Request) {\n  const { sku, qty } = await req.json();\n  const order = await db.order.create({\n    data: { sku, qty, userId: req.auth.id },\n  });\n  return Response.json({ id: order.id });\n}\n```",
             "iconName": null,
             "width": null,
             "height": null,
@@ -160,7 +160,7 @@
         "elements": [
           {
             "type": "text",
-            "content": "\"Simplicity is the soul of efficiency.\"\n— Austin Freeman",
+            "content": "\"The fastest endpoint is the one that doesn't run.\"\n— internal SRE channel, 2024",
             "iconName": null,
             "width": null,
             "height": null,
@@ -178,7 +178,7 @@
         "elements": [
           {
             "type": "icon",
-            "content": "Edge cache",
+            "content": "CloudFront edge",
             "iconName": "Globe",
             "width": null,
             "height": null,
@@ -188,7 +188,7 @@
           },
           {
             "type": "icon",
-            "content": "Origin server",
+            "content": "Fastify origin",
             "iconName": "Server",
             "width": null,
             "height": null,
@@ -206,7 +206,7 @@
         "elements": [
           {
             "type": "mermaid",
-            "content": "flowchart TB\n  Q[\"Producer\"] --> Topic[\"events.orders\"]\n  Topic --> W1[\"Worker A\"]\n  Topic --> W2[\"Worker B\"]\n  Topic --> W3[\"Worker C\"]\n  W1 --> DB[(\"Postgres\")]\n  W2 --> DB\n  W3 --> DB\n  classDef hi fill:#000,stroke:#000;\n  class Topic hi;",
+            "content": "flowchart TB\n  Order[\"POST /orders\"] --> Topic[\"events.orders\"]\n  Topic --> W1[\"invoice-worker\"]\n  Topic --> W2[\"shipping-worker\"]\n  Topic --> W3[\"analytics-worker\"]\n  W1 --> PG[(\"Postgres\")]\n  W2 --> PG\n  W3 --> WH[(\"warehouse\")]\n  classDef hi fill:#000,stroke:#000;\n  class Topic hi;",
             "iconName": null,
             "width": null,
             "height": null,
@@ -216,8 +216,8 @@
           },
           {
             "type": "text",
-            "content": "Fan-out, one topic\n\nThe topic decouples the producer from the worker pool — add a fourth worker, the producer never knows.",
-            "iconName": "Share2",
+            "content": "After the 200\n\nThe API never blocks on shipping or analytics. It writes one row, fires one event, and the workers pick up from there.",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 1100,
@@ -234,7 +234,7 @@
         "elements": [
           {
             "type": "code",
-            "content": "```sql\nSELECT user_id, COUNT(*) AS pageviews\nFROM events\nWHERE created_at >= now() - interval '7 days'\nGROUP BY user_id\nORDER BY pageviews DESC\nLIMIT 25;\n```",
+            "content": "```sql\nSELECT user_id, count(*) AS orders_7d\nFROM events\nWHERE created_at >= now() - interval '7 days'\n  AND type = 'order.placed'\nGROUP BY user_id\nORDER BY orders_7d DESC\nLIMIT 25;\n```",
             "iconName": null,
             "width": null,
             "height": null,
@@ -244,8 +244,8 @@
           },
           {
             "type": "text",
-            "content": "Cheapest aggregation that still tells you something\n\n- One scan, one group\n- Index on `created_at` skips old rows\n- LIMIT keeps the response payload tiny",
-            "iconName": "Database",
+            "content": "Top 25 buyers, last 7 days\n\n- BRIN index on `created_at` skips 11 months of rows\n- Partial index on `type = 'order.placed'`\n- One sequential scan of the recent partition",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 1100,
@@ -262,8 +262,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "ZERO\n\nruntime dependencies on the hot path.",
-            "iconName": "Shield",
+            "content": "ZERO\n\nbackground jobs on the hot path. Workers handle anything that can wait.",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
@@ -280,8 +280,8 @@
         "elements": [
           {
             "type": "text",
-            "content": "Where to go next\n\n1. Trace a single request end to end\n2. Pick one slow query and rewrite it\n3. Cap your tail latency, not your average",
-            "iconName": "ArrowUpRight",
+            "content": "What we'd cut next\n\n1. The 6ms TLS handshake — keep-alive longer\n2. The 22ms Postgres wait — add a read replica\n3. The 7ms shipback — flush headers earlier",
+            "iconName": null,
             "width": null,
             "height": null,
             "x": 120,

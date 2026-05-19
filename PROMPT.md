@@ -56,7 +56,10 @@ colors in your scene content; the renderer will ignore them.
 - Icons come from **Lucide** only (`src/remotion/spec/icon-map.ts`).
 - They render at 1.6 stroke width, in indigo (`#c7d2fe`) inside a ghost
   tile — never filled with rainbow gradients.
-- Headline icon sits **next to** the title (flex-row), not above it.
+- **Do not decorate titles with icons.** Titles and stat callouts render as
+  pure type. The renderer ignores `iconName` on `type: "text"` elements —
+  set it to `null`. Icons are still used inside diagrams (`type: "icon"`
+  tiles, and the inferred icons inside Mermaid nodes).
 
 ---
 
@@ -225,6 +228,41 @@ This is where most of the value lives. Narration is **spoken**, not read.
     tooling, or production process.
 - **Refer to real parts of the system.** "When a request hits the gateway"
   — not "this box here".
+
+### Tone — no AI cliché
+
+The biggest tell of LLM-generated copy is generic, abstract language with no
+specifics. Beat that out of every line. Concretely:
+
+- **Name real things.** "Postgres" not "the database". "p99 47ms" not
+  "fast". "Fastify on Node 20" not "the backend". "BRIN index on
+  `created_at`" not "an efficient index".
+- **Pick one example, commit to it.** Don't list three frameworks; pick
+  one. Don't say "could be Redis, Memcached, or DynamoDB" — pick Redis and
+  move on. The viewer wants a concrete story, not a survey.
+- **Use real numbers, not vague intensifiers.** "47ms p99" not
+  "blazing fast". "Cuts the query from 1.2s to 38ms" not "dramatically
+  faster". If you don't have a number, omit the claim — don't fake it.
+- **No "in this video / in this scene / let's dive into / unpack /
+  unlock".** Same energy as the meta-language above.
+- **No marketing voice.** Forbidden: "seamless", "robust",
+  "lightning-fast", "blazing", "next-generation", "powerful", "elegant",
+  "beautiful", "delightful", "world-class", "revolutionary", "leverage",
+  "synergy", "best-in-class", "future-proof", "cutting-edge".
+- **No filler openers.** Forbidden: "In today's fast-paced world",
+  "Imagine if…", "Have you ever wondered…", "Let me tell you a story",
+  "Picture this".
+- **No throat-clearing.** "Now, here's the thing", "But wait, there's
+  more", "Here's where it gets interesting" — cut them all.
+- **No "the three pillars / four key principles / five must-knows".**
+  Pick a specific number that matches the actual content. If there are
+  four things, say four. If there are seven, say seven.
+- **Past or present tense, not future hand-waving.** "We traced one
+  request and found the 22ms wait was on Postgres." Beats "Tracing
+  requests can help you discover where latency lives."
+
+If a sentence would still make sense with the product name swapped for
+any other product, it's too generic — rewrite it.
 
 ### `visualDescription`
 
