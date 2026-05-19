@@ -11,6 +11,7 @@ import type {
   RemotionElementPlacement,
   RemotionSpec,
 } from "../server/llm/schemas";
+import { SceneTransition } from "./spec/SceneTransition";
 import fallbackSpec from "../../rem.json";
 import { normalizeLayoutPreset } from "../server/llm/layout-presets";
 import { specAnimations } from "./spec/Animations";
@@ -35,7 +36,12 @@ function resolveElementPlacement(
 }
 
 function focusedTextAlignForced(el: SceneEl): boolean {
-  return el.type === "code" || el.type === "mermaid" || el.type === "image";
+  return (
+    el.type === "code" ||
+    el.type === "mermaid" ||
+    el.type === "image" ||
+    el.type === "chart"
+  );
 }
 
 function SceneElement({
@@ -98,7 +104,9 @@ function focusedMaxWidthForType(
         ? 920
         : el.type === "icon"
           ? 780
-          : 820;
+          : el.type === "chart"
+            ? 940
+            : 820;
   }
   if (dualFigure) {
     return el.type === "mermaid"
@@ -107,7 +115,9 @@ function focusedMaxWidthForType(
         ? 820
         : el.type === "icon"
           ? 600
-          : 720;
+          : el.type === "chart"
+            ? 820
+            : 720;
   }
   /* Text columns are intentionally narrower than the canvas — long lines kill
    * legibility and short copy stranded in a 1080px column looks lonely. */
@@ -117,7 +127,9 @@ function focusedMaxWidthForType(
       ? 980
       : el.type === "icon"
         ? 620
-        : 820;
+        : el.type === "chart"
+          ? 1240
+          : 820;
 }
 
 /** Vertical budget for a focused element in a single-element scene. */
@@ -134,6 +146,7 @@ function focusedMaxHeightForType(
   if (el.type === "mermaid") return Math.min(560, usable);
   if (el.type === "code") return Math.min(720, usable);
   if (el.type === "image") return Math.min(720, usable);
+  if (el.type === "chart") return Math.min(680, usable);
   return usable;
 }
 
@@ -150,6 +163,7 @@ function splitMaxHeightForType(
   if (el.type === "mermaid") return Math.min(540, usable);
   if (el.type === "code") return Math.min(620, usable);
   if (el.type === "image") return Math.min(620, usable);
+  if (el.type === "chart") return Math.min(620, usable);
   return usable;
 }
 
@@ -459,6 +473,21 @@ export const VideoFromSpec: React.FC<VideoFromSpecProps> = ({
 
   return (
     <AbsoluteFill style={{ background: specTokens.pageBackground }}>
+      {data.music ? (
+        /* Music bed spans the whole composition. Volume defaults to a low
+         * value so narration stays the lead — we don't try to duck because
+         * Remotion's per-frame volume callback would be expensive to thread
+         * through the voice timeline. */
+        <Audio
+          src={staticFile(`audio/music/${data.music.name}.mp3`)}
+          volume={data.music.volume ?? 0.12}
+          loop
+          acceptableTimeShiftInSeconds={6}
+          pauseWhenBuffering
+          delayRenderTimeoutInMilliseconds={120000}
+          delayRenderRetries={3}
+        />
+      ) : null}
       {voice.map((seg, i) => (
         <Sequence
           key={`vo-${seg.staticPath}-${i}`}
@@ -475,30 +504,56 @@ export const VideoFromSpec: React.FC<VideoFromSpecProps> = ({
           />
         </Sequence>
       ))}
+      {data.scenes.flatMap((scene: Scene, sceneIdx: number) =>
+        (scene.sfx ?? []).map((cue, cueIdx) => (
+          <Sequence
+            key={`sfx-${sceneIdx}-${cueIdx}-${cue.name}`}
+            from={scene.fromFrame + cue.atFrame}
+            /* Cap at remaining scene length so SFX doesn't bleed into the
+             * next scene's transition. */
+            durationInFrames={Math.max(
+              1,
+              scene.durationInFrames - cue.atFrame
+            )}
+          >
+            <Audio
+              src={staticFile(`audio/sfx/${cue.name}.mp3`)}
+              volume={cue.volume ?? 0.6}
+              acceptableTimeShiftInSeconds={6}
+              pauseWhenBuffering
+            />
+          </Sequence>
+        ))
+      )}
       {data.scenes.map((scene: Scene, sceneIdx: number) => (
         <Sequence
           key={sceneIdx}
           from={scene.fromFrame}
           durationInFrames={scene.durationInFrames}
         >
-          <AbsoluteFill
-            style={{
-              background: scene.background ?? specTokens.pageBackground,
-            }}
+          <SceneTransition
+            kind={scene.transition ?? (sceneIdx === 0 ? "cut" : "fade")}
+            sceneDurationInFrames={scene.durationInFrames}
           >
-            <SceneChrome
-              sceneIndex={sceneIdx}
-              sceneCount={data.scenes.length}
-              layoutPreset={normalizeLayoutPreset(scene.layoutPreset)}
-              sceneDurationInFrames={scene.durationInFrames}
+            <AbsoluteFill
+              style={{
+                background: scene.background ?? specTokens.pageBackground,
+              }}
             >
-              {sceneBodyForPlacement(
-                placementForScene(scene, defaultPlacement, portrait),
-                scene,
-                scene.durationInFrames
-              )}
-            </SceneChrome>
-          </AbsoluteFill>
+              <SceneChrome
+                sceneIndex={sceneIdx}
+                sceneCount={data.scenes.length}
+                layoutPreset={normalizeLayoutPreset(scene.layoutPreset)}
+                sceneDurationInFrames={scene.durationInFrames}
+              >
+                {sceneBodyForPlacement(
+                  placementForScene(scene, defaultPlacement, portrait),
+                  scene,
+                  scene.durationInFrames
+                )}
+              </SceneChrome>
+            </AbsoluteFill>
+          </SceneTransition>
         </Sequence>
       ))}
     </AbsoluteFill>
