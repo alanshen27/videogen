@@ -229,6 +229,35 @@ This is where most of the value lives. Narration is **spoken**, not read.
 - **Refer to real parts of the system.** "When a request hits the gateway"
   — not "this box here".
 
+### Audio tags (ElevenLabs v3)
+
+The narration is synthesised with ElevenLabs `eleven_v3`, which understands
+inline audio-direction tags. Use them sparingly to make delivery feel
+human — one tag per ~25 spoken words is the right density. Tags go
+**before** the sentence they shape.
+
+Allowed inline tags:
+
+```
+[laughs] [chuckles] [sighs] [exhales]
+[whispers] [shouts]
+[excited] [curious] [thoughtful] [amazed] [disappointed]
+[sarcastic] [deadpan] [warm] [serious] [matter-of-fact]
+```
+
+Allowed pause: `<break time="0.4s"/>` (clamped to 0.1–3.0s).
+Use to set rhythm between sentences, not on every line.
+
+Example:
+
+> [curious] So why did the request take 47 milliseconds? <break time="0.3s"/>
+> [matter-of-fact] We traced it. The handler ran in twelve. Postgres took
+> the other twenty-two.
+
+Anything else inside square brackets — `[dramatic]`, `[angry]`,
+`[robotic]`, raw asterisks, SSML you invented — is silently stripped
+before TTS. Stick to the list.
+
 ### Tone — no AI cliché
 
 The biggest tell of LLM-generated copy is generic, abstract language with no
@@ -277,6 +306,77 @@ Internal production notes only. **Never** copy this into narration.
 - Human phrases, never raw API identifiers.
 - Title-case or sentence-case, never `SCREAMING_SNAKE`.
 - ≤ 8 words. The headline is small-display-typography, not a press release.
+
+### Highlighted keywords inside on-screen text
+
+You can wrap one or two key tokens in `**double asterisks**` and the
+renderer will draw an animated indigo underline-wipe under them. Use it
+to call out the single piece of information the viewer should fixate
+on:
+
+> Top 25 buyers, last 7 days
+>
+> - **BRIN index** on `created_at` skips 11 months of rows
+> - Partial index on `type = 'order.placed'`
+> - One sequential scan of the recent partition
+
+Rules:
+
+- At most **one** bold span per line. Two highlights compete; one
+  directs the eye.
+- Bold the *specific identifier* — `**BRIN index**`, `**47ms**`,
+  `**Postgres wait**`. Never bold generic words like `**fast**` or
+  `**important**`.
+- Works in headlines, paragraphs, `ul`, and `ol` items. It does **not**
+  work inside `quote` blocks, `stat_callout` value lines, or code
+  fences.
+- Don't bold a whole sentence. If everything's bold, nothing is.
+
+### Charts (`type: "chart"`)
+
+Use a chart element when the scene's job is "show numbers move".
+Prefer a bar chart for a breakdown (one snapshot, multiple categories)
+and a line chart for a trend (one metric over time). Charts win over a
+bullet list whenever the values themselves are the story.
+
+`content` is a small DSL — first line `bar` or `line`, then one
+`label | value` per row, then an optional `---` block of metadata:
+
+```text
+bar
+Postgres wait | 22
+Handler logic | 12
+Response write | 7
+TLS handshake | 6
+---
+title: Where the 47ms goes
+yLabel: ms p99
+highlight: Postgres wait
+```
+
+```text
+line
+Mon | 38
+Tue | 41
+Wed | 44
+Thu | 46
+Fri | 47
+Sat | 45
+Sun | 43
+---
+title: p99 latency, last week
+yLabel: p99 ms
+highlight: Fri
+```
+
+Rules:
+
+- Values must be numeric. Strings, units, and `~`/`+` are rejected.
+- 3–8 data points per chart. Two looks bare; ten is unreadable.
+- Pick **one** row to `highlight:` — that's the one that gets the
+  indigo gradient. Skip if no row deserves emphasis.
+- A chart takes the figure pane. Don't pair it with another diagram
+  in the same scene.
 
 ---
 

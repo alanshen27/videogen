@@ -4,7 +4,7 @@
       "width": 1920,
       "height": 1080,
       "fps": 30,
-      "durationInFrames": 1440,
+      "durationInFrames": 1500,
       "elementPlacement": "split_text_left_window_right"
     },
     "scenes": [
@@ -13,10 +13,14 @@
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.08) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "cut",
+        "sfx": [
+          { "name": "thunk", "atFrame": 0, "volume": 0.5 }
+        ],
         "elements": [
           {
             "type": "text",
-            "content": "Where the 47ms went\n\nWe traced a single request from the load balancer to Postgres and back. Here is what we found.",
+            "content": "Where the **47ms** went\n\nWe traced a single request from the load balancer to Postgres and back. Here is what we found.",
             "iconName": null,
             "width": null,
             "height": null,
@@ -31,6 +35,10 @@
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_text_left_canvas_right",
+        "transition": "fade",
+        "sfx": [
+          { "name": "whoosh", "atFrame": 0, "volume": 0.5 }
+        ],
         "elements": [
           {
             "type": "text",
@@ -59,6 +67,10 @@
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.05) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_canvas_left_text_right",
+        "transition": "push_left",
+        "sfx": [
+          { "name": "whoosh", "atFrame": 0, "volume": 0.6 }
+        ],
         "elements": [
           {
             "type": "mermaid",
@@ -93,6 +105,10 @@
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "scale_down",
+        "sfx": [
+          { "name": "ding", "atFrame": 12, "volume": 0.6 }
+        ],
         "elements": [
           {
             "type": "text",
@@ -108,13 +124,20 @@
       },
       {
         "fromFrame": 480,
-        "durationInFrames": 120,
+        "durationInFrames": 150,
         "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "push_up",
+        "sfx": [
+          { "name": "pop", "atFrame": 8, "volume": 0.4 },
+          { "name": "pop", "atFrame": 18, "volume": 0.4 },
+          { "name": "pop", "atFrame": 28, "volume": 0.4 },
+          { "name": "pop", "atFrame": 38, "volume": 0.4 }
+        ],
         "elements": [
           {
-            "type": "text",
-            "content": "Where the time goes\n\n- 6ms TLS handshake (already amortised)\n- 12ms in our handler\n- 22ms waiting on Postgres\n- 7ms shipping the response back",
+            "type": "chart",
+            "content": "bar\nPostgres wait | 22\nHandler logic | 12\nResponse write | 7\nTLS handshake | 6\n---\nyLabel: ms p99\nhighlight: Postgres wait\ntitle: Where the 47ms goes",
             "iconName": null,
             "width": null,
             "height": null,
@@ -125,14 +148,21 @@
         ]
       },
       {
-        "fromFrame": 600,
+        "fromFrame": 630,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_text_left_canvas_right",
+        "transition": "fade",
+        "sfx": [
+          { "name": "type", "atFrame": 8, "volume": 0.5 },
+          { "name": "type", "atFrame": 12, "volume": 0.5 },
+          { "name": "type", "atFrame": 16, "volume": 0.5 },
+          { "name": "type", "atFrame": 20, "volume": 0.5 }
+        ],
         "elements": [
           {
             "type": "text",
-            "content": "One handler, one trip\n\nThe handler does exactly one round-trip to Postgres. No N+1, no pre-warming, no lazy hydrate. We tested it with k6 at 4k RPS.",
+            "content": "One handler, **one trip**\n\nThe handler does exactly one round-trip to Postgres. No N+1, no pre-warming, no lazy hydrate. We tested it with k6 at 4k RPS.",
             "iconName": null,
             "width": null,
             "height": null,
@@ -153,10 +183,11 @@
         ]
       },
       {
-        "fromFrame": 720,
+        "fromFrame": 750,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "fade",
         "elements": [
           {
             "type": "text",
@@ -171,10 +202,14 @@
         ]
       },
       {
-        "fromFrame": 840,
+        "fromFrame": 870,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "split_dual_figure",
+        "transition": "whip",
+        "sfx": [
+          { "name": "whoosh", "atFrame": 0, "volume": 0.7 }
+        ],
         "elements": [
           {
             "type": "icon",
@@ -199,38 +234,40 @@
         ]
       },
       {
-        "fromFrame": 960,
-        "durationInFrames": 120,
+        "fromFrame": 990,
+        "durationInFrames": 150,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
-        "layoutPreset": "split_canvas_left_text_right",
+        "layoutPreset": "title_hero_and_canvas",
+        "transition": "push_left",
+        "sfx": [
+          { "name": "whoosh", "atFrame": 0, "volume": 0.5 }
+        ],
         "elements": [
           {
-            "type": "mermaid",
-            "content": "flowchart TB\n  Order[\"POST /orders\"] --> Topic[\"events.orders\"]\n  Topic --> W1[\"invoice-worker\"]\n  Topic --> W2[\"shipping-worker\"]\n  Topic --> W3[\"analytics-worker\"]\n  W1 --> PG[(\"Postgres\")]\n  W2 --> PG\n  W3 --> WH[(\"warehouse\")]\n  classDef hi fill:#000,stroke:#000;\n  class Topic hi;",
+            "type": "chart",
+            "content": "line\nMon | 38\nTue | 41\nWed | 44\nThu | 46\nFri | 47\nSat | 45\nSun | 43\n---\nyLabel: p99 ms\nhighlight: Fri\ntitle: p99 latency, last week",
             "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
-            "y": 140,
-            "animation": "highlight"
-          },
-          {
-            "type": "text",
-            "content": "After the 200\n\nThe API never blocks on shipping or analytics. It writes one row, fires one event, and the workers pick up from there.",
-            "iconName": null,
-            "width": null,
-            "height": null,
-            "x": 1100,
-            "y": 200,
+            "y": 120,
             "animation": "fade"
           }
         ]
       },
       {
-        "fromFrame": 1080,
+        "fromFrame": 1140,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "code_and_callouts",
+        "transition": "fade",
+        "sfx": [
+          { "name": "type", "atFrame": 6, "volume": 0.4 },
+          { "name": "type", "atFrame": 10, "volume": 0.4 },
+          { "name": "type", "atFrame": 14, "volume": 0.4 },
+          { "name": "type", "atFrame": 18, "volume": 0.4 },
+          { "name": "type", "atFrame": 22, "volume": 0.4 }
+        ],
         "elements": [
           {
             "type": "code",
@@ -244,7 +281,7 @@
           },
           {
             "type": "text",
-            "content": "Top 25 buyers, last 7 days\n\n- BRIN index on `created_at` skips 11 months of rows\n- Partial index on `type = 'order.placed'`\n- One sequential scan of the recent partition",
+            "content": "Top 25 buyers, last 7 days\n\n- **BRIN index** on `created_at` skips 11 months of rows\n- Partial index on `type = 'order.placed'`\n- One sequential scan of the recent partition",
             "iconName": null,
             "width": null,
             "height": null,
@@ -255,10 +292,14 @@
         ]
       },
       {
-        "fromFrame": 1200,
+        "fromFrame": 1260,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "scale_down",
+        "sfx": [
+          { "name": "ding", "atFrame": 12, "volume": 0.7 }
+        ],
         "elements": [
           {
             "type": "text",
@@ -273,14 +314,15 @@
         ]
       },
       {
-        "fromFrame": 1320,
+        "fromFrame": 1380,
         "durationInFrames": 120,
         "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
         "layoutPreset": "title_hero_and_canvas",
+        "transition": "fade",
         "elements": [
           {
             "type": "text",
-            "content": "What we'd cut next\n\n1. The 6ms TLS handshake — keep-alive longer\n2. The 22ms Postgres wait — add a read replica\n3. The 7ms shipback — flush headers earlier",
+            "content": "What we'd cut next\n\n1. The **6ms** TLS handshake — keep-alive longer\n2. The **22ms** Postgres wait — add a read replica\n3. The **7ms** shipback — flush headers earlier",
             "iconName": null,
             "width": null,
             "height": null,

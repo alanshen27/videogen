@@ -90,6 +90,33 @@ export const REMOTION_LUCIDE_ICON_NAMES = LucideIconNameSchema.options;
 
 const animEnum = z.enum(["fade", "slide", "scale", "highlight", "none"]);
 
+/** Names of SFX cues the renderer knows. Must match files under
+ * `public/audio/sfx/<name>.mp3`. Adding a new cue means adding the file. */
+export const SfxNameSchema = z.enum([
+  "whoosh",
+  "ding",
+  "type",
+  "pop",
+  "thunk",
+]);
+
+/** Named music loops under `public/audio/music/<name>.mp3`. */
+export const MusicNameSchema = z.enum([
+  "lofi",
+  "upbeat",
+  "ambient",
+]);
+
+/** Per-scene transition into this scene. "cut" is the no-op default. */
+export const SceneTransitionSchema = z.enum([
+  "cut",
+  "fade",
+  "push_left",
+  "push_up",
+  "whip",
+  "scale_down",
+]);
+
 export const RemotionLayoutPresetSchema = z.enum(REMOTION_LAYOUT_PRESETS);
 
 /** How scene elements are laid out on screen */
@@ -120,6 +147,7 @@ export const RemotionElementSchema = z.object({
     "image",
     "icon",
     "mermaid",
+    "chart",
   ]),
   content: z.string(),
   iconName: z.union([LucideIconNameSchema, z.null()]),
@@ -165,6 +193,20 @@ export const RemotionSceneSchema = z.object({
   /** Structural template — drives prompt cookbook + optional on-screen badge */
   layoutPreset: RemotionLayoutPresetSchema,
   elements: z.array(RemotionElementSchema),
+  /** How to transition INTO this scene. "cut" is the default. Server-set,
+   * not required from the LLM. */
+  transition: SceneTransitionSchema.optional(),
+  /** SFX cues fired during this scene. Each cue is scene-relative
+   * (atFrame=0 is scene start). Files live under `public/audio/sfx/`. */
+  sfx: z
+    .array(
+      z.object({
+        name: SfxNameSchema,
+        atFrame: z.number().int().nonnegative(),
+        volume: z.number().min(0).max(1).optional(),
+      })
+    )
+    .optional(),
 });
 
 /** Paths relative to Next/Remotion `public/` — use with Remotion `staticFile()` */
@@ -189,6 +231,14 @@ export const RemotionSpecGenerationSchema = z.object({
 
 export const RemotionSpecSchema = RemotionSpecGenerationSchema.extend({
   voice: z.array(RemotionVoiceSegmentSchema).optional(),
+  /** Optional music bed spanning the whole composition. */
+  music: z
+    .object({
+      name: MusicNameSchema,
+      /** Linear volume [0,1]. Defaults to 0.12 — narration is the lead. */
+      volume: z.number().min(0).max(1).optional(),
+    })
+    .optional(),
 });
 
 export const MetadataSchema = z.object({

@@ -9,12 +9,70 @@ import {
 const ELEVEN_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
 const MAX_CHARS_PER_SCENE = 2500;
 
+/**
+ * Audio tags the renderer accepts in narration. The LLM is told to emit these
+ * sparingly; anything else inside square brackets is treated as a hallucinated
+ * tag and stripped before we ship the text to ElevenLabs.
+ *
+ * Source: https://elevenlabs.io/docs/best-practices/prompting/v3-prompting
+ */
+const ALLOWED_EMOTION_TAGS = new Set<string>([
+  "laughs",
+  "laughs harder",
+  "chuckles",
+  "sighs",
+  "exhales",
+  "whispers",
+  "shouts",
+  "excited",
+  "curious",
+  "thoughtful",
+  "sarcastic",
+  "amazed",
+  "disappointed",
+  "deadpan",
+  "warm",
+  "serious",
+  "matter-of-fact",
+]);
+
+/**
+ * Pass through `[laughs]` / `[whispers]` etc. when whitelisted, and
+ * `<break time="0.4s"/>` style pauses. Strip everything else that *looks*
+ * like a tag so we never ship `[explode]` to the TTS API.
+ *
+ * Why: the v3 model treats unknown bracketed tokens unpredictably — some
+ * are read aloud, some break the cadence. A small whitelist keeps the
+ * surface area predictable.
+ */
+export function sanitizeElevenLabsTags(text: string): string {
+  /* Drop bracketed tags that aren't in the allow-list. */
+  const tagStripped = text.replace(/\[([^\[\]]{1,40})\]/g, (_full, raw) => {
+    const key = String(raw).trim().toLowerCase();
+    return ALLOWED_EMOTION_TAGS.has(key) ? `[${key}]` : "";
+  });
+
+  /* Normalise <break time="..."> — keep only the time attribute, clamp to
+   * [0.1s, 3.0s]. Anything weirder gets removed. */
+  const breakNormalised = tagStripped.replace(
+    /<\s*break\b[^>]*?time\s*=\s*"?([\d.]+)\s*s"?[^>]*?\/?>/gi,
+    (_full, sec) => {
+      const t = Math.max(0.1, Math.min(3.0, parseFloat(sec)));
+      return `<break time="${t.toFixed(1)}s"/>`;
+    }
+  );
+
+  /* Collapse multiple spaces left behind by stripped tags. */
+  return breakNormalised.replace(/[ \t]{2,}/g, " ").replace(/\s+([.,!?;:])/g, "$1").trim();
+}
+
 export async function elevenLabsTextToSpeechMp3(
   text: string,
   apiKey: string,
   voiceId: string
 ): Promise<Buffer> {
-  const trimmed = text.trim();
+  const sanitized = sanitizeElevenLabsTags(text);
+  const trimmed = sanitized.trim();
   if (!trimmed) {
     throw new Error("ElevenLabs TTS: empty text");
   }
@@ -35,7 +93,10 @@ export async function elevenLabsTextToSpeechMp3(
     },
     body: JSON.stringify({
       text: payload,
-      model_id: "eleven_multilingual_v2",
+      /* v3 supports inline emotion tags + <break/> pauses. v2 silently
+       * drops both — if you don't have v3 access yet, set
+       * `ELEVENLABS_MODEL_ID=eleven_multilingual_v2` to fall back. */
+      model_id: process.env.ELEVENLABS_MODEL_ID || "eleven_v3",
     }),
   });
 

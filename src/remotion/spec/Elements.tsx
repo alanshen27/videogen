@@ -57,6 +57,7 @@ import {
 } from "./design";
 import { SpecMermaid, type MermaidSceneEl } from "./MermaidBlock";
 import { parseMermaidFlowchart, type ParsedGraph } from "./mermaid-parse";
+import { SpecChart } from "./SpecChart";
 import { SpecCodeBlock } from "./SpecCodeBlock";
 import { SpecDiagram } from "./SpecDiagram";
 
@@ -330,6 +331,209 @@ function parseTextBlocks(content: string): ParsedTextBlock[] {
   return blocks.length > 0 ? blocks : [{ kind: "paragraph", text: content }];
 }
 
+/**
+ * Word-by-word reveal for hero headlines. Every word is its own inline-block
+ * span that fades + lifts in on a tiny per-word stagger (3 frames). Reads as
+ * "the line is being spoken" rather than "the line was already there".
+ *
+ * Implementation notes:
+ * - We split on whitespace to keep punctuation glued to words ("47ms,").
+ * - Each word renders with `display: inline-block` so the transform is on
+ *   the word itself, not the inline run. Single space between words is
+ *   re-inserted as a plain text node so wrapping behaves normally.
+ * - `**bold**` segments inside the headline get an animated indigo
+ *   underline-wipe drawn during the scene, NOT a synchronous fade. See
+ *   `InlineHighlights` below.
+ */
+function KineticHeadline({
+  text,
+  fontSize,
+  fontWeight = 700,
+  letterSpacing,
+  lineHeight,
+  color,
+  textShadow,
+  fontFamily,
+  startDelay = 4,
+  perWord = 3,
+}: {
+  text: string;
+  fontSize: number;
+  fontWeight?: 400 | 500 | 600 | 700 | 800 | 900;
+  letterSpacing?: string;
+  lineHeight?: number;
+  color?: string;
+  textShadow?: string;
+  fontFamily?: string;
+  startDelay?: number;
+  perWord?: number;
+}) {
+  const frame = useCurrentFrame();
+  /* Tokenize: a token is either a `**bold span**` (possibly multi-word) or a
+   * plain word. Bold segments stagger as one unit so the highlight reads as
+   * one phrase, not three individually-revealed words. */
+  type Token = { kind: "word" | "bold"; text: string };
+  const tokens: Token[] = [];
+  const boldRe = /\*\*([^*]+)\*\*/g;
+  let cursor = 0;
+  let m: RegExpExecArray | null;
+  while ((m = boldRe.exec(text)) !== null) {
+    if (m.index > cursor) {
+      for (const w of text.slice(cursor, m.index).split(/\s+/)) {
+        if (w) tokens.push({ kind: "word", text: w });
+      }
+    }
+    tokens.push({ kind: "bold", text: m[1] });
+    cursor = m.index + m[0].length;
+  }
+  if (cursor < text.length) {
+    for (const w of text.slice(cursor).split(/\s+/)) {
+      if (w) tokens.push({ kind: "word", text: w });
+    }
+  }
+
+  return (
+    <div
+      style={{
+        fontFamily,
+        fontSize,
+        fontWeight,
+        letterSpacing,
+        lineHeight,
+        color,
+        textShadow,
+      }}
+    >
+      {tokens.map((tok, i) => {
+        const start = startDelay + i * perWord;
+        const opacity = interpolate(frame, [start, start + 8], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+        });
+        const lift = interpolate(frame, [start, start + 12], [16, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+        });
+        const wipeStart = start + 6;
+        const wipe =
+          tok.kind === "bold"
+            ? interpolate(frame, [wipeStart, wipeStart + 14], [0, 1], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+                easing: (t) => 1 - Math.pow(1 - t, 3),
+              })
+            : 0;
+        return (
+          <React.Fragment key={`${tok.text}-${i}`}>
+            <span
+              style={{
+                position: "relative",
+                display: "inline-block",
+                opacity,
+                transform: `translateY(${lift}px)`,
+                willChange: "opacity, transform",
+              }}
+            >
+              {tok.text}
+              {tok.kind === "bold" ? (
+                <span
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    bottom: "-0.10em",
+                    height: "0.10em",
+                    width: `${wipe * 100}%`,
+                    background:
+                      "linear-gradient(90deg, #a5b4fc 0%, #c7d2fe 80%, rgba(199,210,254,0) 100%)",
+                    borderRadius: 999,
+                    transform: "translateZ(0)",
+                  }}
+                />
+              ) : null}
+            </span>
+            {i < tokens.length - 1 ? " " : null}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Renders text with `**bold**` segments highlighted by an animated indigo
+ * underline-wipe. The wipe starts at `delayFrames` and draws across the
+ * highlighted span over ~14 frames. Used by KineticHeadline + the lead body
+ * paragraph so the LLM can call out a phrase without us hard-coding it.
+ *
+ * Returns plain text when no `**` markers are present, so it's safe to use
+ * on every string in the headline path without overhead.
+ */
+function InlineHighlights({
+  text,
+  delayFrames,
+}: {
+  text: string;
+  delayFrames: number;
+}) {
+  const frame = useCurrentFrame();
+  if (!text.includes("**")) return <>{text}</>;
+
+  /* Greedy split on bold markers — `a **b** c` → ["a ", "**b**", " c"]. */
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        const m = /^\*\*([^*]+)\*\*$/.exec(part);
+        if (!m) return <React.Fragment key={i}>{part}</React.Fragment>;
+        const inner = m[1];
+        const wipe = interpolate(
+          frame,
+          [delayFrames, delayFrames + 14],
+          [0, 1],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: (t) => 1 - Math.pow(1 - t, 3),
+          }
+        );
+        return (
+          <span
+            key={i}
+            style={{
+              position: "relative",
+              display: "inline-block",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {inner}
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                left: 0,
+                /* Sit the wipe right under the baseline of the text. */
+                bottom: "-0.12em",
+                height: "0.10em",
+                width: `${wipe * 100}%`,
+                /* Gradient terminates with a 16px taper so the leading edge
+                 * looks like a marker stroke rather than a hard cut. */
+                background:
+                  "linear-gradient(90deg, #a5b4fc 0%, #c7d2fe 80%, rgba(199,210,254,0) 100%)",
+                borderRadius: 999,
+                transform: "translateZ(0)",
+              }}
+            />
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
 function FireshipBullet(_props: { palette: FireshipPalette }) {
   return (
     <span
@@ -436,6 +640,33 @@ export function SpecText({ el }: { el: SceneEl }) {
   };
 
   if (!useStructured) {
+    const paragraphText =
+      blocks[0]?.kind === "paragraph" ? blocks[0].text : el.content;
+    /* Hero / lead variants get the word-by-word reveal. Long body copy
+     * keeps the existing static render — staggering 30+ words feels like
+     * a karaoke prompter, not narration. */
+    if (variant === "hero" || variant === "lead") {
+      return (
+        <div
+          style={{
+            ...baseContainer,
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <KineticHeadline
+            text={paragraphText}
+            fontFamily={specTokens.sans}
+            fontSize={typo.fontSize}
+            fontWeight={typo.fontWeight}
+            letterSpacing={typo.letterSpacing}
+            lineHeight={typo.lineHeight}
+            color={typo.color}
+            textShadow={shadow}
+          />
+        </div>
+      );
+    }
     return (
       <div
         style={{
@@ -445,7 +676,7 @@ export function SpecText({ el }: { el: SceneEl }) {
           marginRight: "auto",
         }}
       >
-        {blocks[0]?.kind === "paragraph" ? blocks[0].text : el.content}
+        <InlineHighlights text={paragraphText} delayFrames={10} />
       </div>
     );
   }
@@ -479,21 +710,17 @@ export function SpecText({ el }: { el: SceneEl }) {
           if (headline) {
             const headlineFs = Math.min(typo.fontSize + 22, 84);
             return (
-              <div
+              <KineticHeadline
                 key={`p-${i}`}
-                style={{
-                  fontFamily: specTokens.display,
-                  fontWeight: 700,
-                  fontSize: headlineFs,
-                  lineHeight: 1.04,
-                  letterSpacing: "-0.035em",
-                  color: specTokens.ink.primary,
-                  textShadow: specTokens.shadow.textHero,
-                  marginBottom: 4,
-                }}
-              >
-                {block.text}
-              </div>
+                text={block.text}
+                fontFamily={specTokens.display}
+                fontWeight={700}
+                fontSize={headlineFs}
+                lineHeight={1.04}
+                letterSpacing={"-0.035em"}
+                color={specTokens.ink.primary}
+                textShadow={specTokens.shadow.textHero}
+              />
             );
           }
           return (
@@ -508,7 +735,7 @@ export function SpecText({ el }: { el: SceneEl }) {
                 color: typo.color,
               }}
             >
-              {block.text}
+              <InlineHighlights text={block.text} delayFrames={14} />
             </div>
           );
         }
@@ -536,7 +763,12 @@ export function SpecText({ el }: { el: SceneEl }) {
                   <FireshipBullet
                     palette={fireshipPaletteFor(`${item}:${j}`)}
                   />
-                  <span style={{ flex: 1, minWidth: 0 }}>{item}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <InlineHighlights
+                      text={item}
+                      delayFrames={8 + j * 5}
+                    />
+                  </span>
                 </CascadeListItem>
               ))}
             </ul>
@@ -581,7 +813,12 @@ export function SpecText({ el }: { el: SceneEl }) {
                   >
                     {String(j + 1).padStart(2, "0")}
                   </span>
-                  <span style={{ flex: 1, minWidth: 0 }}>{item}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <InlineHighlights
+                      text={item}
+                      delayFrames={8 + j * 5}
+                    />
+                  </span>
                 </CascadeListItem>
               );
             })}
@@ -610,6 +847,44 @@ function splitNumericStat(
   return { prefix: m[1], num, suffix: m[3], decimals };
 }
 
+/**
+ * Cheap PRNG used to flicker digits during stat reveal. Deterministic given
+ * (frame, idx) — same render produces same pixels, which keeps Remotion's
+ * still-frame caching happy.
+ */
+function digitFlickerSeed(frame: number, idx: number): number {
+  let x = (frame * 1103515245 + idx * 12345 + 12345) & 0x7fffffff;
+  x ^= x >>> 13;
+  x = (x * 1274126177) & 0x7fffffff;
+  x ^= x >>> 16;
+  return x;
+}
+
+/**
+ * Replace digits in `value` with random digits during the early count-up
+ * window so the stat reads like a slot-machine ticker. Once `progress >= 1`
+ * (count-up done), we return `value` verbatim and settle.
+ *
+ * `progress` is 0..1; flicker is most aggressive at 0 and fades out by 1.
+ */
+function flickerDigits(value: string, frame: number, progress: number): string {
+  if (progress >= 1) return value;
+  /* Flicker density tapers from ~70% of digits early on to 0% at the end. */
+  const density = (1 - progress) * 0.7;
+  let out = "";
+  for (let i = 0; i < value.length; i++) {
+    const c = value[i];
+    if (c >= "0" && c <= "9") {
+      const seed = digitFlickerSeed(frame, i);
+      const flicker = (seed & 0xff) / 255 < density;
+      out += flicker ? String((seed >> 8) % 10) : c;
+    } else {
+      out += c;
+    }
+  }
+  return out;
+}
+
 function SpecStatCallout({
   stat,
 }: {
@@ -625,9 +900,13 @@ function SpecStatCallout({
     extrapolateRight: "clamp",
     easing: (x) => 1 - Math.pow(1 - x, 3),
   });
-  const displayedValue = parts
+  const rawValue = parts
     ? `${parts.prefix}${(parts.num * t).toFixed(parts.decimals)}${parts.suffix}`
     : stat.value;
+  /* Flicker only applies to numeric stats and only during the count-up window. */
+  const displayedValue = parts
+    ? flickerDigits(rawValue, frame, t)
+    : rawValue;
   const textOpacity = parts
     ? 1
     : interpolate(frame, [6, 26], [0, 1], {
@@ -1219,6 +1498,8 @@ export function RenderSpecElement({
           availableHeight={availableHeight}
         />
       );
+    case "chart":
+      return <SpecChart content={el.content} />;
     default:
       return null;
   }
