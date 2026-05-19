@@ -1,5 +1,5 @@
 import React, { useId, useMemo } from "react";
-import { useCurrentFrame } from "remotion";
+import { interpolate, useCurrentFrame } from "remotion";
 import {
   BarChart3,
   Binary,
@@ -193,6 +193,10 @@ function pickIconForLabel(label: string): LucideCmp {
   return CircleDot;
 }
 
+/** Frames between layer reveals when the diagram cascades in. */
+const LAYER_REVEAL_BASE = 6;
+const LAYER_REVEAL_STEP = 6;
+
 type Anchor = { x: number; y: number };
 type Placed = {
   node: DiagramNode;
@@ -204,6 +208,8 @@ type Placed = {
   top: number;
   inAnchor: Anchor;
   outAnchor: Anchor;
+  /** Topological layer index — used to stagger the cascade reveal. */
+  layer: number;
 };
 
 type LayoutResult = {
@@ -250,6 +256,7 @@ function computeLayout(graph: ParsedGraph): LayoutResult {
           top,
           inAnchor: { x: left, y: cy },
           outAnchor: { x: left + tileW, y: cy },
+          layer: layerIdx,
         });
       });
     });
@@ -275,6 +282,7 @@ function computeLayout(graph: ParsedGraph): LayoutResult {
           top,
           inAnchor: { x: cx, y: top },
           outAnchor: { x: cx, y: top + tileH },
+          layer: layerIdx,
         });
       });
     });
@@ -377,7 +385,15 @@ function edgePath(from: Anchor, to: Anchor, isLR: boolean): string {
   return `M ${from.x} ${from.y} C ${from.x} ${from.y + cy}, ${to.x} ${to.y - cy}, ${to.x} ${to.y}`;
 }
 
-function NodeTile({ placed }: { placed: Placed }) {
+function NodeTile({
+  placed,
+  revealStart,
+  isLR,
+}: {
+  placed: Placed;
+  revealStart: number;
+  isLR: boolean;
+}) {
   const { node, width, height, Icon } = placed;
   const radius =
     node.shape === "circle"
@@ -398,6 +414,30 @@ function NodeTile({ placed }: { placed: Placed }) {
     : active
       ? DIAGRAM.iconColorActive
       : DIAGRAM.iconColor;
+
+  const frame = useCurrentFrame();
+  const opacity = interpolate(
+    frame,
+    [revealStart, revealStart + 12],
+    [0, muted ? 0.7 : 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+    }
+  );
+  /* Slide in from the side the flow comes from (left for LR, top for TB). */
+  const slideAxis = isLR ? "X" : "Y";
+  const slide = interpolate(
+    frame,
+    [revealStart, revealStart + 14],
+    [-14, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+    }
+  );
 
   return (
     <div
@@ -423,7 +463,8 @@ function NodeTile({ placed }: { placed: Placed }) {
               ? DIAGRAM.tileBorderMuted
               : DIAGRAM.tileBorder
         }`,
-        opacity: muted ? 0.7 : 1,
+        opacity,
+        transform: `translate${slideAxis}(${slide}px)`,
       }}
     >
       {/* Tiny status dot — the Pierre/diff signal that this is a node */}
@@ -479,6 +520,7 @@ function EdgeLine({
   arrowId,
   arrowMutedId,
   arrowActiveId,
+  revealStart,
 }: {
   edge: DiagramEdge;
   from: Placed;
@@ -487,6 +529,8 @@ function EdgeLine({
   arrowId: string;
   arrowMutedId: string;
   arrowActiveId: string;
+  /** Frame to start drawing this edge on. */
+  revealStart: number;
 }) {
   const a = from.outAnchor;
   const b = to.inAnchor;
@@ -501,7 +545,7 @@ function EdgeLine({
     : active
       ? DIAGRAM.edgeActive
       : DIAGRAM.edge;
-  const dash = edge.style === "dotted" ? "6 6" : undefined;
+  const baseDash = edge.style === "dotted" ? "6 6" : undefined;
   const widthPx = edge.style === "thick" ? 2 : 1.4;
   const markerEnd = `url(#${
     muted ? arrowMutedId : active ? arrowActiveId : arrowId
@@ -512,6 +556,34 @@ function EdgeLine({
     y: (a.y + b.y) / 2 - (isLR ? 14 : 0) + (isLR ? 0 : 4),
   };
 
+  /* Edge "draws" itself from source to target by walking strokeDashoffset
+   * across an approximate path length. We over-estimate length once so the
+   * draw never finishes too early; the cap clamps any overshoot. */
+  const frame = useCurrentFrame();
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const pathLen = Math.hypot(dx, dy) * 1.25 + 60;
+  const drawT = interpolate(frame, [revealStart, revealStart + 14], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const dashOffset = pathLen * (1 - drawT);
+  const labelOpacity = interpolate(
+    frame,
+    [revealStart + 8, revealStart + 18],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  /* For dotted edges we keep the source dash pattern; the cascade only fires
+   * on solid lines (drawing a dotted line with a dashOffset reveal looks odd
+   * because the dashes lurch as they appear). */
+  const useDraw = !baseDash && drawT < 1;
+
   return (
     <g>
       <path
@@ -520,11 +592,16 @@ function EdgeLine({
         strokeWidth={widthPx}
         fill="none"
         strokeLinecap="round"
-        strokeDasharray={dash}
-        markerEnd={markerEnd}
+        strokeDasharray={useDraw ? `${pathLen}` : baseDash}
+        strokeDashoffset={useDraw ? dashOffset : undefined}
+        markerEnd={drawT > 0.85 ? markerEnd : undefined}
+        opacity={baseDash ? drawT : 1}
       />
       {edge.label ? (
-        <g transform={`translate(${labelMid.x} ${labelMid.y})`}>
+        <g
+          transform={`translate(${labelMid.x} ${labelMid.y})`}
+          opacity={labelOpacity}
+        >
           <rect
             x={-Math.min(edge.label.length * 4.2 + 12, 140) / 2}
             y={-10}
@@ -775,6 +852,8 @@ export function SpecDiagram({
             const a = layout.placed.get(edge.from);
             const b = layout.placed.get(edge.to);
             if (!a || !b) return null;
+            /* Edge starts drawing right after its source node has landed. */
+            const edgeStart = LAYER_REVEAL_BASE + a.layer * LAYER_REVEAL_STEP + 8;
             return (
               <EdgeLine
                 key={`e-${i}`}
@@ -785,6 +864,7 @@ export function SpecDiagram({
                 arrowId={arrowId}
                 arrowMutedId={arrowMutedId}
                 arrowActiveId={arrowActiveId}
+                revealStart={edgeStart}
               />
             );
           })}
@@ -797,6 +877,8 @@ export function SpecDiagram({
               left: placed.left + offsetX,
               top: placed.top + offsetY,
             }}
+            revealStart={LAYER_REVEAL_BASE + placed.layer * LAYER_REVEAL_STEP}
+            isLR={isLR}
           />
         ))}
       </div>

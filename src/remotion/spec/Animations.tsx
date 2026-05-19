@@ -10,18 +10,30 @@ export type AnimProps = {
   durationInFrames: number;
 };
 
+/**
+ * Eased entry (opacity + 10px lift) followed by a slow continuous drift that
+ * runs for the whole scene. The drift is a sub-pixel/per-frame creep so the
+ * shot doesn't feel frozen between cuts, but it's gentle enough that no single
+ * frame reads as motion.
+ */
 function FadeAnim({ children, frame, durationInFrames }: AnimProps) {
   const fadeEnd = Math.min(14, Math.max(6, durationInFrames * 0.12));
   const opacity = interpolate(frame, [0, fadeEnd], [0, 1], {
     extrapolateRight: "clamp",
     easing: (t) => 1 - Math.pow(1 - t, 3),
   });
-  const lift = interpolate(frame, [0, fadeEnd], [10, 0], {
+  const entryLift = interpolate(frame, [0, fadeEnd], [10, 0], {
     extrapolateRight: "clamp",
     easing: (t) => 1 - Math.pow(1 - t, 3),
   });
+  /* Slow continuous drift — total of ~6px across the scene. Keeps the eye
+   * moving without ever calling attention to itself. */
+  const driftT = Math.min(1, frame / Math.max(1, durationInFrames));
+  const drift = -driftT * 6;
   return (
-    <div style={{ opacity, transform: `translateY(${lift}px)` }}>{children}</div>
+    <div style={{ opacity, transform: `translateY(${entryLift + drift}px)` }}>
+      {children}
+    </div>
   );
 }
 
@@ -35,11 +47,14 @@ function SlideAnim({ children, frame, durationInFrames }: AnimProps) {
   const opacity = interpolate(frame, [0, dur * 0.75], [0, 1], {
     extrapolateRight: "clamp",
   });
+  /* Same gentle drift as Fade — translateX continues at a slow walk. */
+  const driftT = Math.min(1, frame / Math.max(1, durationInFrames));
+  const drift = -driftT * 4;
   return (
     <div
       style={{
         opacity,
-        transform: `translate(${translateX}px, 0)`,
+        transform: `translate(${translateX + drift}px, 0)`,
       }}
     >
       {children}
@@ -77,7 +92,7 @@ function HighlightAnim({ children, frame, durationInFrames }: AnimProps) {
     extrapolateRight: "clamp",
     easing: (t) => 1 - Math.pow(1 - t, 3),
   });
-  const lift = interpolate(frame, [0, fadeEnd], [12, 0], {
+  const entryLift = interpolate(frame, [0, fadeEnd], [12, 0], {
     extrapolateRight: "clamp",
     easing: (t) => 1 - Math.pow(1 - t, 3),
   });
@@ -85,11 +100,18 @@ function HighlightAnim({ children, frame, durationInFrames }: AnimProps) {
   const bounce = interpolate(frame, [0, fadeEnd * 0.6, bounceEnd], [0.96, 1.015, 1], {
     extrapolateRight: "clamp",
   });
+  /* Held-shot breathing: 0.997 ↔ 1.003 over ~6s, sine-eased. Invisible per
+   * frame, but stops the held subject from feeling like a still image. */
+  const breathPeriod = 180;
+  const breath = 1 + 0.003 * Math.sin((frame / breathPeriod) * Math.PI * 2);
+  /* Slow continuous lift — total of ~4px across the scene. */
+  const driftT = Math.min(1, frame / Math.max(1, durationInFrames));
+  const drift = -driftT * 4;
   return (
     <div
       style={{
         opacity,
-        transform: `translateY(${lift}px) scale(${bounce})`,
+        transform: `translateY(${entryLift + drift}px) scale(${bounce * breath})`,
         transformOrigin: "center center",
       }}
     >

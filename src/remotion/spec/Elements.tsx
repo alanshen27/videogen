@@ -1,4 +1,5 @@
 import React from "react";
+import { interpolate, useCurrentFrame } from "remotion";
 import type { RemotionLucideIconName, RemotionSpec } from "../../server/llm/schemas";
 import {
   ArrowDown,
@@ -349,11 +350,59 @@ function FireshipBullet(_props: { palette: FireshipPalette }) {
   );
 }
 
+/**
+ * List <li> that fades + lifts in on a per-index stagger. Sits on top of the
+ * scene-level animation that the renderer already applies. Keeps lists from
+ * appearing all-at-once which is the single biggest reason scenes felt static.
+ */
+function CascadeListItem({
+  index,
+  startDelay = 4,
+  perItem = 5,
+  gap = 0,
+  children,
+}: {
+  index: number;
+  /** Frames to wait before the first item starts revealing. */
+  startDelay?: number;
+  /** Frames between item reveals. */
+  perItem?: number;
+  /** Extra `gap` between bullet and content (matches the original ol style). */
+  gap?: number;
+  children: React.ReactNode;
+}) {
+  const frame = useCurrentFrame();
+  const start = startDelay + index * perItem;
+  const opacity = interpolate(frame, [start, start + 10], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const lift = interpolate(frame, [start, start + 12], [8, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  return (
+    <li
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap,
+        opacity,
+        transform: `translateY(${lift}px)`,
+      }}
+    >
+      {children}
+    </li>
+  );
+}
+
 export function SpecText({ el }: { el: SceneEl }) {
   /* Specialised renderers — stat callout + quote — catch high-signal short
    * content before the generic markdown/list parser runs. */
   const stat = parseStatCallout(el.content);
-  if (stat) return <SpecStatCallout el={el} stat={stat} />;
+  if (stat) return <SpecStatCallout stat={stat} />;
   const quote = parseQuote(el.content);
   if (quote) return <SpecQuote quote={quote} />;
 
@@ -377,10 +426,6 @@ export function SpecText({ el }: { el: SceneEl }) {
       : specTokens.shadow.text;
 
   void fireshipPaletteFor;
-  const HeaderIcon =
-    el.iconName && el.iconName in REMOTION_ICON_MAP
-      ? REMOTION_ICON_MAP[el.iconName]
-      : null;
 
   const baseContainer: React.CSSProperties = {
     fontFamily: specTokens.sans,
@@ -433,55 +478,21 @@ export function SpecText({ el }: { el: SceneEl }) {
             (hasList || blocks.length > 1 || block.text.split(" ").length <= 12);
           if (headline) {
             const headlineFs = Math.min(typo.fontSize + 22, 84);
-            const tile = Math.round(headlineFs * 0.82);
             return (
               <div
                 key={`p-${i}`}
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  gap: 18,
+                  fontFamily: specTokens.display,
+                  fontWeight: 700,
+                  fontSize: headlineFs,
+                  lineHeight: 1.04,
+                  letterSpacing: "-0.035em",
+                  color: specTokens.ink.primary,
+                  textShadow: specTokens.shadow.textHero,
                   marginBottom: 4,
                 }}
               >
-                {HeaderIcon ? (
-                  <div
-                    style={{
-                      flexShrink: 0,
-                      width: tile,
-                      height: tile,
-                      borderRadius: 10,
-                      background: "rgba(99, 102, 241, 0.06)",
-                      border: "1px solid rgba(129, 140, 248, 0.35)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: 6,
-                    }}
-                  >
-                    <HeaderIcon
-                      size={Math.round(tile * 0.52)}
-                      strokeWidth={1.6}
-                      color="#c7d2fe"
-                    />
-                  </div>
-                ) : null}
-                <div
-                  style={{
-                    fontFamily: specTokens.display,
-                    fontWeight: 700,
-                    fontSize: headlineFs,
-                    lineHeight: 1.04,
-                    letterSpacing: "-0.035em",
-                    color: specTokens.ink.primary,
-                    textShadow: specTokens.shadow.textHero,
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  {block.text}
-                </div>
+                {block.text}
               </div>
             );
           }
@@ -521,19 +532,12 @@ export function SpecText({ el }: { el: SceneEl }) {
               }}
             >
               {block.items.map((item, j) => (
-                <li
-                  key={j}
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    lineHeight: listLineHeight,
-                  }}
-                >
+                <CascadeListItem key={j} index={j} startDelay={4}>
                   <FireshipBullet
                     palette={fireshipPaletteFor(`${item}:${j}`)}
                   />
                   <span style={{ flex: 1, minWidth: 0 }}>{item}</span>
-                </li>
+                </CascadeListItem>
               ))}
             </ul>
           );
@@ -559,14 +563,7 @@ export function SpecText({ el }: { el: SceneEl }) {
           >
             {block.items.map((item, j) => {
               return (
-                <li
-                  key={j}
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                  }}
-                >
+                <CascadeListItem key={j} index={j} startDelay={4} gap={16}>
                   <span
                     aria-hidden
                     style={{
@@ -585,7 +582,7 @@ export function SpecText({ el }: { el: SceneEl }) {
                     {String(j + 1).padStart(2, "0")}
                   </span>
                   <span style={{ flex: 1, minWidth: 0 }}>{item}</span>
-                </li>
+                </CascadeListItem>
               );
             })}
           </ol>
@@ -595,18 +592,73 @@ export function SpecText({ el }: { el: SceneEl }) {
   );
 }
 
-/** Big-number stat block — ideal for hooks and impact beats. */
+/**
+ * Try to split a stat string like "10x", "$2.4M", "4.8/5" into a numeric body
+ * and a non-numeric tail. We only count up the numeric body and keep the tail
+ * pinned for the entire reveal. Returns null when the value is purely textual
+ * (e.g. "ZERO") — those use a fade reveal instead.
+ */
+function splitNumericStat(
+  value: string
+): { prefix: string; num: number; suffix: string; decimals: number } | null {
+  const m = /^([^0-9\-]*)(-?\d+(?:[.,]\d+)?)(.*)$/.exec(value);
+  if (!m) return null;
+  const numText = m[2].replace(",", ".");
+  const num = parseFloat(numText);
+  if (!Number.isFinite(num)) return null;
+  const decimals = numText.includes(".") ? numText.split(".")[1].length : 0;
+  return { prefix: m[1], num, suffix: m[3], decimals };
+}
+
 function SpecStatCallout({
-  el,
   stat,
 }: {
-  el: SceneEl;
   stat: { value: string; caption: string | null };
 }) {
-  const HeaderIcon =
-    el.iconName && el.iconName in REMOTION_ICON_MAP
-      ? REMOTION_ICON_MAP[el.iconName]
-      : null;
+  const frame = useCurrentFrame();
+  const parts = splitNumericStat(stat.value);
+
+  /* Count-up runs over ~22 frames after a short hold. Pure-text stats
+   * ("ZERO") instead fade in over the same window. */
+  const t = interpolate(frame, [6, 26], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (x) => 1 - Math.pow(1 - x, 3),
+  });
+  const displayedValue = parts
+    ? `${parts.prefix}${(parts.num * t).toFixed(parts.decimals)}${parts.suffix}`
+    : stat.value;
+  const textOpacity = parts
+    ? 1
+    : interpolate(frame, [6, 26], [0, 1], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: (x) => 1 - Math.pow(1 - x, 3),
+      });
+
+  /* Caption holds back so the number lands first, then the line of context
+   * underlines it — a deliberate two-beat reveal. */
+  const captionStart = 28;
+  const captionOpacity = interpolate(
+    frame,
+    [captionStart, captionStart + 12],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: (x) => 1 - Math.pow(1 - x, 3),
+    }
+  );
+  const captionLift = interpolate(
+    frame,
+    [captionStart, captionStart + 14],
+    [8, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: (x) => 1 - Math.pow(1 - x, 3),
+    }
+  );
 
   return (
     <div
@@ -619,41 +671,6 @@ function SpecStatCallout({
         maxWidth: 980,
       }}
     >
-      {HeaderIcon ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              background: "rgba(99, 102, 241, 0.06)",
-              border: "1px solid rgba(129, 140, 248, 0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <HeaderIcon size={18} strokeWidth={1.6} color="#c7d2fe" />
-          </div>
-          <span
-            style={{
-              fontFamily: specTokens.mono,
-              fontSize: 14,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: specTokens.ink.subtle,
-            }}
-          >
-            {el.iconName}
-          </span>
-        </div>
-      ) : null}
       <div
         style={{
           fontFamily: specTokens.display,
@@ -668,9 +685,11 @@ function SpecStatCallout({
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
+          fontVariantNumeric: "tabular-nums",
+          opacity: textOpacity,
         }}
       >
-        {stat.value}
+        {displayedValue}
       </div>
       {stat.caption ? (
         <div
@@ -681,6 +700,8 @@ function SpecStatCallout({
             letterSpacing: "-0.02em",
             color: specTokens.ink.muted,
             maxWidth: 760,
+            opacity: captionOpacity,
+            transform: `translateY(${captionLift}px)`,
           }}
         >
           {stat.caption}
@@ -696,6 +717,36 @@ function SpecQuote({
 }: {
   quote: { body: string; attribution: string | null };
 }) {
+  const frame = useCurrentFrame();
+
+  /* Three-beat reveal: opening glyph → body → attribution rule, each lifted
+   * in on its own offset. Reads as a careful pull-quote, not a static plate. */
+  const glyphIn = interpolate(frame, [0, 10], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const bodyIn = interpolate(frame, [6, 22], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const bodyLift = interpolate(frame, [6, 22], [12, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const attrIn = interpolate(frame, [18, 32], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+  const ruleScale = interpolate(frame, [18, 30], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
+
   return (
     <div
       style={{
@@ -718,6 +769,7 @@ function SpecQuote({
           marginLeft: -8,
           fontWeight: 700,
           letterSpacing: "-0.04em",
+          opacity: glyphIn,
         }}
       >
         “
@@ -732,6 +784,8 @@ function SpecQuote({
           color: specTokens.ink.primary,
           textShadow: specTokens.shadow.textHero,
           marginTop: -32,
+          opacity: bodyIn,
+          transform: `translateY(${bodyLift}px)`,
         }}
       >
         {quote.body}
@@ -743,6 +797,7 @@ function SpecQuote({
             alignItems: "center",
             gap: 16,
             marginTop: 4,
+            opacity: attrIn,
           }}
         >
           <span
@@ -751,6 +806,8 @@ function SpecQuote({
               width: 32,
               height: 1,
               background: "rgba(165, 180, 252, 0.45)",
+              transform: `scaleX(${ruleScale})`,
+              transformOrigin: "left center",
             }}
           />
           <span
