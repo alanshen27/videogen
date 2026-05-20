@@ -38,7 +38,8 @@ import {
 } from "../llm/schemas";
 import { searchReferenceImages } from "../tools/search-images";
 import { downloadImage } from "../tools/download-image";
-import { env } from "../env";
+import { env, isEmailDeliveryConfigured } from "../env";
+import { sendJobVideoEmail } from "../email/send-job-video";
 import {
   applyVoiceFirstTimelineToSpec,
   synthesizeElevenLabsVoiceFirst,
@@ -121,7 +122,27 @@ function normalizeRasterAssetRow(
   };
 }
 
+/** Fast-cut pacing: many short scenes; only diagram-hop beats may linger. */
+function pacingHints(durationSeconds: number): {
+  targetScenes: number;
+  minScenes: number;
+  maxScenes: number;
+} {
+  const targetScenes = Math.max(
+    12,
+    Math.min(40, Math.round(durationSeconds / 4.5))
+  );
+  return {
+    targetScenes,
+    minScenes: Math.max(10, Math.round(durationSeconds / 7)),
+    maxScenes: Math.min(42, Math.round(durationSeconds / 3.5)),
+  };
+}
+
 function buildVideoPrompt(job: Job): string {
+  const { targetScenes, minScenes, maxScenes } = pacingHints(
+    job.durationSeconds
+  );
   return `
 You are creating a YouTube-style educational video.
 
@@ -130,6 +151,13 @@ DURATION: ${job.durationSeconds} seconds
 AUDIENCE: ${job.audienceLevel}
 STYLE: ${job.style}
 INSTRUCTIONS: ${job.instructions || "None"}
+
+**Pacing (non-negotiable)** — fast cuts, not slide-deck dwell time:
+- Plan **${targetScenes} scenes** (acceptable range ${minScenes}–${maxScenes}) for this duration. More scenes = better; do not under-cut.
+- **Default scene length: 2.5–5 seconds** of narration (one punchy idea, then cut).
+- **Exception — diagram hopping**: ONE scene may run **5–12 seconds** when the visual is a flowchart with per-node \`focusBeats\` / \`mermaidTargets\` stepping through the graph. Motion carries the beat; the camera does not need to cut.
+- **Never** park on the same static layout (list, image, stat, quote, code-only) for more than **~5 seconds**. Split into two scenes instead.
+- Prefer **a new scene** over stuffing another bullet into the current one.
 
 **Spoken narration** (\`narration\`, \`hook\`, \`fullNarration\`) — written for **listeners on YouTube**, not producers:
 - **READABLE**: short sentences, plain words, one idea per beat. A viewer listening once should follow without rewinding — no acronym dumps, no run-on clauses, no dense jargon walls. Every line must sound natural read aloud (voice-over).
@@ -160,11 +188,14 @@ export async function executePipeline(job: Job): Promise<void> {
     await updateProgress(jobId, 5, "PLANNING");
     await log(jobId, "info", "Starting topic planning...");
 
+    const { targetScenes, minScenes, maxScenes } = pacingHints(
+      job.durationSeconds
+    );
     const plan = await generateStructuredOutput({
-      prompt: `${prompt}\n\nGenerate a topic plan with title, angle, target audience, learning objectives, scene count, and estimated duration. Assume structured diagrams suit architecture/system-flow beats; icon-led slides elsewhere unless photography is essential.`,
+      prompt: `${prompt}\n\nGenerate a topic plan with title, angle, target audience, learning objectives, scene count, and estimated duration.\n\nScene count: set sceneCount to **${targetScenes}** (stay within ${minScenes}–${maxScenes}). Each scene is one quick beat (~3–5s) unless it is a diagram-hop walkthrough (see pacing rules). More scenes = better rhythm — do not plan an 8-scene deck for a 90s video.\n\nAssume structured diagrams suit architecture/system-flow beats; icon-led slides elsewhere unless photography is essential.`,
       schema: PlanSchema,
       systemMessage: withBrand(
-        "You are a professional educational video planner. Prefer concrete scene beats viewers care about — not production jargon. Output valid JSON only."
+        "You are a professional educational video planner for fast-cut explainers. Prefer many short scene beats over few long chapters. Output valid JSON only."
       ),
       modelId: OPENAI_MODEL_SCRIPT_LIGHT,
     });
@@ -176,10 +207,10 @@ export async function executePipeline(job: Job): Promise<void> {
     await log(jobId, "info", "Generating full script...");
 
     const script = await generateStructuredOutput({
-      prompt: `${prompt}\n\nPLAN:\n${JSON.stringify(plan, null, 2)}\n\nGenerate a full video script with scenes, narration, and visual descriptions. Each scene should have timing, narration text, visual description, and animation type.\n\nCRITICAL: Emit exactly ${plan.sceneCount} scenes with sceneNumber 1 through ${plan.sceneCount} (same count as plan.sceneCount). This must match later motion + voice-over pairing.\n\nREADABILITY (non-negotiable): narration and hook must be easy to understand on first listen — short spoken sentences, everyday language for the audience level, no walls of technical terms. If a line would sound awkward read aloud, rewrite it.\n\nNARRATION AUDIO TAGS (ElevenLabs v3):\n- You MAY embed inline audio-direction tags in narration & hook to control delivery. Use them sparingly — at most one tag per ~25 spoken words. Overuse sounds theatrical.\n- Allowed inline tags (use exactly these, in square brackets):\n  [laughs] [chuckles] [sighs] [exhales] [whispers] [shouts] [excited] [curious] [thoughtful] [sarcastic] [amazed] [disappointed] [deadpan] [warm] [serious] [matter-of-fact]\n- Allowed pause: <break time="0.4s"/> (0.1s–3.0s). Use to set rhythm between sentences, NOT every line.\n- Tags appear **before** the affected sentence. Example:\n  \"[thoughtful] Here is the weird part. The query was fast. The connection was slow.\"\n- Do NOT invent other tags. [explode], [dramatic], [angry], [robotic] etc. are silently stripped before TTS.\n- Hook scene: opening line gets one tag (e.g. [curious], [excited]) to set the energy. Don't open with [deadpan].\n\nvisualDescription (production notes ONLY — **never** paste into narration):\n- Architecture/system beats: say it's a flowchart-style layout, **which layer or subsystem** this beat focuses on, and how emphasis should move scene-to-scene — motion tooling reads this; the viewer does not hear it.\n- Other beats: concise icon/storyboard cues (e.g. Cpu + Terminal + Code2). Photos only when necessary.`,
+      prompt: `${prompt}\n\nPLAN:\n${JSON.stringify(plan, null, 2)}\n\nGenerate a full video script with scenes, narration, and visual descriptions. Each scene should have timing, narration text, visual description, and animation type.\n\nCRITICAL: Emit exactly ${plan.sceneCount} scenes with sceneNumber 1 through ${plan.sceneCount} (same count as plan.sceneCount). This must match later motion + voice-over pairing.\n\nSCENE TIMING (non-negotiable):\n- Most scenes: **2.5–5 seconds** each (\`endSecond - startSecond\`). One idea, tight narration (~8–18 spoken words), then cut.\n- **Diagram-hop scenes only**: **5–12 seconds** when \`animationType\` is \`diagram\` and \`visualDescription\` says the beat walks node-by-node through ONE flowchart (focus beats / mermaidTargets). Pack the hops into that single scene — do not stretch list/image/stat scenes this long.\n- If a beat needs more than ~5s on a static visual, **split into two scenes** with different templates.\n- Scene timings must be contiguous and sum to ~${job.durationSeconds}s (±2s).\n\nREADABILITY (non-negotiable): narration and hook must be easy to understand on first listen — short spoken sentences, everyday language for the audience level, no walls of technical terms. If a line would sound awkward read aloud, rewrite it.\n\nNARRATION AUDIO TAGS (ElevenLabs v3):\n- You MAY embed inline audio-direction tags in narration & hook to control delivery. Use them sparingly — at most one tag per ~25 spoken words. Overuse sounds theatrical.\n- Allowed inline tags (use exactly these, in square brackets):\n  [laughs] [chuckles] [sighs] [exhales] [whispers] [shouts] [excited] [curious] [thoughtful] [sarcastic] [amazed] [disappointed] [deadpan] [warm] [serious] [matter-of-fact]\n- Allowed pause: <break time="0.4s"/> (0.1s–3.0s). Use to set rhythm between sentences, NOT every line.\n- Tags appear **before** the affected sentence. Example:\n  \"[thoughtful] Here is the weird part. The query was fast. The connection was slow.\"\n- Do NOT invent other tags. [explode], [dramatic], [angry], [robotic] etc. are silently stripped before TTS.\n- Hook scene: opening line gets one tag (e.g. [curious], [excited]) to set the energy. Don't open with [deadpan].\n\nvisualDescription (production notes ONLY — **never** paste into narration):\n- Architecture/system beats: say it's a flowchart-style layout, **which layer or subsystem** this beat focuses on, and how emphasis should move scene-to-scene — motion tooling reads this; the viewer does not hear it.\n- Other beats: concise icon/storyboard cues (e.g. Cpu + Terminal + Code2). Photos only when necessary.`,
       schema: ScriptSchema,
       systemMessage: withBrand(
-        "You are a professional YouTube scriptwriter. The script must be READABLE: clear, concise narration that sounds natural when read aloud — short sentences, plain language, one idea per beat. Zero lecturing about graphics software or why a diagram exists. Use visualDescription for layout/emphasis notes only. You may use ElevenLabs v3 inline audio tags ([laughs], [whispers], [excited], [thoughtful], etc. + <break time=\"0.4s\"/>) sparingly to add natural delivery — never more than one per ~25 words. Output valid JSON only."
+        "You are a professional YouTube scriptwriter for fast-cut explainers. Many short scenes (2.5–5s each); only diagram-hop walkthroughs may run 5–12s on one flowchart. Clear, concise narration — one idea per scene. Zero lecturing about graphics software. Use visualDescription for layout/emphasis notes only. ElevenLabs v3 tags sparingly. Output valid JSON only."
       ),
       modelId: OPENAI_MODEL_SCRIPT_LIGHT,
     });
@@ -404,7 +435,7 @@ Output valid JSON only.`,
     await log(jobId, "info", "Generating Remotion animation spec...");
 
     const brandedSceneSpec: BrandedSceneSpec = await generateStructuredOutput({
-      prompt: `${prompt}\n\nSCRIPT AND STORYBOARD:\n${JSON.stringify({ script, storyboard }, null, 2)}\n\nGenerate a branded scene spec for a YouTube-style explainer.\n\nAllowed templates:\n- left_diagram_right_text\n- right_diagram_left_text\n- list\n- image\n- image_hero\n- image_left\n- code_focus\n- stat_callout  // big number / single bold idea\n- quote          // short pull-quote\n\nRules:\n- Return exactly one branded scene per script scene, same order and scene numbers.\n- VARY the template — back-to-back diagram scenes get boring. Use list / stat_callout / quote for hook + summary beats.\n- IMAGE BIAS: prefer image / image_hero / image_left whenever a real-world picture would help — ESPECIALLY for any named product, tool, company, framework, language, or person (Claude, OpenAI, React, AWS, Postgres, Vercel, GitHub, Linear, ChatGPT, etc.). For those, write imageSearchQuery as a tight "<thing> logo" / "<thing> screenshot" / "<thing> ui" query — short, specific, no filler. Examples: "Claude AI logo", "ChatGPT interface screenshot", "AWS Lambda logo", "Vercel dashboard ui".\n- NEVER append "stock photo" / "stock image" / "royalty free" / "HD" / "4k" to imageSearchQuery — that ranks watermarked Shutterstock thumbnails first which we can't download. Name the actual thing instead.\n- Architecture diagrams (mermaid source) are re-rendered as a clean Linear/Vercel-style flowchart — but only when ≤8 nodes, LR/TB, simple shapes (rect/rounded/diamond/cylinder), basic --> edges, no subgraphs, no sequence/state/ER/gantt. Reach for a diagram only when the flow/relationship IS the point; otherwise prefer an image.\n- If a scene has both a downloaded image AND a mermaid diagram, the image wins at render time. Don't bother emitting mermaid unless it's genuinely the best beat.\n- Use code_focus when code OR pseudo-code is the clearest way to explain a step. For algorithm/concept beats prefer PSEUDO-CODE in a python-fenced block (\`\`\`python\\n...\\n\`\`\`) — it reads like the narration, avoids language ceremony, and the syntax highlighter still colours it. Reserve real code for when the exact API/syntax IS the point.\n- Keep body concise and spoken-line friendly.\n- For left/right split templates, include 2-4 concrete listItems so the text panel has clear hierarchy.\n- focusBeats should point to one target at a time (title/body/list/diagram/image/code).\n- For mermaid walkthroughs (the diagram IS the visual), the diagram BEATS any downloaded image — author one focusBeats row per spoken beat with target="diagram" and mermaidTargets pointing to the node IDs you're currently narrating. The renderer animates: the listed nodes light up indigo while the rest dim. Keep each beat ~1–2.5s, cover the full scene, and make IDs match diagramMermaid exactly. TIMINGS ARE SCENE-RELATIVE: startSecond/endSecond live in 0..sceneDurationSeconds, NOT absolute script time. For a 6s scene with 4 beats: [0,1.5][1.5,3.0][3.0,4.5][4.5,6.0]. This is when diagrams shine — use it whenever a flow is the point.\n- Structured JSON requires every field on each scene: use listItems=[], diagramMermaid="", imageSearchQuery="", codeSnippet="", focusBeats=[] (or beats with caption="" and mermaidTargets=[] when unused) whenever those parts do not apply.`,
+      prompt: `${prompt}\n\nSCRIPT AND STORYBOARD:\n${JSON.stringify({ script, storyboard }, null, 2)}\n\nGenerate a branded scene spec for a YouTube-style explainer.\n\nAllowed templates:\n- left_diagram_right_text\n- right_diagram_left_text\n- list\n- image\n- image_hero\n- image_left\n- code_focus\n- stat_callout  // big number / single bold idea\n- quote          // short pull-quote\n\nRules:\n- Return exactly one branded scene per script scene, same order and scene numbers.\n- **Fast cuts**: match the script's short timings — do not pad scenes. If script gave a 3s beat, keep headline/body minimal.\n- VARY the template every scene — never the same template twice in a row. Back-to-back diagram *templates* are boring unless the second is a diagram-hop continuation (same mermaid, new focusBeats).\n- Use list / stat_callout / quote for hook + summary beats.\n- IMAGE BIAS: prefer image / image_hero / image_left whenever a real-world picture would help — ESPECIALLY for any named product, tool, company, framework, language, or person (Claude, OpenAI, React, AWS, Postgres, Vercel, GitHub, Linear, ChatGPT, etc.). For those, write imageSearchQuery as a tight "<thing> logo" / "<thing> screenshot" / "<thing> ui" query — short, specific, no filler. Examples: "Claude AI logo", "ChatGPT interface screenshot", "AWS Lambda logo", "Vercel dashboard ui".\n- NEVER append "stock photo" / "stock image" / "royalty free" / "HD" / "4k" to imageSearchQuery — that ranks watermarked Shutterstock thumbnails first which we can't download. Name the actual thing instead.\n- Architecture diagrams (mermaid source) are re-rendered as a clean Linear/Vercel-style flowchart — but only when ≤8 nodes, LR/TB, simple shapes (rect/rounded/diamond/cylinder), basic --> edges, no subgraphs, no sequence/state/ER/gantt. Reach for a diagram only when the flow/relationship IS the point; otherwise prefer an image.\n- If a scene has both a downloaded image AND a mermaid diagram, the image wins at render time. Don't bother emitting mermaid unless it's genuinely the best beat.\n- Use code_focus when code OR pseudo-code is the clearest way to explain a step. For algorithm/concept beats prefer PSEUDO-CODE in a python-fenced block (\`\`\`python\\n...\\n\`\`\`) — it reads like the narration, avoids language ceremony, and the syntax highlighter still colours it. Reserve real code for when the exact API/syntax IS the point.\n- Keep on-screen copy sparse: headline (≤6 words) + either one short body line (≤80 chars) OR 2–3 listItems — never headline + paragraph + bullets. Split templates default listItems=[].\n- template "list": always 2–4 listItems + focusBeats — title beat first, then one target="list" beat per item when VO says it (mermaidTargets ["0"], ["1"], …). Never headline-only list scenes.\n- focusBeats should point to one target at a time (title/body/list/diagram/image/code).\n- For mermaid walkthroughs (the diagram IS the visual), the diagram BEATS any downloaded image — author one focusBeats row per spoken beat with target="diagram" and mermaidTargets pointing to the node IDs you're currently narrating. The renderer animates: the listed nodes light up indigo while the rest dim. Keep each beat ~1–2.5s, cover the full scene, and make IDs match diagramMermaid exactly. TIMINGS ARE SCENE-RELATIVE: startSecond/endSecond live in 0..sceneDurationSeconds, NOT absolute script time. For a 6s scene with 4 beats: [0,1.5][1.5,3.0][3.0,4.5][4.5,6.0]. This is when diagrams shine — use it whenever a flow is the point.\n- Structured JSON requires every field on each scene: use listItems=[], diagramMermaid="", imageSearchQuery="", codeSnippet="", focusBeats=[] (or beats with caption="" and mermaidTargets=[] when unused) whenever those parts do not apply.`,
       schema: BrandedSceneSpecSchema,
       systemMessage: withBrand(
         "You are a YouTube motion storyboard director. Choose clear templates and beat-by-beat focus. Output valid JSON only."
@@ -495,11 +526,12 @@ Output valid JSON only.`,
     );
 
     // Stage 7: RENDER_VIDEO (must follow VO synthesis so timeline matches audio)
+    let videoPath: string | null = null;
     if (job.renderVideo) {
       await updateProgress(jobId, 82, "RENDERING");
       await log(jobId, "info", "Remotion CLI render starting (progress in worker stdout)...");
 
-      const videoPath = await renderRemotionJobVideo({
+      videoPath = await renderRemotionJobVideo({
         jobId,
         spec: remotionSpecFinal,
         onLogLine: (line) => {
@@ -535,6 +567,37 @@ Output valid JSON only.`,
     }
     await saveArtifact(jobId, "METADATA", metadata);
     await log(jobId, "info", `Metadata created: "${metadata.title}"`);
+
+    if (videoPath && isEmailDeliveryConfigured()) {
+      try {
+        const fps = remotionSpecFinal.composition.fps;
+        const frames = remotionSpecFinal.composition.durationInFrames;
+        await sendJobVideoEmail({
+          jobId,
+          topic: job.topic,
+          videoPath,
+          metadata,
+          scriptTitle: script.title,
+          hook: script.hook,
+          sceneCount: script.scenes.length,
+          runtimeSeconds: frames / fps,
+        });
+        await log(
+          jobId,
+          "info",
+          `Delivery email sent to ${env.NOTIFY_EMAIL}`
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        await log(jobId, "warn", `Email delivery failed: ${msg}`);
+      }
+    } else if (videoPath && !isEmailDeliveryConfigured()) {
+      await log(
+        jobId,
+        "info",
+        "Email delivery skipped (set SMTP_* and NOTIFY_EMAIL in .env)"
+      );
+    }
 
     // Stage 9: COMPLETE
     await updateProgress(jobId, 100, "COMPLETED");

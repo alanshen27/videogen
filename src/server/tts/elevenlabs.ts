@@ -4,6 +4,7 @@ import type { RemotionSpec, Script } from "../llm/schemas";
 import {
   estimateSpeechSecondsFromText,
   probeAudioDurationSeconds,
+  probeMp3DurationFromBuffer,
 } from "./audio-duration";
 
 const ELEVEN_TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
@@ -154,10 +155,8 @@ export async function synthesizeElevenLabsVoiceFirst(options: {
     (a, b) => a.sceneNumber - b.sceneNumber
   );
   const { fps, jobId } = options;
-  /* Generous tail pad: ElevenLabs sometimes clips final phonemes by 100-300ms
-   * and the next scene cutting in mid-word reads as a "cut off" narration.
-   * 1.0s buffer is barely perceptible as silence but eliminates the chop. */
-  const tailPadFrames = Math.max(24, Math.round(fps * 1.0));
+  /* Small tail pad so the next scene does not clip the last phoneme. */
+  const tailPadFrames = Math.max(9, Math.round(fps * 0.3));
 
   const absDir = path.join(process.cwd(), "public", "audio-jobs", jobId);
   await fs.mkdir(absDir, { recursive: true });
@@ -197,18 +196,20 @@ export async function synthesizeElevenLabsVoiceFirst(options: {
       );
       await fs.writeFile(absPath, mp3);
 
-      const probedSec = probeAudioDurationSeconds(absPath);
-      const sec =
-        probedSec ?? estimateSpeechSecondsFromText(narration);
+      const probedSec =
+        probeMp3DurationFromBuffer(mp3) ??
+        probeAudioDurationSeconds(absPath);
+      const measured = probedSec !== null;
+      const sec = probedSec ?? estimateSpeechSecondsFromText(narration);
       const audioFrames = Math.ceil(sec * fps) + tailPadFrames;
-      const dur = Math.max(scriptDur, audioFrames);
+      /* Voice-first: scene length follows the MP3, not the script's guess. */
+      const dur = measured ? audioFrames : Math.max(scriptDur, audioFrames);
       durationFramesPerScene.push(dur);
       voiceStaticPathBySceneIndex[i] = staticPath;
 
-      const note =
-        probedSec !== null
-          ? `measured ${probedSec.toFixed(2)}s`
-          : `estimated ${sec.toFixed(2)}s (install ffmpeg/ffprobe for exact length)`;
+      const note = measured
+        ? `measured ${probedSec!.toFixed(2)}s (mp3 bytes)`
+        : `estimated ${sec.toFixed(2)}s (could not read mp3 length)`;
       void Promise.resolve(
         options.onLog(
           "info",
@@ -259,23 +260,45 @@ export function applyVoiceFirstTimelineToSpec(
      * and the highlight then sits stuck on the last node forever. */
     const scale = oldDuration > 0 ? newDuration / oldDuration : 1;
     const elements = s.elements.map((el) => {
-      if (el.type !== "mermaid") return el;
-      const beats = (
-        el as typeof el & {
-          diagramBeats?: {
-            fromFrame: number;
-            durationInFrames: number;
-            targets: string[];
-          }[];
-        }
-      ).diagramBeats;
-      if (!beats || beats.length === 0) return el;
-      const rescaled = beats.map((b) => ({
-        fromFrame: Math.round(b.fromFrame * scale),
-        durationInFrames: Math.max(12, Math.round(b.durationInFrames * scale)),
-        targets: b.targets,
-      }));
-      return { ...el, diagramBeats: rescaled };
+      if (el.type === "mermaid") {
+        const beats = (
+          el as typeof el & {
+            diagramBeats?: {
+              fromFrame: number;
+              durationInFrames: number;
+              targets: string[];
+            }[];
+          }
+        ).diagramBeats;
+        if (!beats || beats.length === 0) return el;
+        const rescaled = beats.map((b) => ({
+          fromFrame: Math.round(b.fromFrame * scale),
+          durationInFrames: Math.max(12, Math.round(b.durationInFrames * scale)),
+          targets: b.targets,
+        }));
+        return { ...el, diagramBeats: rescaled };
+      }
+
+      if (el.type === "text") {
+        const listBeats = (
+          el as typeof el & {
+            listBeats?: { fromFrame: number; itemIndex: number }[];
+          }
+        ).listBeats;
+        if (!listBeats || listBeats.length === 0) return el;
+        return {
+          ...el,
+          listBeats: listBeats.map((b) => ({
+            ...b,
+            fromFrame: Math.min(
+              newDuration - 6,
+              Math.max(0, Math.round(b.fromFrame * scale))
+            ),
+          })),
+        };
+      }
+
+      return el;
     });
     const row = {
       ...s,

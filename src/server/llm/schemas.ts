@@ -184,6 +184,20 @@ export const RemotionElementSchema = z.object({
       })
     )
     .optional(),
+  /**
+   * Optional internal-only field — staggered bullet reveals for `text`
+   * elements. Frame numbers are SCENE-RELATIVE (0 = scene start). Built from
+   * `BrandedScene.focusBeats` where `target === "list"`, or derived from
+   * narration phrase alignment when beats are missing.
+   */
+  listBeats: z
+    .array(
+      z.object({
+        fromFrame: z.number(),
+        itemIndex: z.number().int().nonnegative(),
+      })
+    )
+    .optional(),
 });
 
 export const RemotionSceneSchema = z.object({

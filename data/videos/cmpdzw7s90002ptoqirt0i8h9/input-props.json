@@ -1,0 +1,379 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 1868,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Before or during?\n\nA compiler works before the program runs. An interpreter works while it runs.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 103,
+        "durationInFrames": 100,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"Source code\"] --> C[\"Compiler\"]\n  C --> B[\"Binary\"]\n  B --> CPU[\"CPU\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-2-1779278093656-1.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 49,
+                "targets": [
+                  "S",
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 49,
+                "durationInFrames": 51,
+                "targets": [
+                  "B",
+                  "CPU"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Compiled path\n\nSource code becomes a binary first. Then the CPU runs that binary directly.\n\n- Source code goes in\n- Compiler builds a **binary**\n- CPU runs the result",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 203,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Interpreted path\n\nNo separate binary is required before the first line starts running.\n\n- Read a line\n- Decide what it means\n- Run it immediately",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 332,
+        "durationInFrames": 165,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Different outputs\n\nCompiled languages usually produce machine code. Many interpreted systems run through bytecode or a virtual machine.\n\n- Machine code: close to hardware\n- Bytecode: runs through a **VM**\n- JIT: compiles hot paths later",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"Source code\"] --> C[\"Compiler\"]\n  C --> M[\"Machine code\"]\n  S --> I[\"Interpreter\"]\n  I --> V[\"Bytecode / VM\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779278102503-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 81,
+                "targets": [
+                  "C",
+                  "M"
+                ]
+              },
+              {
+                "fromFrame": 81,
+                "durationInFrames": 84,
+                "targets": [
+                  "I",
+                  "V"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 497,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Static vs flexible\n\n“Compile once, run the same bits. Interpret now, react as you go.”",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 631,
+        "durationInFrames": 223,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nlex(code)        -> tokens\nparse(tokens)   -> tree\ncodegen(tree)   -> machine_code\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Compiler pipeline\n\nLexing finds tokens. Parsing builds structure. Codegen emits instructions the machine can execute.\n\n- Lexing finds tokens\n- Parsing builds structure\n- Codegen emits instructions the machine can execute",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 854,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Startup vs speed\n\nInterpreters can start sooner. Compilers often win after the program is already running.",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 983,
+        "durationInFrames": 227,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Real examples",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 88,
+            "animation": "fade"
+          },
+          {
+            "type": "image",
+            "content": "reference-images/scene-8-1779278112121-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 180,
+            "y": 224,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1210,
+        "durationInFrames": 165,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The tradeoff\n\nThe choice is not moral. It is about where the cost lands.\n\n- Startup time\n- Runtime speed\n- Portability",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1375,
+        "durationInFrames": 203,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "reference-images/scene-10-1779278118567-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Modern runtimes blur it\n\nJavaScript engines interpret, profile, then JIT-compile hot code while the app keeps running.\n\n- Interpreter starts execution\n- Profiler finds hot paths\n- JIT compiles the repeated work",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 170,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1578,
+        "durationInFrames": 115,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Pick for the job\n\n“Need raw runtime speed? Compile. Need quick iteration and portability? Interpret.”",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1693,
+        "durationInFrames": 175,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Ten-second takeaway\n\nBoth turn human code into work the machine can do. They just choose different timing.\n\n- Compiler: **before** running\n- Interpreter: **during** running\n- VM and JIT: mix both",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/0.mp3"
+      },
+      {
+        "fromFrame": 103,
+        "durationInFrames": 100,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/1.mp3"
+      },
+      {
+        "fromFrame": 203,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/2.mp3"
+      },
+      {
+        "fromFrame": 332,
+        "durationInFrames": 165,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/3.mp3"
+      },
+      {
+        "fromFrame": 497,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/4.mp3"
+      },
+      {
+        "fromFrame": 631,
+        "durationInFrames": 223,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/5.mp3"
+      },
+      {
+        "fromFrame": 854,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/6.mp3"
+      },
+      {
+        "fromFrame": 983,
+        "durationInFrames": 227,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/7.mp3"
+      },
+      {
+        "fromFrame": 1210,
+        "durationInFrames": 165,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/8.mp3"
+      },
+      {
+        "fromFrame": 1375,
+        "durationInFrames": 203,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/9.mp3"
+      },
+      {
+        "fromFrame": 1578,
+        "durationInFrames": 115,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/10.mp3"
+      },
+      {
+        "fromFrame": 1693,
+        "durationInFrames": 175,
+        "staticPath": "audio-jobs/cmpdzw7s90002ptoqirt0i8h9/11.mp3"
+      }
+    ]
+  }
+}

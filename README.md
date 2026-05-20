@@ -31,6 +31,12 @@ cp .env .env.local
 #   OPENAI_API_KEY=sk-...
 #   DEEPSEEK_API_KEY=sk-... (optional fallback)
 #   SERPAPI_API_KEY=... (optional, Google Images via SerpAPI)
+#   SMTP_HOST=smtp.gmail.com (optional — emails finished MP4 to you)
+#   SMTP_PORT=587
+#   SMTP_USER=you@gmail.com
+#   SMTP_PASS=app-password
+#   SMTP_FROM=segfault <you@gmail.com>
+#   NOTIFY_EMAIL=you@gmail.com
 
 # 3. Set up the database
 npx prisma db push

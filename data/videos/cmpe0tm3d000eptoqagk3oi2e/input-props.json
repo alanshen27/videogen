@@ -1,0 +1,674 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 2715,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 122,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Deep First\n\nDFS follows one branch until it runs out, then backs up.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 122,
+        "durationInFrames": 203,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  R[\"Start\"] --> A[\"Left branch\"]\n  R --> B[\"Right branch\"]\n  A --> C[\"Deep node\"]\n  B --> D[\"Sibling node\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-2-1779279930753-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 72,
+                "targets": [
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 72,
+                "durationInFrames": 72,
+                "targets": [
+                  "A",
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "DFS vs BFS\n\nDFS dives down one path first. Breadth-first search checks nearby siblings before going deeper.\n\n- DFS: go deep\n- BFS: go wide\n- Both avoid repeats",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 325,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The call stack grows\n\nEvery deeper move waits on the stack until that branch finishes.\n\n- Visit a node\n- Push the next step\n- Keep going deeper",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 430,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nstack = [\"A\", \"B\", \"C\"]\n\nif no_unvisited_neighbors(\"C\"):\n    stack.pop()      # leave C\n    current = \"B\"    # try B's next choice\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Dead end, step back\n\nWhen a node has no unvisited neighbors, DFS returns to the last node that still has a choice.\n\n- When a node has no unvisited neighbors\n- DFS returns to the last node that still has a choice.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 535,
+        "durationInFrames": 93,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Remember visited nodes\n\nA visited set stops DFS from walking in circles when a graph loops back on itself.\n\n- Mark before exploring\n- Skip marked neighbors\n- Finish without loops",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"A\"] --> B[\"B\"]\n  B --> C[\"C\"]\n  C --> A\n  B --> D[\"D\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-5-1779279935933-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 29,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 29,
+                "durationInFrames": 29,
+                "targets": [
+                  "B",
+                  "C"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 628,
+        "durationInFrames": 168,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\ndef dfs(node):\n    visited.add(node)\n\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            dfs(neighbor)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "The core idea\n\nDFS is small: mark the current node, then recursively visit every neighbor that is still unvisited.\n\n- DFS is small: mark the current node\n- then recursively visit every neighbor that is still unvisited.",
+            "iconName": "Lightbulb",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 796,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Visited set\n\n“The visited set is the map DFS keeps in its pocket.”",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 901,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  A[\"A\"] --> B[\"B\"]\n  A --> D[\"D\"]\n  B --> C[\"C\"]\n  D --> E[\"E\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-8-1779279942834-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 45,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 45,
+                "durationInFrames": 45,
+                "targets": [
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "One branch at a time\n\nDFS does not try to be fair. If a branch has another unvisited node, DFS takes it before checking siblings.\n\n- Choose one neighbor\n- Follow it fully\n- Return for siblings",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1035,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "A → B → C\n\nWith neighbor order fixed, DFS can visit A, then B, then C before it backs up.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1164,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Stack frames as breadcrumbs\n\nEach recursive call remembers where DFS came from and which neighbors are left to try.\n\n- Frame 1: node A\n- Frame 2: node B\n- Frame 3: node C\n- Return in reverse",
+            "iconName": "Layers",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1269,
+        "durationInFrames": 241,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Walk from A to E\n\nDFS goes deep first. If that path ends, it backs up and tries the next available branch.\n\n- Start at A\n- Try B, then C\n- Backtrack\n- Reach E",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"A\"] --> B[\"B\"]\n  A --> D[\"D\"]\n  B --> C[\"C\"]\n  C --> X[\"Dead end\"]\n  D --> E[\"E\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-11-1779279955936-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 39,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 39,
+                "durationInFrames": 39,
+                "targets": [
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 77,
+                "durationInFrames": 43,
+                "targets": [
+                  "C",
+                  "X"
+                ]
+              },
+              {
+                "fromFrame": 121,
+                "durationInFrames": 39,
+                "targets": [
+                  "B",
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 159,
+                "durationInFrames": 43,
+                "targets": [
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 202,
+                "durationInFrames": 39,
+                "targets": [
+                  "E"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1510,
+        "durationInFrames": 168,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Backtracking rule\n\n“Return only when the current branch has nothing new left.”",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1678,
+        "durationInFrames": 141,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Small DFS extras\n\nOnce the basics work, extra labels can answer more questions about the graph.\n\n- Entry time: when a node starts\n- Exit time: when it finishes\n- Edge order: which neighbor wins",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1819,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "O(V + E)\n\nDFS touches each vertex and checks each edge at most once.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1953,
+        "durationInFrames": 139,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\n# recursive DFS uses the call stack\ndfs(start)\n\n# iterative DFS uses your own stack\nstack = [start]\nwhile stack:\n    node = stack.pop()\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Space is the path\n\nDFS stores the active path, either in recursion calls or in an explicit stack you manage yourself.\n\n- DFS stores the active path\n- either in recursion calls or in an explicit stack you manage yourself.",
+            "iconName": "Layers",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2092,
+        "durationInFrames": 136,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Where DFS shows up\n\nDFS is a building block for many beginner graph problems.\n\n- Find whether a path exists\n- Detect cycles\n- Sort dependency chains",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2228,
+        "durationInFrames": 160,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"S\"] --> T[\"T\"]\n  S --> U[\"U\"]\n  T --> V[\"V\"]\n  U --> W[\"W\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 46,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 46,
+                "durationInFrames": 60,
+                "targets": [
+                  "T",
+                  "V"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Start at S\n\nIf S has neighbors T and U, DFS picks one based on the graph’s neighbor order. The other waits.\n\n- Visit S\n- Pick T first\n- Leave U for later",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2388,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Order matters\n\n“Same graph, different neighbor order, different DFS trace.”",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2517,
+        "durationInFrames": 98,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Time vs stack\n\nDFS is usually cheap on time, but a very deep graph can make the stack large.",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2615,
+        "durationInFrames": 100,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "DFS in one breath\n\nStart somewhere, go deep, mark what you visit, and backtrack when a branch is done.\n\n- Go deep first\n- Track visited nodes\n- Backtrack at dead ends\n- Cost: **O(V + E)**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 122,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/0.mp3"
+      },
+      {
+        "fromFrame": 122,
+        "durationInFrames": 203,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/1.mp3"
+      },
+      {
+        "fromFrame": 325,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/2.mp3"
+      },
+      {
+        "fromFrame": 430,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/3.mp3"
+      },
+      {
+        "fromFrame": 535,
+        "durationInFrames": 93,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/4.mp3"
+      },
+      {
+        "fromFrame": 628,
+        "durationInFrames": 168,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/5.mp3"
+      },
+      {
+        "fromFrame": 796,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/6.mp3"
+      },
+      {
+        "fromFrame": 901,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/7.mp3"
+      },
+      {
+        "fromFrame": 1035,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/8.mp3"
+      },
+      {
+        "fromFrame": 1164,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/9.mp3"
+      },
+      {
+        "fromFrame": 1269,
+        "durationInFrames": 241,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/10.mp3"
+      },
+      {
+        "fromFrame": 1510,
+        "durationInFrames": 168,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/11.mp3"
+      },
+      {
+        "fromFrame": 1678,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/12.mp3"
+      },
+      {
+        "fromFrame": 1819,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/13.mp3"
+      },
+      {
+        "fromFrame": 1953,
+        "durationInFrames": 139,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/14.mp3"
+      },
+      {
+        "fromFrame": 2092,
+        "durationInFrames": 136,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/15.mp3"
+      },
+      {
+        "fromFrame": 2228,
+        "durationInFrames": 160,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/16.mp3"
+      },
+      {
+        "fromFrame": 2388,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/17.mp3"
+      },
+      {
+        "fromFrame": 2517,
+        "durationInFrames": 98,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/18.mp3"
+      },
+      {
+        "fromFrame": 2615,
+        "durationInFrames": 100,
+        "staticPath": "audio-jobs/cmpe0tm3d000eptoqagk3oi2e/19.mp3"
+      }
+    ]
+  }
+}

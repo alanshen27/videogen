@@ -12,9 +12,10 @@ strings to match.
 
 ## 1. What we're making
 
-YouTube-style explainer videos: 60–180s, voice-narrated, dense with motion.
-Each video is composed scene-by-scene from a small set of templates and
-rendered by Remotion (React). The visual language is **warm-minimal**:
+YouTube-style explainer videos: 60–180s, voice-narrated, **fast-cut** pacing
+(many short scenes, not long static slides). Each video is composed
+scene-by-scene from a small set of templates and rendered by Remotion
+(React). The visual language is **warm-minimal**:
 a charcoal sheet with a single coral/terracotta accent and a paper-white
 block as the brand mark. Influences are diffs.com / Linear / Vercel / Geist
 for the type and density, but the palette is warmer and the accent is
@@ -76,12 +77,30 @@ The renderer (`VideoFromSpec.tsx`) places each scene into one of four
 layouts. You influence which one via the **`template`** field on the
 branded scene spec.
 
+### Pacing — scene switches (read this first)
+
+Videos should **cut often**. Viewers should feel rhythm, not a slide deck.
+
+| Scene type | Target length | Rule |
+| ---------- | ------------- | ---- |
+| List, image, stat, quote, code-only | **2.5–5 s** | One idea, then cut. ~8–18 spoken words. |
+| Diagram-hop walkthrough | **5–12 s** | **One** scene; multiple `focusBeats` with `target: "diagram"` and shifting `mermaidTargets`. Motion = the cut. |
+| Everything else | **2.5–5 s** | If narration needs >5s on a static layout, **split into two scenes**. |
+
+**Scene count vs duration** (planning): aim for `round(durationSeconds / 4.5)`
+scenes, minimum 12 for a 60s video. A 90s video should land around **18–22
+scenes**, not 8.
+
+**Do not** reuse the same static screen for multiple spoken beats unless
+you are diagram-hopping inside that scene.
+
 ### Layout rules
 
 - **Outer margins are large by design** (~9% of canvas). Don't try to fight
-  them by stuffing more content per scene — fewer ideas, more breathing room.
+  them by stuffing more content per scene — **split into another scene**
+  instead of adding bullets.
 - **One clear idea per scene.** A scene answers one question, shows one
-  flow, or makes one comparison.
+  flow, or makes one comparison — then **cut**.
 - **Single-element scenes are always centred** in the canvas. Don't worry
   about positioning.
 - **Two-element scenes** (text + visual) become a split layout: text island
@@ -104,9 +123,12 @@ branded scene spec.
 | `stat_callout`              | Single huge number / word. Use sparingly for impact.         |
 | `quote`                     | Short pull-quote, optionally attributed.                     |
 
-**Vary the template.** Three diagram scenes in a row is boring. A typical
-8-scene video might read: `list → image_hero → left_diagram_right_text →
-right_diagram_left_text → stat_callout → image → quote → list`.
+**Vary the template every scene** — never the same template twice in a row.
+Three diagram *templates* in a row is boring unless the middle one is a
+diagram-hop (same graph, new `mermaidTargets`). A typical **90s / ~20-scene**
+arc might read: `stat_callout → list → image_hero → left_diagram_right_text
+(diagram-hop 8s) → image → list → right_diagram_left_text → stat_callout →
+quote → image_left → list → …` — many quick beats, one longer hop scene.
 
 ---
 
@@ -417,10 +439,15 @@ even when unused. Use the empty defaults shown.
 
 ### Body length budget
 
-- `headline`: ≤ 8 words.
-- `body`: ≤ 220 chars when paired with a visual; ≤ 360 chars when
-  text-only.
-- `listItems`: 2–5 items, each ≤ 60 chars. More than 5 gets cramped.
+- `headline`: ≤ 8 words (≤ 6 when a diagram/image/code pane is present).
+- `body`: ≤ 80 chars when paired with a visual; ≤ 220 chars for
+  text-only (`list`, `stat_callout`, `quote`); never repeat what bullets
+  already say.
+- `listItems`: **only** for `template: "list"` — 2–4 items, each ≤ 48
+  chars. For split templates (`*_diagram_*`, `image_left`, `code_focus`),
+  default to `[]` unless two ultra-short labels genuinely help. The renderer
+  does **not** stack `headline` + `body` + bullets: bullets replace the body
+  paragraph when present.
 - `codeSnippet`: ≤ 18 lines, ≤ 80 chars wide. Shiki gives us real syntax
   highlighting; specify the language with a leading fence
   (`` ```typescript `` … `` ``` ``) when the snippet isn't TypeScript so the
@@ -503,6 +530,38 @@ Rules:
 - Always cover the full scene. The last beat holds to the end of the scene.
 - Use `mermaidTargets: []` on non-diagram beats; the renderer ignores them.
 
+### List reveals — bullets in sync with voice
+
+ElevenLabs gives us **one MP3 per scene** (total duration), not word-level
+timestamps. List items still sync to narration via scene-relative `focusBeats`:
+
+- `template: "list"` must include **2–4 `listItems`** — never headline-only.
+- Show the headline first (`target: "title"` beat ~0–1s), then reveal each
+  bullet when the VO mentions it (`target: "list"`).
+- One `focusBeats` row per list item. Put the 0-based item index in
+  `mermaidTargets` as a string, e.g. `["0"]`, `["1"]`, `["2"]`.
+- `startSecond` / `endSecond` are scene-relative and should match when that
+  bullet is spoken in `narration`. After voice synthesis, the renderer rescales
+  beats to the measured MP3 length (same as diagram hops).
+
+```jsonc
+{
+  "template": "list",
+  "headline": "Three checks before deploy",
+  "body": "",
+  "listItems": ["Migrations applied", "Feature flags off", "Rollback tested"],
+  "focusBeats": [
+    { "startSecond": 0,   "endSecond": 1.0, "target": "title", "mode": "highlight", "caption": "", "mermaidTargets": [] },
+    { "startSecond": 1.0, "endSecond": 2.2, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["0"] },
+    { "startSecond": 2.2, "endSecond": 3.4, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["1"] },
+    { "startSecond": 3.4, "endSecond": 4.8, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["2"] }
+  ]
+}
+```
+
+If list beats are omitted, the builder aligns reveals to keywords in
+`narration` — less accurate than explicit beats.
+
 ---
 
 ## 9. Generating ideas — the "fireship rhythm" without the fireship look
@@ -522,9 +581,12 @@ Patterns to favour:
 
 - **Compare-and-contrast** beats: a list of "old way vs new way", a split
   with two images side-by-side.
-- **Walk-through**: reuse one diagram for 2–3 consecutive scenes with
-  `mermaidTargets` shifting emphasis — the narration narrates *what's
-  happening here* without ever saying "as you can see".
+- **Diagram-hop walk-through**: **one scene**, one `diagramMermaid`, many
+  `focusBeats` rows stepping `mermaidTargets` node-by-node (5–12s total).
+  Do **not** stretch list/image/stat scenes to mimic this — only the
+  animated graph earns a long beat.
+- **Split beats**: if you have three facts to land, use three **short**
+  scenes (different templates) rather than one list with nine bullets.
 - **One bold number**: any time the topic has a stat (10x, 95th
   percentile, $0.0002 per call), give it a `stat_callout` of its own.
 
@@ -543,6 +605,9 @@ Patterns to avoid:
 
 - [ ] Every scene has all 7 fields filled (use `""` / `[]` where unused).
 - [ ] No two consecutive scenes share the same `template`.
+- [ ] Non-diagram scenes are ≤5s; diagram-hop scenes have ≥3 `focusBeats`
+      with `target: "diagram"` and cover 5–12s.
+- [ ] Scene count matches fast-cut pacing (~`duration / 4.5` scenes).
 - [ ] `imageSearchQuery` is a tight noun phrase. No "stock photo" anywhere.
 - [ ] `diagramMermaid` is empty OR within the allowed subset (≤8 nodes,
       `flowchart LR|TB`, basic shapes, no subgraphs).
@@ -554,5 +619,5 @@ Patterns to avoid:
       bother proposing exotic ones.
 
 If you're unsure whether to use a diagram or an image: **pick the image**.
-If you're unsure whether to use an image or a list: **pick the list with a
-short headline**. The renderer makes both look great.
+If you're unsure whether to use an image or a list: **pick the image with a
+short headline** (≤6 words, empty body). The renderer makes both look great.

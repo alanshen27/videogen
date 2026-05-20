@@ -1,0 +1,730 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 3109,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Shortest path\n\n**BFS** finds the fewest-edge route when every edge has the same cost.",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 103,
+        "durationInFrames": 110,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Start with a queue\n\nThe queue remembers what to explore next.\n\n- Pick a source node\n- Put it in the queue\n- Visit neighbors in waves",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 213,
+        "durationInFrames": 177,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  Q[\"Queue front\"] --> N[\"Current node\"]\n  N --> A[\"Neighbor A\"]\n  N --> B[\"Neighbor B\"]\n  A --> T[\"Queue back\"]\n  B --> T",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-3-1779279566475-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 58,
+                "targets": [
+                  "Q"
+                ]
+              },
+              {
+                "fromFrame": 58,
+                "durationInFrames": 62,
+                "targets": [
+                  "N"
+                ]
+              },
+              {
+                "fromFrame": 119,
+                "durationInFrames": 58,
+                "targets": [
+                  "A",
+                  "B",
+                  "T"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "The frontier\n\nThe front of the queue is the next node to expand. Unseen neighbors join the back.\n\n- Pop from the front\n- Scan its neighbors\n- Enqueue unseen nodes",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 390,
+        "durationInFrames": 146,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "First wave\n\nStart at S. Its direct neighbors, A and B, are the first wave.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 536,
+        "durationInFrames": 144,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Levels appear\n\nBFS assigns distance by layers: S is level 0. A and B are level 1.\n\n- Level 0: S\n- Level 1: A, B\n- Distance equals edge count",
+            "iconName": "Layers",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  S[\"S level 0\"] --> A[\"A level 1\"]\n  S --> B[\"B level 1\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-5-1779279569534-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 72,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 72,
+                "durationInFrames": 72,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 680,
+        "durationInFrames": 151,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Second wave\n\nAfter A and B, BFS reaches the nodes two edges away.\n\n- A discovers C\n- B discovers D\n- Both land at level 2",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 831,
+        "durationInFrames": 165,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nqueue = [S]\nvisited = {S}\n\nwhile queue:\n    node = queue.pop_front()\n\n    for next in node.neighbors:\n        if next not in visited:\n            visited.add(next)\n            queue.push_back(next)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Mark before enqueue\n\nMark a node as visited the moment it joins the queue. That stops duplicates.\n\n- Mark a node as visited the moment it joins the queue\n- That stops duplicates",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 996,
+        "durationInFrames": 206,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"S\"] --> A[\"A\"]\n  S --> B[\"B\"]\n  A --> C[\"C\"]\n  B --> D[\"D\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-8-1779279583308-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 67,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 67,
+                "durationInFrames": 72,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 139,
+                "durationInFrames": 67,
+                "targets": [
+                  "C",
+                  "D"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Parents build paths\n\nWhen BFS discovers a node, store where it came from. That parent chain reconstructs the route.\n\n- S discovers A and B\n- A discovers C\n- B discovers D",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1202,
+        "durationInFrames": 180,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Equal edge cost\n\nShortest-path proof depends on **same cost** per edge.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1382,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "reference-images/scene-10-1779279587998-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Where it shows up\n\nBFS is a natural fit when the world is made of equal steps.\n\n- Grid maps\n- Maze puzzles\n- Simple crawlers",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 170,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1508,
+        "durationInFrames": 180,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Use it when\n\nThe question is about layers, distance, or the nearest reachable thing.\n\n- **Shortest routes** by edge count\n- All nodes one step away\n- Nearest target in a grid",
+            "iconName": "Layers",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1688,
+        "durationInFrames": 144,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Wave by wave\n\nOne run from S reaches every node in increasing distance order.\n\n- Start at S\n- Visit A and B\n- Then C and D\n- Finish at E",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"S\"] --> A[\"A\"]\n  S --> B[\"B\"]\n  A --> C[\"C\"]\n  B --> D[\"D\"]\n  C --> E[\"E\"]\n  D --> E",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-12-1779279591013-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 29,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 29,
+                "durationInFrames": 29,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 58,
+                "durationInFrames": 33,
+                "targets": [
+                  "C",
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 91,
+                "durationInFrames": 29,
+                "targets": [
+                  "E"
+                ]
+              },
+              {
+                "fromFrame": 119,
+                "durationInFrames": 25,
+                "targets": [
+                  "S",
+                  "A",
+                  "C",
+                  "E"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1832,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "One level at a time\n\nThe queue holds the current wave, then the next wave.",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1961,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\ndistance[S] = 0\nparent[S] = None\n\nfor next in node.neighbors:\n    if next not in visited:\n        distance[next] = distance[node] + 1\n        parent[next] = node\n        queue.push_back(next)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Distance counter\n\nEach neighbor gets the current distance plus one.\n\n- Each neighbor gets the current distance plus one.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2087,
+        "durationInFrames": 177,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The catch\n\nIf edges have different costs, use Dijkstra instead.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2264,
+        "durationInFrames": 148,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"Start\"] --> C1[\"Cell\"]\n  C1 --> C2[\"Cell\"]\n  C2 --> C3[\"Cell\"]\n  C3 --> G[\"Goal\"]\n  C1 --> X[\"Dead end\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 44,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 44,
+                "durationInFrames": 50,
+                "targets": [
+                  "C1",
+                  "C2",
+                  "C3"
+                ]
+              },
+              {
+                "fromFrame": 95,
+                "durationInFrames": 53,
+                "targets": [
+                  "G"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Grid shortest path\n\nOn a grid, every move up, down, left, or right costs one step.\n\n- Cells are nodes\n- Moves are edges\n- First arrival is shortest",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2412,
+        "durationInFrames": 252,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "BFS versus DFS\n\nThey both explore graphs. Their order is completely different.\n\n- **BFS** spreads by depth\n- DFS dives until it must backtrack\n- BFS wins for unweighted shortest paths",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2664,
+        "durationInFrames": 132,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Tiny maze\n\nIn a 3 by 3 maze, BFS checks nearby cells before it tries longer routes.\n\n- Start in the corner\n- Expand legal moves\n- Stop when goal appears",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"Start\"] --> P1[\"1 step\"]\n  P1 --> P2[\"2 steps\"]\n  P2 --> P3[\"3 steps\"]\n  P3 --> G[\"Goal\"]\n  P1 --> W[\"Blocked\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 37,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 37,
+                "durationInFrames": 45,
+                "targets": [
+                  "P1",
+                  "P2"
+                ]
+              },
+              {
+                "fromFrame": 82,
+                "durationInFrames": 50,
+                "targets": [
+                  "P3",
+                  "G"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 2796,
+        "durationInFrames": 136,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Practical memory\n\nGames, basic robot maps, and routing logic often start with the same queue idea.",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2932,
+        "durationInFrames": 177,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "BFS in one pass\n\nThe whole algorithm is just a disciplined queue.\n\n- Visit nodes **level by level**\n- Mark each node once\n- Shortest route needs equal edge costs",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/0.mp3"
+      },
+      {
+        "fromFrame": 103,
+        "durationInFrames": 110,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/1.mp3"
+      },
+      {
+        "fromFrame": 213,
+        "durationInFrames": 177,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/2.mp3"
+      },
+      {
+        "fromFrame": 390,
+        "durationInFrames": 146,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/3.mp3"
+      },
+      {
+        "fromFrame": 536,
+        "durationInFrames": 144,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/4.mp3"
+      },
+      {
+        "fromFrame": 680,
+        "durationInFrames": 151,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/5.mp3"
+      },
+      {
+        "fromFrame": 831,
+        "durationInFrames": 165,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/6.mp3"
+      },
+      {
+        "fromFrame": 996,
+        "durationInFrames": 206,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/7.mp3"
+      },
+      {
+        "fromFrame": 1202,
+        "durationInFrames": 180,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/8.mp3"
+      },
+      {
+        "fromFrame": 1382,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/9.mp3"
+      },
+      {
+        "fromFrame": 1508,
+        "durationInFrames": 180,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/10.mp3"
+      },
+      {
+        "fromFrame": 1688,
+        "durationInFrames": 144,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/11.mp3"
+      },
+      {
+        "fromFrame": 1832,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/12.mp3"
+      },
+      {
+        "fromFrame": 1961,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/13.mp3"
+      },
+      {
+        "fromFrame": 2087,
+        "durationInFrames": 177,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/14.mp3"
+      },
+      {
+        "fromFrame": 2264,
+        "durationInFrames": 148,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/15.mp3"
+      },
+      {
+        "fromFrame": 2412,
+        "durationInFrames": 252,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/16.mp3"
+      },
+      {
+        "fromFrame": 2664,
+        "durationInFrames": 132,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/17.mp3"
+      },
+      {
+        "fromFrame": 2796,
+        "durationInFrames": 136,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/18.mp3"
+      },
+      {
+        "fromFrame": 2932,
+        "durationInFrames": 177,
+        "staticPath": "audio-jobs/cmpe0tai6000cptoqi7nyy7mq/19.mp3"
+      }
+    ]
+  }
+}

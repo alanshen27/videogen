@@ -115,6 +115,156 @@ function buildDiagramBeats(
   return beats;
 }
 
+export type ListRevealBeat = { fromFrame: number; itemIndex: number };
+
+function parseListItemIndex(targets: string[], fallback: number): number {
+  const raw = targets[0]?.trim();
+  if (raw && /^\d+$/.test(raw)) return Math.max(0, Number.parseInt(raw, 10));
+  return fallback;
+}
+
+/**
+ * Align bullet reveals to voice using focus beats (`target: "list"`) or, when
+ * those are missing, phrase positions in the scene narration (ElevenLabs gives
+ * per-scene MP3 length, not word timestamps — this is the practical sync path).
+ */
+function deriveListBeatsFromNarration(
+  narration: string,
+  listItems: string[],
+  sceneDurationFrames: number,
+  headlineHoldFrames: number
+): ListRevealBeat[] {
+  if (listItems.length === 0) return [];
+
+  const avail = Math.max(24, sceneDurationFrames - headlineHoldFrames);
+  const lower = narration.toLowerCase();
+  let cursor = 0;
+  const ratios: number[] = [];
+
+  for (let i = 0; i < listItems.length; i++) {
+    const keywords = listItems[i]!
+      .toLowerCase()
+      .replace(/[*_`]/g, "")
+      .split(/\s+/)
+      .filter((w) => w.length > 3)
+      .slice(0, 4);
+    let bestPos = -1;
+    for (const w of keywords) {
+      const pos = lower.indexOf(w, cursor);
+      if (pos >= 0 && (bestPos < 0 || pos < bestPos)) bestPos = pos;
+    }
+    if (bestPos >= 0) {
+      ratios.push(bestPos / Math.max(1, narration.length));
+      cursor = bestPos + 1;
+    } else {
+      ratios.push((i + 1) / (listItems.length + 1));
+    }
+  }
+
+  return ratios.map((ratio, itemIndex) => ({
+    itemIndex,
+    fromFrame: Math.min(
+      sceneDurationFrames - 9,
+      headlineHoldFrames + Math.round(ratio * avail * 0.92)
+    ),
+  }));
+}
+
+function titleHoldFrames(
+  focusBeats: SceneFocusBeat[],
+  sceneStartSecond: number,
+  sceneDurationFrames: number
+): number {
+  const titleBeats = focusBeats.filter((fb) => fb.target === "title");
+  if (titleBeats.length === 0) {
+    return Math.min(15, Math.round(sceneDurationFrames * 0.1));
+  }
+
+  const sceneDurationSeconds = sceneDurationFrames / FPS;
+  const maxEnd = Math.max(...titleBeats.map((b) => b.endSecond));
+  const sceneRelative = maxEnd <= sceneDurationSeconds * 1.05;
+  const offset = sceneRelative ? 0 : sceneStartSecond;
+  const endSec = Math.max(
+    0,
+    ...titleBeats.map((b) => Math.max(0, b.endSecond - offset))
+  );
+  return Math.min(
+    sceneDurationFrames - 12,
+    Math.max(9, Math.round(endSec * FPS))
+  );
+}
+
+function buildListBeats(
+  focusBeats: SceneFocusBeat[],
+  sceneStartSecond: number,
+  sceneDurationFrames: number,
+  listItems: string[],
+  narration: string
+): ListRevealBeat[] {
+  if (listItems.length === 0) return [];
+
+  const hold = titleHoldFrames(
+    focusBeats,
+    sceneStartSecond,
+    sceneDurationFrames
+  );
+  const listFocus = focusBeats
+    .filter((fb) => fb.target === "list")
+    .sort((a, b) => a.startSecond - b.startSecond);
+
+  if (listFocus.length === 0) {
+    return deriveListBeatsFromNarration(
+      narration,
+      listItems,
+      sceneDurationFrames,
+      hold
+    );
+  }
+
+  const sceneDurationSeconds = sceneDurationFrames / FPS;
+  const maxEnd = Math.max(...listFocus.map((b) => b.endSecond));
+  const sceneRelative = maxEnd <= sceneDurationSeconds * 1.05;
+  const offset = sceneRelative ? 0 : sceneStartSecond;
+
+  const fromFocus: ListRevealBeat[] = listFocus.map((fb, orderIdx) => {
+    const startRel = Math.max(0, fb.startSecond - offset);
+    return {
+      fromFrame: Math.min(
+        sceneDurationFrames - 9,
+        Math.max(hold, Math.round(startRel * FPS))
+      ),
+      itemIndex: parseListItemIndex(fb.mermaidTargets, orderIdx),
+    };
+  });
+
+  const byIndex = new Map<number, ListRevealBeat>();
+  for (const beat of fromFocus) {
+    if (!byIndex.has(beat.itemIndex)) byIndex.set(beat.itemIndex, beat);
+  }
+
+  const derived = deriveListBeatsFromNarration(
+    narration,
+    listItems,
+    sceneDurationFrames,
+    hold
+  );
+
+  return listItems.map((_, itemIndex) => {
+    const authored = byIndex.get(itemIndex);
+    if (authored) return authored;
+    const fallback = derived.find((b) => b.itemIndex === itemIndex);
+    return (
+      fallback ?? {
+        itemIndex,
+        fromFrame: Math.min(
+          sceneDurationFrames - 9,
+          hold + Math.round((itemIndex / listItems.length) * (sceneDurationFrames - hold))
+        ),
+      }
+    );
+  });
+}
+
 /**
  * Whenever the LLM emitted a parseable diagram, it wins over a downloaded
  * image. The labelled structure of a flowchart carries more pedagogical
@@ -129,27 +279,23 @@ function diagramWinsForScene(
   return mermaidParseable;
 }
 
+/** On-screen copy: headline + body OR headline + bullets — never all three. */
 function listContent(headline: string, body: string, listItems: string[] = []): string {
-  if (listItems.length === 0) return `${headline}\n\n${body}`;
-  const bullets = listItems.slice(0, 5).map((item) => `- ${item}`).join("\n");
-  return `${headline}\n\n${body}\n\n${bullets}`;
-}
+  const trimmedHeadline = headline.trim();
+  const trimmedBody = body.trim();
+  const bullets = listItems
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0)
+    .slice(0, 4)
+    .map((item) => `- ${item}`)
+    .join("\n");
 
-function deriveListItems(body: string): string[] {
-  const parts = body
-    .split(/\.|;|\n/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-  if (parts.length >= 2) return parts.slice(0, 4);
-
-  const commaParts = body
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-  if (commaParts.length >= 2) return commaParts.slice(0, 4);
-
-  if (body.trim().length > 0) return [body.trim()];
-  return [];
+  if (bullets.length > 0) {
+    return trimmedHeadline ? `${trimmedHeadline}\n\n${bullets}` : bullets;
+  }
+  if (!trimmedBody) return trimmedHeadline;
+  if (!trimmedHeadline) return trimmedBody;
+  return `${trimmedHeadline}\n\n${trimmedBody}`;
 }
 
 function pickIcon(sceneText: string): RemotionLucideIconName {
@@ -222,6 +368,20 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
       sceneStartSecond,
       durationInFrames
     );
+
+    const listItemsForScene = (scene.listItems ?? [])
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+    const listBeats =
+      listItemsForScene.length > 0
+        ? buildListBeats(
+            scene.focusBeats,
+            sceneStartSecond,
+            durationInFrames,
+            listItemsForScene,
+            scriptScene?.narration?.trim() ?? ""
+          )
+        : [];
 
     const leftTextX = portrait ? 64 : 116;
     const rightTextX = portrait ? 64 : 1044;
@@ -321,13 +481,7 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
 
     const textElement: RemotionElement = {
       type: "text",
-      content: listContent(
-        scene.headline,
-        scene.body,
-        scene.listItems && scene.listItems.length > 0
-          ? scene.listItems
-          : deriveListItems(scene.body)
-      ),
+      content: listContent(scene.headline, scene.body, scene.listItems ?? []),
       /* Render the icon INLINE next to the headline (handled by SpecText) so
        * the layout stays a clean two-column without floating badges. */
       iconName: sceneIcon,
@@ -337,6 +491,7 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
       y: topY,
       animation:
         primaryFocus === "body" || primaryFocus === "list" ? "highlight" : "fade",
+      listBeats: listBeats.length > 0 ? listBeats : undefined,
     };
 
     const sceneOut: RemotionSpecGeneration["scenes"][number] = {

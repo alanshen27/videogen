@@ -1,0 +1,743 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 2347,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 83,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Range sum in **O(1)**\n\nPrefix sums turn repeated range sums into two array reads after one setup pass.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 83,
+        "durationInFrames": 91,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A0[\"3\"] --- A1[\"1\"] --- A2[\"4\"] --- A3[\"1\"] --- A4[\"5\"]\n  A1 --> R[\"range 1..3\"]\n  A2 --> R\n  A3 --> R\n  R --> S[\"sum = 6\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-2-1779279201848-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 27,
+                "targets": [
+                  "A0",
+                  "A1",
+                  "A2",
+                  "A3",
+                  "A4"
+                ]
+              },
+              {
+                "fromFrame": 27,
+                "durationInFrames": 36,
+                "targets": [
+                  "A1",
+                  "A2",
+                  "A3"
+                ]
+              },
+              {
+                "fromFrame": 64,
+                "durationInFrames": 27,
+                "targets": [
+                  "S"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Start with a slice\n\nThe slow way adds every number inside the requested range.\n\n- Array: [3, 1, 4, 1, 5]\n- Question: sum indexes **1..3**\n- Slow path: 1 + 4 + 1",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 174,
+        "durationInFrames": 88,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Running total\n\nA prefix sum stores the total so far at each position.\n\n- Read one number\n- Add it to the running total\n- Store that total as the prefix",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 262,
+        "durationInFrames": 88,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "What prefix[k] means\n\nprefix[k] is the sum from the first item through position k.\n\n- prefix[0] = a[0]\n- prefix[1] = a[0] + a[1]\n- prefix[k] = total through **k**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A0[\"a[0]\"] --> A1[\"a[1]\"] --> A2[\"...\"] --> AK[\"a[k]\"]\n  A0 --> P[\"prefix[k]\"]\n  A1 --> P\n  AK --> P",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-4-1779279206216-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 33,
+                "targets": [
+                  "A0",
+                  "A1",
+                  "A2",
+                  "AK"
+                ]
+              },
+              {
+                "fromFrame": 33,
+                "durationInFrames": 55,
+                "targets": [
+                  "P"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 350,
+        "durationInFrames": 119,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nrange_sum(i, j) = prefix[j] - prefix[i - 1]\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Range formula\n\nTo get i..j, subtract the total before i from the total through j.\n\n- To get i\n- j, subtract the total before i from the total through j",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 469,
+        "durationInFrames": 88,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Tiny example\n\nFive numbers are enough to see the trick.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 557,
+        "durationInFrames": 124,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The input array\n\nUse one small row so the math stays visible.\n\n- index 0 → 3\n- index 1 → 1\n- index 2 → 4\n- index 3 → 1\n- index 4 → 5",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 681,
+        "durationInFrames": 206,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  A[\"array: 3  1  4  1  5\"] --> P[\"prefix: 3  4  8  9  14\"]\n  P --> T[\"stored running totals\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-8-1779279214595-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 62,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 62,
+                "durationInFrames": 82,
+                "targets": [
+                  "P"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Build the prefix row\n\nEach prefix value is the previous prefix plus the next array value.\n\n- 3 stays 3\n- 3 + 1 becomes 4\n- 4 + 4 becomes **8**\n- Keep going to 14",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 887,
+        "durationInFrames": 86,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "When **i = 0**\n\nThere is no left side to subtract. The answer is just prefix[j].",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 973,
+        "durationInFrames": 232,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Running total walk\n\nStart at zero, then add each value once. The final total is 14.\n\n- 0 + 3 = 3\n- 3 + 1 = 4\n- 4 + 4 = 8\n- 9 + 5 = **14**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  Z[\"0\"] --> N3[\"+3 = 3\"]\n  N3 --> N1[\"+1 = 4\"]\n  N1 --> N4[\"+4 = 8\"]\n  N4 --> N1B[\"+1 = 9\"]\n  N1B --> N5[\"+5 = 14\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-10-1779279226130-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 35,
+                "targets": [
+                  "Z"
+                ]
+              },
+              {
+                "fromFrame": 35,
+                "durationInFrames": 38,
+                "targets": [
+                  "N3"
+                ]
+              },
+              {
+                "fromFrame": 73,
+                "durationInFrames": 38,
+                "targets": [
+                  "N1"
+                ]
+              },
+              {
+                "fromFrame": 110,
+                "durationInFrames": 38,
+                "targets": [
+                  "N4"
+                ]
+              },
+              {
+                "fromFrame": 148,
+                "durationInFrames": 38,
+                "targets": [
+                  "N1B"
+                ]
+              },
+              {
+                "fromFrame": 186,
+                "durationInFrames": 46,
+                "targets": [
+                  "N5"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1205,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Preprocess once\n\nThe setup pass stores answers you will reuse later.\n\n- One pass over the array\n- Save each running total\n- Look up prefix[j] in **O(1)**",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1308,
+        "durationInFrames": 151,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  PI[\"prefix[i - 1]\"] --> SUB[\"subtract\"]\n  PJ[\"prefix[j]\"] --> SUB\n  SUB --> R[\"range sum\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-12-1779279237691-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 48,
+                "targets": [
+                  "PI",
+                  "PJ"
+                ]
+              },
+              {
+                "fromFrame": 48,
+                "durationInFrames": 54,
+                "targets": [
+                  "SUB"
+                ]
+              },
+              {
+                "fromFrame": 103,
+                "durationInFrames": 48,
+                "targets": [
+                  "R"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Two reads, one subtraction\n\nA range sum uses the prefix at the end minus the prefix before the start.\n\n- Read prefix[j]\n- Read prefix[i - 1]\n- Subtract to get **i..j**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1459,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The edge case\n\nWhen i is zero, prefix[i - 1] does not exist.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1588,
+        "durationInFrames": 117,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Add a leading zero\n\nPut zero at the front so every range has a left boundary.\n\n- prefix[0] = 0\n- array index i maps to prefix[i]\n- No special branch for **i = 0**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  Z[\"0\"] --> P1[\"3\"]\n  P1 --> P2[\"4\"]\n  P2 --> P3[\"8\"]\n  P3 --> P4[\"9\"]\n  P4 --> P5[\"14\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 39,
+                "targets": [
+                  "Z"
+                ]
+              },
+              {
+                "fromFrame": 39,
+                "durationInFrames": 44,
+                "targets": [
+                  "P1",
+                  "P2",
+                  "P3",
+                  "P4",
+                  "P5"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1705,
+        "durationInFrames": 107,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "No branch needed\n\nWith a leading zero: range i..j is prefix[j + 1] − prefix[i].",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1812,
+        "durationInFrames": 93,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nprefix = [0]\nfor x in a:\n    prefix.append(prefix[-1] + x)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Build it in two lines\n\nThe prefix array starts with zero, then appends the next running total.\n\n- The prefix array starts with zero\n- then appends the next running total.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1905,
+        "durationInFrames": 141,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Build **O(n)**, query **O(1)**\n\nYou pay once to scan n numbers. Each later range sum is constant time.",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2046,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"array\"] --> P[\"prefix table\"]\n  P --> Q1[\"sum 1..3\"]\n  P --> Q2[\"sum 0..4\"]\n  P --> Q3[\"sum 2..4\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 30,
+                "targets": [
+                  "A",
+                  "P"
+                ]
+              },
+              {
+                "fromFrame": 30,
+                "durationInFrames": 44,
+                "targets": [
+                  "Q1",
+                  "Q2",
+                  "Q3"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Many queries pay off\n\nPrefix sums matter when the same array gets asked many range questions.\n\n- Query 1: sum 1..3\n- Query 2: sum 0..4\n- Query 3: sum 2..4\n- Each uses **two prefix reads**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2151,
+        "durationInFrames": 100,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Core idea\n\nBuild once. Answer cheap.",
+            "iconName": "Lightbulb",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2251,
+        "durationInFrames": 96,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Test it yourself\n\nUse the tiny array and check the range sums by hand.\n\n- Array: [3, 1, 4, 1, 5]\n- Prefix: [0, 3, 4, 8, 9, 14]\n- sum 1..3 = prefix[4] - prefix[1]\n- Answer: **6**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 83,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/0.mp3"
+      },
+      {
+        "fromFrame": 83,
+        "durationInFrames": 91,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/1.mp3"
+      },
+      {
+        "fromFrame": 174,
+        "durationInFrames": 88,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/2.mp3"
+      },
+      {
+        "fromFrame": 262,
+        "durationInFrames": 88,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/3.mp3"
+      },
+      {
+        "fromFrame": 350,
+        "durationInFrames": 119,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/4.mp3"
+      },
+      {
+        "fromFrame": 469,
+        "durationInFrames": 88,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/5.mp3"
+      },
+      {
+        "fromFrame": 557,
+        "durationInFrames": 124,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/6.mp3"
+      },
+      {
+        "fromFrame": 681,
+        "durationInFrames": 206,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/7.mp3"
+      },
+      {
+        "fromFrame": 887,
+        "durationInFrames": 86,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/8.mp3"
+      },
+      {
+        "fromFrame": 973,
+        "durationInFrames": 232,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/9.mp3"
+      },
+      {
+        "fromFrame": 1205,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/10.mp3"
+      },
+      {
+        "fromFrame": 1308,
+        "durationInFrames": 151,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/11.mp3"
+      },
+      {
+        "fromFrame": 1459,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/12.mp3"
+      },
+      {
+        "fromFrame": 1588,
+        "durationInFrames": 117,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/13.mp3"
+      },
+      {
+        "fromFrame": 1705,
+        "durationInFrames": 107,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/14.mp3"
+      },
+      {
+        "fromFrame": 1812,
+        "durationInFrames": 93,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/15.mp3"
+      },
+      {
+        "fromFrame": 1905,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/16.mp3"
+      },
+      {
+        "fromFrame": 2046,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/17.mp3"
+      },
+      {
+        "fromFrame": 2151,
+        "durationInFrames": 100,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/18.mp3"
+      },
+      {
+        "fromFrame": 2251,
+        "durationInFrames": 96,
+        "staticPath": "audio-jobs/cmpe0sjay0006ptoq7osqdlgk/19.mp3"
+      }
+    ]
+  }
+}

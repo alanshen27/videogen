@@ -1,0 +1,706 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 3377,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 170,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Graphs connect things\n\nA graph is just **things** plus links. The things are vertices. The links are edges.",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 170,
+        "durationInFrames": 155,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"City A\"] --- B[\"City B\"]\n  B --- C[\"City C\"]\n  classDef active fill:#000,stroke:#000;\n  class A,B active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-2-1779279973395-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 45,
+                "targets": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 45,
+                "durationInFrames": 59,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Cities and roads\n\nA city is a vertex. A road between two cities is an edge.\n\n- Vertex: City B\n- Edge: road from A to B\n- A graph is a map of relationships",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 325,
+        "durationInFrames": 211,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Degree = 3\n\nDegree counts how many edges touch one vertex. Three roads meet here, so the degree is **3**.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 536,
+        "durationInFrames": 218,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Arrows change the count\n\nDirected graphs have arrows. In-degree counts arrows coming in. Out-degree counts arrows going out.\n\n- In-degree: arrows into a vertex\n- Out-degree: arrows leaving it\n- Direction matters",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  X[\"X\"] --> V[\"Vertex V\"]\n  Y[\"Y\"] --> V\n  V --> Z[\"Z\"]\n  classDef active fill:#000,stroke:#000;\n  class V active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-4-1779279984661-1.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 73,
+                "targets": [
+                  "X",
+                  "Y",
+                  "V"
+                ]
+              },
+              {
+                "fromFrame": 73,
+                "durationInFrames": 82,
+                "targets": [
+                  "V",
+                  "Z"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 754,
+        "durationInFrames": 256,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Two graph flavors\n\nUndirected graphs model mutual links. Directed graphs model one-way movement.\n\n- Undirected: roads between towns\n- Directed: flights with one-way routes\n- Same vertices, different edge rules",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1010,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Weights label edges\n\n“A weight is the price of taking an edge.”",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1144,
+        "durationInFrames": 189,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"A\"] -->|5| B[\"B\"]\n  B -->|3| C[\"C\"]\n  C -->|4| D[\"D\"]\n  classDef active fill:#000,stroke:#000;\n  class A,B,C,D active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-7-1779279992092-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 62,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 62,
+                "durationInFrames": 62,
+                "targets": [
+                  "B",
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 124,
+                "durationInFrames": 65,
+                "targets": [
+                  "C",
+                  "D"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "A weighted path\n\nNumbers on edges can mean distance, time, or cost. Here, A to D is a chain of three weighted edges.\n\n- A to B costs **5**\n- B to C costs 3\n- C to D costs 4",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1333,
+        "durationInFrames": 112,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Cost changes routes\n\nA weighted graph tells you which path costs more, and which path costs less.",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1445,
+        "durationInFrames": 139,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nA: B(5), D(8)\nB: A(5), D(2)\nD: A(8), B(2)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Reading a graph\n\nA tiny adjacency list says who connects to whom, and the number beside each neighbor is the edge weight.\n\n- A tiny adjacency list says who connects to whom\n- and the number beside each neighbor is the edge weight.",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1584,
+        "durationInFrames": 198,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"City A\"] -->|8| D[\"City D\"]\n  A -->|5| B[\"City B\"]\n  B -->|2| D\n  classDef active fill:#000,stroke:#000;\n  class A,B,D active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-10-1779279999052-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 50,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 50,
+                "durationInFrames": 50,
+                "targets": [
+                  "A",
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 99,
+                "durationInFrames": 50,
+                "targets": [
+                  "A",
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 149,
+                "durationInFrames": 50,
+                "targets": [
+                  "B",
+                  "D"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Direct or cheaper\n\nFrom City A to City D, direct costs 8. Going through City B costs 5 plus 2, so the total is **7**.\n\n- Direct route: 8\n- Via B: 5 + 2\n- Lower total wins",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1782,
+        "durationInFrames": 206,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Degree = 4\n\nIn a road map, degree is how many roads meet at a city. Four roads means degree **4**.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1988,
+        "durationInFrames": 184,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Where graphs show up\n\nGraphs are not just math objects. They are a compact way to describe connected systems.\n\n- Social networks: people and follows\n- Maps: cities and roads\n- Dependencies: tasks blocking tasks",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2172,
+        "durationInFrames": 165,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Lighter edges win\n\nWeights give shortest-path intuition without heavy math. Smaller totals usually mean quicker routes.\n\n- Route 1: 9\n- Route 2: **7**\n- Pick the lower sum",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"A\"] -->|9| D[\"D\"]\n  A -->|4| C[\"C\"]\n  C -->|3| D\n  classDef active fill:#000,stroke:#000;\n  class A,C,D active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 52,
+                "targets": [
+                  "A",
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 52,
+                "durationInFrames": 59,
+                "targets": [
+                  "A",
+                  "C",
+                  "D"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 2337,
+        "durationInFrames": 184,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "5 + 3 < 9\n\nQuick read: A to B is 5, B to C is 3, and A to C is 9.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2521,
+        "durationInFrames": 119,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nroute_a_to_c = 9\nroute_a_to_b_to_c = 5 + 3\n\nbest = min(route_a_to_c, route_a_to_b_to_c)\n# best = 8\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Smallest total wins\n\nThe route is not chosen by the number of edges. It is chosen by the lowest total weight.\n\n- The route is not chosen by the number of edges\n- It is chosen by the lowest total weight",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2640,
+        "durationInFrames": 144,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Shortest path idea\n\nShortest path means lowest sum along the edges. The “shortest” route may have more stops.\n\n- Add the edge weights\n- Compare full route totals\n- Choose the smallest sum",
+            "iconName": "Lightbulb",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2784,
+        "durationInFrames": 88,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"A\"] -->|10| D[\"D\"]\n  A -->|2| B[\"B\"]\n  B -->|4| D\n  A -->|5| C[\"C\"]\n  C -->|3| D\n  classDef active fill:#000,stroke:#000;\n  class A,B,D active;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 29,
+                "targets": [
+                  "A",
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 29,
+                "durationInFrames": 29,
+                "targets": [
+                  "A",
+                  "B",
+                  "D"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Try this graph\n\nA tiny weighted graph is enough practice. Start at A, add edge weights, and compare routes to D.\n\n- A to D direct: 10\n- A to B to D: **6**\n- A to C to D: 8",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2872,
+        "durationInFrames": 168,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "London Underground map",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Graphs in the wild\n\nA subway map is a graph you can read instantly: stations are vertices, tracks are edges, and travel time can be a weight.\n\n- Stations: vertices\n- Tracks: edges\n- Minutes: weights",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 170,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 3040,
+        "durationInFrames": 211,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The four words\n\nThese are the graph fundamentals to keep straight.\n\n- **Vertices** are the things\n- Edges are the links\n- Degree counts touching edges\n- Weights give edges a cost",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 3251,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Pause and trace\n\n“Pick two vertices. Add the edge weights. Find the lowest route.”",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 170,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/0.mp3"
+      },
+      {
+        "fromFrame": 170,
+        "durationInFrames": 155,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/1.mp3"
+      },
+      {
+        "fromFrame": 325,
+        "durationInFrames": 211,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/2.mp3"
+      },
+      {
+        "fromFrame": 536,
+        "durationInFrames": 218,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/3.mp3"
+      },
+      {
+        "fromFrame": 754,
+        "durationInFrames": 256,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/4.mp3"
+      },
+      {
+        "fromFrame": 1010,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/5.mp3"
+      },
+      {
+        "fromFrame": 1144,
+        "durationInFrames": 189,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/6.mp3"
+      },
+      {
+        "fromFrame": 1333,
+        "durationInFrames": 112,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/7.mp3"
+      },
+      {
+        "fromFrame": 1445,
+        "durationInFrames": 139,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/8.mp3"
+      },
+      {
+        "fromFrame": 1584,
+        "durationInFrames": 198,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/9.mp3"
+      },
+      {
+        "fromFrame": 1782,
+        "durationInFrames": 206,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/10.mp3"
+      },
+      {
+        "fromFrame": 1988,
+        "durationInFrames": 184,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/11.mp3"
+      },
+      {
+        "fromFrame": 2172,
+        "durationInFrames": 165,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/12.mp3"
+      },
+      {
+        "fromFrame": 2337,
+        "durationInFrames": 184,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/13.mp3"
+      },
+      {
+        "fromFrame": 2521,
+        "durationInFrames": 119,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/14.mp3"
+      },
+      {
+        "fromFrame": 2640,
+        "durationInFrames": 144,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/15.mp3"
+      },
+      {
+        "fromFrame": 2784,
+        "durationInFrames": 88,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/16.mp3"
+      },
+      {
+        "fromFrame": 2872,
+        "durationInFrames": 168,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/17.mp3"
+      },
+      {
+        "fromFrame": 3040,
+        "durationInFrames": 211,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/18.mp3"
+      },
+      {
+        "fromFrame": 3251,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0tzvb000gptoq1ylonft4/19.mp3"
+      }
+    ]
+  }
+}

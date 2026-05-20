@@ -61,6 +61,9 @@ import { SpecChart } from "./SpecChart";
 import { SpecCodeBlock } from "./SpecCodeBlock";
 import { SpecDiagram } from "./SpecDiagram";
 
+/** Animated wipe under `**bold**` phrases — matches segfault coral accent. */
+const highlightUnderlineGradient = `linear-gradient(90deg, ${specTokens.ink.accent} 0%, ${specTokens.ink.accentSoft} 80%, rgba(232, 167, 161, 0) 100%)`;
+
 type LucideCmp = React.ComponentType<{
   size?: number;
   strokeWidth?: number;
@@ -341,7 +344,7 @@ function parseTextBlocks(content: string): ParsedTextBlock[] {
  * - Each word renders with `display: inline-block` so the transform is on
  *   the word itself, not the inline run. Single space between words is
  *   re-inserted as a plain text node so wrapping behaves normally.
- * - `**bold**` segments inside the headline get an animated indigo
+ * - `**bold**` segments inside the headline get an animated coral
  *   underline-wipe drawn during the scene, NOT a synchronous fade. See
  *   `InlineHighlights` below.
  */
@@ -446,8 +449,7 @@ function KineticHeadline({
                     bottom: "-0.10em",
                     height: "0.10em",
                     width: `${wipe * 100}%`,
-                    background:
-                      "linear-gradient(90deg, #a5b4fc 0%, #c7d2fe 80%, rgba(199,210,254,0) 100%)",
+                    background: highlightUnderlineGradient,
                     borderRadius: 999,
                     transform: "translateZ(0)",
                   }}
@@ -463,7 +465,7 @@ function KineticHeadline({
 }
 
 /**
- * Renders text with `**bold**` segments highlighted by an animated indigo
+ * Renders text with `**bold**` segments highlighted by an animated coral
  * underline-wipe. The wipe starts at `delayFrames` and draws across the
  * highlighted span over ~14 frames. Used by KineticHeadline + the lead body
  * paragraph so the LLM can call out a phrase without us hard-coding it.
@@ -521,8 +523,7 @@ function InlineHighlights({
                 width: `${wipe * 100}%`,
                 /* Gradient terminates with a 16px taper so the leading edge
                  * looks like a marker stroke rather than a hard cut. */
-                background:
-                  "linear-gradient(90deg, #a5b4fc 0%, #c7d2fe 80%, rgba(199,210,254,0) 100%)",
+                background: highlightUnderlineGradient,
                 borderRadius: 999,
                 transform: "translateZ(0)",
               }}
@@ -561,12 +562,15 @@ function FireshipBullet(_props: { palette: FireshipPalette }) {
  */
 function CascadeListItem({
   index,
+  revealFromFrame,
   startDelay = 4,
   perItem = 5,
   gap = 0,
   children,
 }: {
   index: number;
+  /** When set (from voice-synced `listBeats`), item stays hidden until this frame. */
+  revealFromFrame?: number;
   /** Frames to wait before the first item starts revealing. */
   startDelay?: number;
   /** Frames between item reveals. */
@@ -576,7 +580,14 @@ function CascadeListItem({
   children: React.ReactNode;
 }) {
   const frame = useCurrentFrame();
-  const start = startDelay + index * perItem;
+  const start =
+    revealFromFrame !== undefined
+      ? revealFromFrame
+      : startDelay + index * perItem;
+
+  if (revealFromFrame !== undefined && frame < start) {
+    return null;
+  }
   const opacity = interpolate(frame, [start, start + 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -602,7 +613,24 @@ function CascadeListItem({
   );
 }
 
+function listRevealFrameForIndex(
+  listBeats: { fromFrame: number; itemIndex: number }[] | undefined,
+  itemIndex: number
+): number | undefined {
+  if (!listBeats || listBeats.length === 0) return undefined;
+  const exact = listBeats.find((b) => b.itemIndex === itemIndex);
+  if (exact) return exact.fromFrame;
+  const byOrder = listBeats[itemIndex];
+  return byOrder?.fromFrame;
+}
+
 export function SpecText({ el }: { el: SceneEl }) {
+  const listBeats = (
+    el as SceneEl & {
+      listBeats?: { fromFrame: number; itemIndex: number }[];
+    }
+  ).listBeats;
+
   /* Specialised renderers — stat callout + quote — catch high-signal short
    * content before the generic markdown/list parser runs. */
   const stat = parseStatCallout(el.content);
@@ -759,14 +787,21 @@ export function SpecText({ el }: { el: SceneEl }) {
               }}
             >
               {block.items.map((item, j) => (
-                <CascadeListItem key={j} index={j} startDelay={4}>
+                <CascadeListItem
+                  key={j}
+                  index={j}
+                  revealFromFrame={listRevealFrameForIndex(listBeats, j)}
+                  startDelay={listBeats ? 0 : 4}
+                >
                   <FireshipBullet
                     palette={fireshipPaletteFor(`${item}:${j}`)}
                   />
                   <span style={{ flex: 1, minWidth: 0 }}>
                     <InlineHighlights
                       text={item}
-                      delayFrames={8 + j * 5}
+                      delayFrames={
+                        listRevealFrameForIndex(listBeats, j) ?? 8 + j * 5
+                      }
                     />
                   </span>
                 </CascadeListItem>
@@ -795,7 +830,13 @@ export function SpecText({ el }: { el: SceneEl }) {
           >
             {block.items.map((item, j) => {
               return (
-                <CascadeListItem key={j} index={j} startDelay={4} gap={16}>
+                <CascadeListItem
+                  key={j}
+                  index={j}
+                  revealFromFrame={listRevealFrameForIndex(listBeats, j)}
+                  startDelay={listBeats ? 0 : 4}
+                  gap={16}
+                >
                   <span
                     aria-hidden
                     style={{
@@ -816,7 +857,9 @@ export function SpecText({ el }: { el: SceneEl }) {
                   <span style={{ flex: 1, minWidth: 0 }}>
                     <InlineHighlights
                       text={item}
-                      delayFrames={8 + j * 5}
+                      delayFrames={
+                        listRevealFrameForIndex(listBeats, j) ?? 8 + j * 5
+                      }
                     />
                   </span>
                 </CascadeListItem>

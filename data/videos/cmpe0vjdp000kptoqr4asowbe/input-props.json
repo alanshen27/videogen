@@ -1,0 +1,770 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 2578,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 117,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "One pass\n\nTwo pointers turn a sorted array scan into one clean sweep.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 117,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  L[\"L: start\"] --> W[\"current window\"]\n  W --> R[\"R: end\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-2-1779280875108-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 41,
+                "durationInFrames": 47,
+                "targets": [
+                  "L"
+                ]
+              },
+              {
+                "fromFrame": 88,
+                "durationInFrames": 41,
+                "targets": [
+                  "R"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Start at both ends\n\nLeft begins at index zero. Right begins at the last index. Together, they define the current search window.\n\n- Left checks the smallest value\n- Right checks the largest value\n- The window sits between them",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 246,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The rule is tiny\n\nEach step compares one sum with the target, then moves exactly one pointer.\n\n- Sum too small: move **left**\n- Sum too large: move right\n- Sum matches: return the pair",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 372,
+        "durationInFrames": 119,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Keep an invariant\n\nAn invariant is a promise that stays true after every move. Here, everything outside the window is already ruled out.\n\n- Discarded values stay discarded\n- Only the middle window matters\n- No old pair gets checked twice",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  D[\"done\"] --> L[\"left\"]\n  L --> W[\"possible pairs\"]\n  W --> R[\"right\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779280881070-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 32,
+                "durationInFrames": 43,
+                "targets": [
+                  "D"
+                ]
+              },
+              {
+                "fromFrame": 76,
+                "durationInFrames": 43,
+                "targets": [
+                  "W"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 491,
+        "durationInFrames": 91,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Pointers move inward\n\n“The search space only shrinks. It never grows back.”",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 582,
+        "durationInFrames": 69,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A1[\"1\"] --> A2[\"2\"]\n  A2 --> A3[\"3\"]\n  A3 --> A4[\"4\"]\n  A4 --> A5[\"6\"]\n  A5 --> A6[\"8\"]\n  T[\"target 9\"] --> A1",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-6-1779280883630-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 19,
+                "durationInFrames": 25,
+                "targets": [
+                  "A1",
+                  "A2",
+                  "A3",
+                  "A4",
+                  "A5",
+                  "A6"
+                ]
+              },
+              {
+                "fromFrame": 44,
+                "durationInFrames": 25,
+                "targets": [
+                  "T"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Set up the example\n\nUse a sorted array and a target. We will look for two numbers that add to the target.\n\n- Array: 1, 2, 3, 4, 6, 8\n- Target: **9**\n- Start with the endpoints",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 651,
+        "durationInFrames": 74,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Target 9\n\nThe pair can sit far apart. In this array, the answer starts at the edges.",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 725,
+        "durationInFrames": 117,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "First check\n\nLeft points at 1. Right points at 8. Their sum is **9**, so this example finishes immediately.\n\n- Left value: 1\n- Right value: 8\n- Sum: **9**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"L: 1\"] --> B[\"2\"]\n  B --> C[\"3\"]\n  C --> D[\"4\"]\n  D --> E[\"6\"]\n  E --> F[\"R: 8\"]\n  A --> S[\"1 + 8 = 9\"]\n  F --> S",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-8-1779280888481-1.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 32,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 32,
+                "durationInFrames": 37,
+                "targets": [
+                  "F"
+                ]
+              },
+              {
+                "fromFrame": 69,
+                "durationInFrames": 48,
+                "targets": [
+                  "S"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 842,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Found means stop\n\n“When the sum matches, return the pair and leave the loop.”",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 945,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "When it does not match\n\nMost examples need a few moves. The comparison tells you which side cannot help.\n\n- Too small: need a bigger number\n- Too large: need a smaller number\n- Match: return indices\n- Crossed: no pair found",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1048,
+        "durationInFrames": 288,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart TB\n  S[\"Start window\"] --> C{\"sum vs target\"}\n  C -->|equal| F[\"Return pair\"]\n  C -->|small| L[\"Move left\"]\n  C -->|large| R[\"Move right\"]\n  L --> C\n  R --> C\n  C -->|crossed| X[\"Stop: no pair\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-11-1779280890467-1.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 58,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 58,
+                "durationInFrames": 58,
+                "targets": [
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 115,
+                "durationInFrames": 58,
+                "targets": [
+                  "L"
+                ]
+              },
+              {
+                "fromFrame": 173,
+                "durationInFrames": 58,
+                "targets": [
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 230,
+                "durationInFrames": 58,
+                "targets": [
+                  "F",
+                  "X"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "The whole loop\n\nEvery pass checks the sum, then either returns the pair or shrinks the window by one side.\n\n- Check the current pair\n- Move the side that cannot work\n- Stop on match or crossing",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1336,
+        "durationInFrames": 180,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nif sum == target:\n    return pair\nelif sum < target:\n    left += 1\nelse:\n    right -= 1\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "The decision branch\n\nThe pointer move is just an if statement. Smaller sum moves left. Larger sum moves right.\n\n- The pointer move is just an if statement\n- Smaller sum moves left\n- Larger sum moves right",
+            "iconName": "BarChart3",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1516,
+        "durationInFrames": 96,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Check one pair\n\nThe algorithm only knows one thing per step: the sum of the two endpoint values.\n\n- Read `a[left]`\n- Read `a[right]`\n- Compare with **target**",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  L[\"a[left]\"] --> S[\"sum\"]\n  R[\"a[right]\"] --> S\n  S --> T[\"target\"]\n  T --> D{\"match?\"}",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 28,
+                "targets": [
+                  "L"
+                ]
+              },
+              {
+                "fromFrame": 28,
+                "durationInFrames": 28,
+                "targets": [
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 57,
+                "durationInFrames": 39,
+                "targets": [
+                  "S",
+                  "T",
+                  "D"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1612,
+        "durationInFrames": 148,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Why no repeats?\n\nOnce a move is chosen, the skipped side cannot form a better pair with the current opposite side.\n\n- Sorted order gives direction\n- One pointer moves per step\n- Old endpoints are **ruled out**",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1760,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  L[\"left\"] --> W[\"shrinking window\"]\n  R[\"right\"] --> W\n  W --> M[\"meet or cross\"]\n  M --> X[\"finish\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 43,
+                "targets": [
+                  "L",
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 43,
+                "durationInFrames": 43,
+                "targets": [
+                  "W"
+                ]
+              },
+              {
+                "fromFrame": 86,
+                "durationInFrames": 40,
+                "targets": [
+                  "M",
+                  "X"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Stop when they meet\n\nWhen left reaches right, there are no two different elements left to test.\n\n- Keep `left < right`\n- Move inward after each miss\n- Crossing means **done**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1886,
+        "durationInFrames": 141,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "O(n) time\n\nEach element is touched at most once. The extra memory stays **O(1)**.",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2027,
+        "durationInFrames": 110,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Tiny loop, real pattern\n\n“Move the pointer that cannot help anymore.”",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2137,
+        "durationInFrames": 175,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nleft, right = 0, len(a) - 1\n\nwhile left < right:\n    sum = a[left] + a[right]\n\n    if sum == target:\n        return (left, right)\n    elif sum < target:\n        left += 1\n    else:\n        right -= 1\n\nreturn None\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Two-pointer skeleton\n\nThis is the common shape for sorted two-sum: initialize both ends, loop while they have not crossed, then move one side.\n\n- This is the common shape for sorted two-sum: initialize both ends\n- loop while they have not crossed\n- then move one side.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2312,
+        "durationInFrames": 132,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Common pitfall\n\nDo not keep looping after the pointers cross. At that point, every valid pair has already been ruled out.\n\n- Loop condition: `left < right`\n- Crossing is not a pair\n- Return **None** when finished",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  L[\"left\"] --> C{\"left < right?\"}\n  R[\"right\"] --> C\n  C -->|yes| K[\"keep checking\"]\n  C -->|no| N[\"no pair\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 42,
+                "targets": [
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 42,
+                "durationInFrames": 42,
+                "targets": [
+                  "K"
+                ]
+              },
+              {
+                "fromFrame": 84,
+                "durationInFrames": 48,
+                "targets": [
+                  "N"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 2444,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Practice these next\n\nTwo pointers shows up whenever sorted order lets you safely throw away part of the search.\n\n- Two-sum in a sorted array\n- Remove duplicates in place\n- Reverse a string with two indices\n- Merge from both ends",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 117,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/0.mp3"
+      },
+      {
+        "fromFrame": 117,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/1.mp3"
+      },
+      {
+        "fromFrame": 246,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/2.mp3"
+      },
+      {
+        "fromFrame": 372,
+        "durationInFrames": 119,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/3.mp3"
+      },
+      {
+        "fromFrame": 491,
+        "durationInFrames": 91,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/4.mp3"
+      },
+      {
+        "fromFrame": 582,
+        "durationInFrames": 69,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/5.mp3"
+      },
+      {
+        "fromFrame": 651,
+        "durationInFrames": 74,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/6.mp3"
+      },
+      {
+        "fromFrame": 725,
+        "durationInFrames": 117,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/7.mp3"
+      },
+      {
+        "fromFrame": 842,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/8.mp3"
+      },
+      {
+        "fromFrame": 945,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/9.mp3"
+      },
+      {
+        "fromFrame": 1048,
+        "durationInFrames": 288,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/10.mp3"
+      },
+      {
+        "fromFrame": 1336,
+        "durationInFrames": 180,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/11.mp3"
+      },
+      {
+        "fromFrame": 1516,
+        "durationInFrames": 96,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/12.mp3"
+      },
+      {
+        "fromFrame": 1612,
+        "durationInFrames": 148,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/13.mp3"
+      },
+      {
+        "fromFrame": 1760,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/14.mp3"
+      },
+      {
+        "fromFrame": 1886,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/15.mp3"
+      },
+      {
+        "fromFrame": 2027,
+        "durationInFrames": 110,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/16.mp3"
+      },
+      {
+        "fromFrame": 2137,
+        "durationInFrames": 175,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/17.mp3"
+      },
+      {
+        "fromFrame": 2312,
+        "durationInFrames": 132,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/18.mp3"
+      },
+      {
+        "fromFrame": 2444,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0vjdp000kptoqr4asowbe/19.mp3"
+      }
+    ]
+  }
+}

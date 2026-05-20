@@ -1,0 +1,686 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 2476,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 129,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Find without scanning\n\nA sorted list lets you skip huge chunks instead of checking every number.",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 129,
+        "durationInFrames": 117,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The trick\n\nBinary search is one repeated move: use order to throw away half the remaining list.\n\n- Start with a **sorted** list\n- Check the middle item\n- Keep only the possible half",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 246,
+        "durationInFrames": 91,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  L[\"left side\"] --> M[\"mid = 30\"]\n  M --> R[\"right side\"]\n  T[\"target = 37\"] --> C{\"compare\"}\n  M --> C\n  C --> K[\"choose half\"]\n  classDef hi fill:#000,stroke:#000;\n  class M,C hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-3-1779280266064-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 29,
+                "targets": [
+                  "M"
+                ]
+              },
+              {
+                "fromFrame": 29,
+                "durationInFrames": 33,
+                "targets": [
+                  "T",
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Check the middle\n\nThe middle value is the question. Is the target equal, smaller, or larger?\n\n- mid = center of the current range\n- target = value you want\n- comparison picks the next range",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 337,
+        "durationInFrames": 184,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Pick a side\n\n“Smaller goes left. Larger goes right.”",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 521,
+        "durationInFrames": 93,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Repeat the cut\n\nEvery comparison shrinks the only part of the list where the target can still exist.\n\n- Full range\n- Half range\n- One slot\n- Found — or empty",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"full range\"] --> B[\"half range\"]\n  B --> C[\"one slot\"]\n  C --> D{\"found?\"}\n  D --> E[\"return index\"]\n  D --> F[\"not found\"]\n  classDef hi fill:#000,stroke:#000;\n  class A,B,C hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-5-1779280271089-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 25,
+                "targets": [
+                  "A"
+                ]
+              },
+              {
+                "fromFrame": 25,
+                "durationInFrames": 25,
+                "targets": [
+                  "B"
+                ]
+              },
+              {
+                "fromFrame": 51,
+                "durationInFrames": 25,
+                "targets": [
+                  "C",
+                  "D"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 614,
+        "durationInFrames": 126,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "1,000,000 items\n\nBinary search needs about **20 comparisons**, not a million.",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 740,
+        "durationInFrames": 78,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Find 37\n\nUse a tiny list so the moves are easy to see.\n\n- List: 10, 20, 30, 37, 41\n- Target: **37**\n- Start with the whole range",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 818,
+        "durationInFrames": 88,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  N10[\"10\"] --> N20[\"20\"]\n  N20 --> N30[\"30\"]\n  N30 --> N37[\"37\"]\n  N37 --> N41[\"41\"]\n  classDef hi fill:#000,stroke:#000;\n  class N30 hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-8-1779280918178-1.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 26,
+                "targets": [
+                  "N10",
+                  "N20",
+                  "N30",
+                  "N37",
+                  "N41"
+                ]
+              },
+              {
+                "fromFrame": 26,
+                "durationInFrames": 36,
+                "targets": [
+                  "N30"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Middle is 30\n\nThe first middle value is 30. Since 37 is bigger, everything at 30 or below can go.\n\n- low starts at 10\n- high starts at 41\n- mid lands on **30**",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 906,
+        "durationInFrames": 105,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nif target > mid_value:\n    low = mid + 1\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Move right\n\nBecause 37 is greater than 30, the new low point jumps past the middle.\n\n- Because 37 is greater than 30\n- the new low point jumps past the middle.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1011,
+        "durationInFrames": 103,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "37 found\n\nThe next middle is the target. The search stops immediately.",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1114,
+        "durationInFrames": 124,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The whole loop\n\nBinary search is a small loop around one decision: compare the middle, then move the boundary.\n\n- Set low and high\n- Compare the middle\n- Move one boundary\n- Stop when done",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  S[\"start range\"] --> M[\"pick middle\"]\n  M --> C{\"target vs mid\"}\n  C --> L[\"move high left\"]\n  C --> R[\"move low right\"]\n  L --> M\n  R --> M\n  C --> F[\"found or empty\"]\n  classDef hi fill:#000,stroke:#000;\n  class S,M,C hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": "reference-images/scene-11-1779280291365-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 22,
+                "targets": [
+                  "S"
+                ]
+              },
+              {
+                "fromFrame": 22,
+                "durationInFrames": 25,
+                "targets": [
+                  "M"
+                ]
+              },
+              {
+                "fromFrame": 47,
+                "durationInFrames": 28,
+                "targets": [
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 74,
+                "durationInFrames": 25,
+                "targets": [
+                  "L",
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 99,
+                "durationInFrames": 25,
+                "targets": [
+                  "F"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1238,
+        "durationInFrames": 115,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Two coding styles\n\nThe idea stays the same. Only the shape of the code changes.\n\n- Loop-based: updates variables\n- Recursive: calls itself\n- Both halve the same range",
+            "iconName": "Code2",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1353,
+        "durationInFrames": 110,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nsearch(low, high):\n    mid = middle(low, high)\n    if target == items[mid]:\n        return mid\n    return search(next_low, next_high)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Recursive shape\n\nThe recursive version returns the answer for a smaller range each time.\n\n- The recursive version returns the answer for a smaller range each time.",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1463,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  Low[\"low\"] --> Mid[\"mid\"]\n  Mid --> High[\"high\"]\n  Mid --> C{\"compare\"}\n  C --> Up[\"update low\"]\n  C --> Down[\"update high\"]\n  classDef hi fill:#000,stroke:#000;\n  class Low,Mid,High hi;",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "highlight",
+            "fallbackImageUrl": null,
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 40,
+                "targets": [
+                  "Low",
+                  "High"
+                ]
+              },
+              {
+                "fromFrame": 40,
+                "durationInFrames": 43,
+                "targets": [
+                  "Mid"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Loop shape\n\nThe iterative version keeps the range in two variables: low and high.\n\n- low marks the start\n- high marks the end\n- mid is recalculated each pass",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1597,
+        "durationInFrames": 119,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Logarithmic time\n\nEach comparison cuts n in half, so the step count grows slowly.",
+            "iconName": "Timer",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1716,
+        "durationInFrames": 182,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Best and worst\n\nBinary search can finish instantly, but even the slow case stays small.\n\n- Best case: target is the first middle\n- Worst case: range shrinks to empty\n- Space: loop version uses **constant** extra memory",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1898,
+        "durationInFrames": 134,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "One hard rule\n\n“Sorted first, or binary search lies.”",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 160,
+            "y": 200,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2032,
+        "durationInFrames": 112,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\nitems = sort(items)\nindex = binary_search(items, target)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Sort before search\n\nIf order is missing, create it first. Then the halving trick becomes valid.\n\n- If order is missing, create it first\n- Then the halving trick becomes valid",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2144,
+        "durationInFrames": 141,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "PostgreSQL logo",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Where it shows up\n\nThe same ordered-search idea appears inside indexes and lookup tables.\n\n- Database indexes keep keys ordered\n- Dictionaries use fast lookup structures\n- Sorted files can be searched by position",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 170,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2285,
+        "durationInFrames": 191,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Binary search recap\n\nThe whole algorithm fits in one loop and one comparison.\n\n- Halve the range\n- Compare the middle\n- Pick the only possible side\n- Stop when found or empty",
+            "iconName": "Search",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 129,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/0.mp3"
+      },
+      {
+        "fromFrame": 129,
+        "durationInFrames": 117,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/1.mp3"
+      },
+      {
+        "fromFrame": 246,
+        "durationInFrames": 91,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/2.mp3"
+      },
+      {
+        "fromFrame": 337,
+        "durationInFrames": 184,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/3.mp3"
+      },
+      {
+        "fromFrame": 521,
+        "durationInFrames": 93,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/4.mp3"
+      },
+      {
+        "fromFrame": 614,
+        "durationInFrames": 126,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/5.mp3"
+      },
+      {
+        "fromFrame": 740,
+        "durationInFrames": 78,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/6.mp3"
+      },
+      {
+        "fromFrame": 818,
+        "durationInFrames": 88,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/7.mp3"
+      },
+      {
+        "fromFrame": 906,
+        "durationInFrames": 105,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/8.mp3"
+      },
+      {
+        "fromFrame": 1011,
+        "durationInFrames": 103,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/9.mp3"
+      },
+      {
+        "fromFrame": 1114,
+        "durationInFrames": 124,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/10.mp3"
+      },
+      {
+        "fromFrame": 1238,
+        "durationInFrames": 115,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/11.mp3"
+      },
+      {
+        "fromFrame": 1353,
+        "durationInFrames": 110,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/12.mp3"
+      },
+      {
+        "fromFrame": 1463,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/13.mp3"
+      },
+      {
+        "fromFrame": 1597,
+        "durationInFrames": 119,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/14.mp3"
+      },
+      {
+        "fromFrame": 1716,
+        "durationInFrames": 182,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/15.mp3"
+      },
+      {
+        "fromFrame": 1898,
+        "durationInFrames": 134,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/16.mp3"
+      },
+      {
+        "fromFrame": 2032,
+        "durationInFrames": 112,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/17.mp3"
+      },
+      {
+        "fromFrame": 2144,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/18.mp3"
+      },
+      {
+        "fromFrame": 2285,
+        "durationInFrames": 191,
+        "staticPath": "audio-jobs/cmpe0udz4000iptoq7z6nyo5v/19.mp3"
+      }
+    ]
+  }
+}

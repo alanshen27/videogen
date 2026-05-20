@@ -14,6 +14,24 @@ const envSchema = z.object({
     .string()
     .optional()
     .default("21m00Tcm4TlvDq8ikWAM"),
+  /** SMTP — optional; when set, completed renders are emailed to NOTIFY_EMAIL */
+  SMTP_HOST: z.string().optional().default(""),
+  SMTP_PORT: z.coerce.number().int().positive().optional().default(587),
+  SMTP_USER: z.string().optional().default(""),
+  SMTP_PASS: z.string().optional().default(""),
+  SMTP_FROM: z.string().optional().default(""),
+  /** Recipient inbox for finished videos */
+  NOTIFY_EMAIL: z.string().optional().default(""),
 });
 
 export const env = envSchema.parse(process.env);
+
+export function isEmailDeliveryConfigured(): boolean {
+  return Boolean(
+    env.SMTP_HOST.trim() &&
+      env.SMTP_FROM.trim() &&
+      env.NOTIFY_EMAIL.trim() &&
+      env.SMTP_USER.trim() &&
+      env.SMTP_PASS.trim()
+  );
+}
