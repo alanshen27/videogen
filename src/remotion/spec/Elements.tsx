@@ -545,7 +545,7 @@ function FireshipBullet(_props: { palette: FireshipPalette }) {
         width: 6,
         height: 6,
         borderRadius: "50%",
-        background: "#a5b4fc",
+        background: "#d97c75",
         marginRight: 16,
         marginTop: 14,
         flex: "0 0 6px",
@@ -960,7 +960,7 @@ function SpecStatCallout({
           color: specTokens.ink.primary,
           textShadow: specTokens.shadow.textHero,
           background:
-            "linear-gradient(180deg, #fafafa 0%, #c7d2fe 95%)",
+            "linear-gradient(180deg, #fafafa 0%, #e8a7a1 95%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
@@ -990,7 +990,7 @@ function SpecStatCallout({
   );
 }
 
-/** Pull-quote layout — large body + indigo opening glyph + attribution rule. */
+/** Pull-quote layout — large body + soft-coral opening glyph + attribution rule. */
 function SpecQuote({
   quote,
 }: {
@@ -1044,7 +1044,7 @@ function SpecQuote({
           fontFamily: specTokens.display,
           fontSize: 180,
           lineHeight: 0.7,
-          color: "rgba(165, 180, 252, 0.35)",
+          color: "rgba(232, 167, 161, 0.38)",
           marginLeft: -8,
           fontWeight: 700,
           letterSpacing: "-0.04em",
@@ -1084,7 +1084,7 @@ function SpecQuote({
               display: "inline-block",
               width: 32,
               height: 1,
-              background: "rgba(165, 180, 252, 0.45)",
+              background: "rgba(232, 167, 161, 0.5)",
               transform: `scaleX(${ruleScale})`,
               transformOrigin: "left center",
             }}
@@ -1137,14 +1137,14 @@ export function SpecBox({ el }: { el: SceneEl }) {
         lineHeight: 1.28,
         overflowWrap: "break-word",
         wordBreak: "break-word",
-        background: "rgba(99, 102, 241, 0.025)",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
+        background: "rgba(217, 124, 117, 0.03)",
+        border: "1px solid rgba(255, 248, 240, 0.1)",
         borderRadius: 8,
         letterSpacing: "-0.005em",
         overflow: "hidden",
       }}
     >
-      {/* Indigo accent rail down the left edge — a tiny hint of brand colour
+      {/* Coral accent rail down the left edge — a tiny hint of brand colour
        * without crossing into Fireship rainbow territory. */}
       <span
         aria-hidden
@@ -1155,7 +1155,7 @@ export function SpecBox({ el }: { el: SceneEl }) {
           bottom: 0,
           width: 3,
           background:
-            "linear-gradient(180deg, rgba(165, 180, 252, 0.85) 0%, rgba(99, 102, 241, 0.35) 100%)",
+            "linear-gradient(180deg, rgba(232, 167, 161, 0.9) 0%, rgba(217, 124, 117, 0.4) 100%)",
         }}
       />
       <span style={{ position: "relative", zIndex: 1 }}>{el.content}</span>
@@ -1172,15 +1172,15 @@ export function SpecCircle({ el }: { el: SceneEl }) {
         height: inner,
         borderRadius: "50%",
         boxSizing: "border-box",
-        background: "rgba(99, 102, 241, 0.06)",
-        border: "1px solid rgba(129, 140, 248, 0.4)",
+        background: "rgba(217, 124, 117, 0.07)",
+        border: "1px solid rgba(217, 124, 117, 0.45)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         fontFamily: specTokens.mono,
         fontSize: 22,
         fontWeight: 500,
-        color: "#c7d2fe",
+        color: "#e8a7a1",
         letterSpacing: "-0.01em",
         fontVariantNumeric: "tabular-nums",
       }}
@@ -1212,8 +1212,8 @@ export function SpecArrow({ el }: { el: SceneEl }) {
       >
         <defs>
           <linearGradient id="arrow-stroke" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="rgba(165, 180, 252, 0.25)" />
-            <stop offset="100%" stopColor="rgba(165, 180, 252, 0.95)" />
+            <stop offset="0%" stopColor="rgba(232, 167, 161, 0.28)" />
+            <stop offset="100%" stopColor="rgba(232, 167, 161, 0.95)" />
           </linearGradient>
         </defs>
         <line
@@ -1227,7 +1227,7 @@ export function SpecArrow({ el }: { el: SceneEl }) {
         />
         <polygon
           points="306,11 286,2 286,20"
-          fill="rgba(165, 180, 252, 0.95)"
+          fill="rgba(232, 167, 161, 0.95)"
         />
       </svg>
       <span
@@ -1236,8 +1236,8 @@ export function SpecArrow({ el }: { el: SceneEl }) {
           fontSize: 14,
           fontWeight: 500,
           color: specTokens.ink.muted,
-          background: "rgba(99, 102, 241, 0.045)",
-          border: "1px solid rgba(129, 140, 248, 0.3)",
+          background: "rgba(217, 124, 117, 0.05)",
+          border: "1px solid rgba(217, 124, 117, 0.35)",
           borderRadius: 6,
           padding: "6px 12px",
           maxWidth: 440,
@@ -1303,11 +1303,11 @@ export function SpecIcon({
             height: tile,
             flexShrink: 0,
             borderRadius: 10,
-            background: "rgba(99, 102, 241, 0.06)",
-            border: "1px solid rgba(129, 140, 248, 0.4)",
+            background: "rgba(217, 124, 117, 0.07)",
+            border: "1px solid rgba(217, 124, 117, 0.45)",
           }}
         >
-          <Icon size={iconPx} strokeWidth={1.6} color="#c7d2fe" />
+          <Icon size={iconPx} strokeWidth={1.6} color="#e8a7a1" />
         </div>
         {cap ? (
           <span
@@ -1355,11 +1355,11 @@ export function SpecIcon({
           height: tile,
           flexShrink: 0,
           borderRadius: 8,
-          background: "rgba(99, 102, 241, 0.06)",
-          border: "1px solid rgba(129, 140, 248, 0.35)",
+          background: "rgba(217, 124, 117, 0.07)",
+          border: "1px solid rgba(217, 124, 117, 0.4)",
         }}
       >
-        <Icon size={26} strokeWidth={1.6} color="#c7d2fe" />
+        <Icon size={26} strokeWidth={1.6} color="#e8a7a1" />
       </div>
       {cap ? (
         <span
@@ -1402,7 +1402,7 @@ export function SpecImage({ el }: { el: SceneEl }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0a0c",
+          background: "#15110f",
           padding: 24,
           textAlign: "center",
           lineHeight: 1.32,
@@ -1437,7 +1437,7 @@ export function SpecImage({ el }: { el: SceneEl }) {
         borderRadius: 14,
         overflow: "hidden",
         border: "1px solid rgba(255,255,255,0.08)",
-        background: "#0a0a0c",
+        background: "#15110f",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

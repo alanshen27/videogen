@@ -1,0 +1,237 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 906,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 135,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "One tap\n\nA feed load starts as one small request from the phone to the API gateway.",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 135,
+        "durationInFrames": 141,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[\"Phone\"] --> G[\"API Gateway\"]\n  G --> F[\"Feed Service\"]\n  G --> P[\"Profile Service\"]\n  G --> M[\"Media Service\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-2-1779222668083-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "U",
+                  "G"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "F"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "The gateway routes it\n\nThe gateway is the front door. It checks where the request belongs, then sends the feed call to the feed service.\n\n- One public entry point\n- Routes feed calls\n- Keeps services separate",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 276,
+        "durationInFrames": 150,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "image",
+            "content": "reference-images/scene-3-1779222669986-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "highlight"
+          },
+          {
+            "type": "text",
+            "content": "Postgres stores posts\n\nThe feed service asks Postgres for rows like author, text, image URL, and created time. That becomes the base feed.\n\n- Latest posts live in tables\n- Indexes keep reads cheap\n- Rows turn into feed cards",
+            "iconName": "Lock",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 170,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 426,
+        "durationInFrames": 150,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Redis handles hot reads\n\nRedis keeps recently requested feed data in memory. If the cache has it, the app skips a slower database read.\n\n- Check cache first\n- Miss falls back to Postgres\n- Popular feeds stay warm",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  U[\"Phone\"] --> G[\"API Gateway\"]\n  G --> F[\"Feed Service\"]\n  F --> R[(\"Redis Cache\")]\n  F --> DB[(\"Postgres\")]\n  R --> F",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779222671814-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "F",
+                  "R"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "R",
+                  "F"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "DB"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 576,
+        "durationInFrames": 150,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\non_image_upload(file):\n    image_url = store_original(file)\n    queue.push(\"resize_image\", image_url)\n    return { \"status\": \"accepted\" }\n\nworker(\"resize_image\"):\n    image = load(image_url)\n    create_thumbnail(image)\n    mark_ready(image_url)\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Images run off-path\n\nHeavy image work should not block the feed response. The API puts the job on a queue, then a worker handles it later.\n\n- Heavy image work should not block the feed response\n- The API puts the job on a queue, then a worker handles it later",
+            "iconName": "Workflow",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 726,
+        "durationInFrames": 180,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Keep it close\n\nAt global scale, the same idea repeats: reduce distance, reduce waiting. Put cached content near users, and keep regional data nearby.\n\n- Edge nodes cache static content\n- Regional databases cut round trips\n- Queues protect the main request\n- Cache hits keep the feed snappy",
+            "iconName": "Users",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 135,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/0.mp3"
+      },
+      {
+        "fromFrame": 135,
+        "durationInFrames": 141,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/1.mp3"
+      },
+      {
+        "fromFrame": 276,
+        "durationInFrames": 150,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/2.mp3"
+      },
+      {
+        "fromFrame": 426,
+        "durationInFrames": 150,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/3.mp3"
+      },
+      {
+        "fromFrame": 576,
+        "durationInFrames": 150,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/4.mp3"
+      },
+      {
+        "fromFrame": 726,
+        "durationInFrames": 180,
+        "staticPath": "audio-jobs/cmpd36a690002f9oqw0ppywh8/5.mp3"
+      }
+    ]
+  }
+}

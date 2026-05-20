@@ -1,0 +1,243 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationInFrames": 1982,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 341,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Claude Code in one path",
+            "iconName": "Network",
+            "width": null,
+            "height": null,
+            "x": 120,
+            "y": 88,
+            "animation": "fade"
+          },
+          {
+            "type": "image",
+            "content": "reference-images/scene-1-1779181060691-0.jpg",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 180,
+            "y": 224,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 341,
+        "durationInFrames": 278,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  P[\"Prompt\"] --> C[\"Code context\"]\n  C --> R[\"Clean request\"]\n  R --> A[\"API layer\"]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-2-1779181064891-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "P"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "R",
+                  "A"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Start with the prompt\n\nClaude first receives your plain request. Pasted code stays part of the context, so the API can send one structured job forward.\n\n- Prompt text\n- Pasted code\n- Clean request",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 619,
+        "durationInFrames": 372,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The API picks a route\n\nThe API layer decides where the request should go. For coding work, it sends the job to a model path tuned for code and explanations.\n\n- Read the task type\n- Keep the code context attached\n- Send it to the code path",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 991,
+        "durationInFrames": 330,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "The model writes back\n\nClaude reads the request, uses the attached context, then returns code, an explanation, or both through the API layer.\n\n- Understand the ask\n- Use code context\n- Return the answer",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 64,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  A[\"API layer\"] --> M[\"Claude model\"]\n  M --> K[\"Code answer\"]\n  M --> E[\"Short explanation\"]\n  K --> O[\"Output\"]\n  E --> O",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 48,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779181068673-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "M"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "K",
+                  "E"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "O"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1321,
+        "durationInFrames": 299,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```python\ndef add(a, b):\n    return a + b\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "A tiny output\n\nThe result can be copied, run, and checked right away.\n\n- The result can be copied\n- run\n- and checked right away.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1620,
+        "durationInFrames": 362,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Prompt it like this\n\nShort, specific prompts give Claude less room to guess and more room to answer cleanly.\n\n- Name the language and version\n- Name the library you want\n- Ask for a compact example\n- Ask for one quick test",
+            "iconName": "Brain",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 341,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/0.mp3"
+      },
+      {
+        "fromFrame": 341,
+        "durationInFrames": 278,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/1.mp3"
+      },
+      {
+        "fromFrame": 619,
+        "durationInFrames": 372,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/2.mp3"
+      },
+      {
+        "fromFrame": 991,
+        "durationInFrames": 330,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/3.mp3"
+      },
+      {
+        "fromFrame": 1321,
+        "durationInFrames": 299,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/4.mp3"
+      },
+      {
+        "fromFrame": 1620,
+        "durationInFrames": 362,
+        "staticPath": "audio-jobs/cmpceeslt00021koqr88kbnfp/5.mp3"
+      }
+    ]
+  }
+}

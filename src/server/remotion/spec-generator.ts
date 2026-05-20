@@ -47,7 +47,7 @@ const AnimationComponents: Record<string, React.FC<{ children: React.ReactNode; 
   },
   highlight: ({ children, frame, durationInFrames }) => {
     const intensity = interpolate(frame, [0, 10, durationInFrames * 0.7, durationInFrames], [0, 1, 1, 0]);
-    const bg = \`rgba(99, 102, 241, \${intensity * 0.3})\`;
+    const bg = \`rgba(217, 124, 117, \${intensity * 0.3})\`;
     return <div style={{ backgroundColor: bg, borderRadius: 8, padding: 4 }}>{children}</div>;
   },
   none: ({ children }) => <>{children}</>,
@@ -68,7 +68,7 @@ function RenderElement({ el }: { el: { type: string; content: string; x: number;
     case 'code':
       return <pre style={{ ...styles, backgroundColor: '#1a1a2e', padding: '8px 16px', borderRadius: 6, fontSize: 16, maxWidth: 800 }}><code>{el.content}</code></pre>;
     case 'box':
-      return <div style={{ ...styles, width: 200, height: 100, border: '2px solid #6366f1', borderRadius: 8 }} />;
+      return <div style={{ ...styles, width: 200, height: 100, border: '2px solid #d97c75', borderRadius: 8 }} />;
     case 'circle':
       return <div style={{ ...styles, width: 80, height: 80, borderRadius: '50%', border: '2px solid #f59e0b' }} />;
     case 'arrow':

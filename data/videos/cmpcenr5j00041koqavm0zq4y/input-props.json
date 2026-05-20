@@ -1,0 +1,297 @@
+{
+  "spec": {
+    "composition": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationInFrames": 2700,
+      "elementPlacement": "canvas_absolute"
+    },
+    "scenes": [
+      {
+        "fromFrame": 0,
+        "durationInFrames": 300,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Tiny social app\n\nA first version needs one action: write a post, then read it back in a feed.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 300,
+        "durationInFrames": 300,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Three moving parts\n\nKeep the first build small. A browser screen talks to an API, and the API writes posts into a table.\n\n- Client: the feed and compose box\n- API: routes for posts and feed\n- Database: one posts table",
+            "iconName": "Database",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 600,
+        "durationInFrames": 360,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  C[\"Client\"] --> G[\"Gateway\"]\n  G --> API[\"Posts API\"]\n  API --> DB[(\"Posts table\")]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 92,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-3-1779181511939-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "C"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "C",
+                  "G"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Create a post\n\nThe browser sends the new post to one front door: the gateway. Keep the request small: user ID, text, and a timestamp.\n\n- POST /posts\n- User ID\n- Text\n- Timestamp",
+            "iconName": "Users",
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 960,
+        "durationInFrames": 360,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_text_left_canvas_right",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Route to the API\n\nThe gateway checks the route and hands the request to the posts API. That keeps client code away from server details.\n\n- One public entry\n- Posts route\n- Server-only logic",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 116,
+            "y": 148,
+            "animation": "fade"
+          },
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  C[\"Client\"] --> G[\"Gateway\"]\n  G --> API[\"Posts API\"]\n  API --> DB[(\"Posts table\")]",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 726,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-4-1779181513785-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "G"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "G",
+                  "API"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "fromFrame": 1320,
+        "durationInFrames": 420,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "code_and_callouts",
+        "elements": [
+          {
+            "type": "code",
+            "content": "```javascript\napp.post(\"/posts\", async (req, res) => {\n  const { userId, text } = req.body;\n\n  if (!userId || !text) {\n    return res.status(400).json({ error: \"Missing fields\" });\n  }\n\n  const post = await db.posts.create({\n    data: { userId, text }\n  });\n\n  res.status(201).json(post);\n});\n```",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 110,
+            "y": 236,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Save the post\n\nThe API validates the body, writes one row, and returns the saved post. Start with the boring path before adding likes or comments.\n\n- The API validates the body, writes one row, and returns the saved post\n- Start with the boring path before adding likes or comments",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1128,
+            "y": 210,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1740,
+        "durationInFrames": 420,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "elements": [
+          {
+            "type": "mermaid",
+            "content": "flowchart LR\n  C[\"Client feed\"] --> API[\"Posts API\"]\n  API --> DB[(\"Posts table\")]\n  DB --> API\n  API --> C",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 92,
+            "y": 166,
+            "animation": "fade",
+            "fallbackImageUrl": "reference-images/scene-6-1779181517591-0.jpg",
+            "diagramBeats": [
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "C",
+                  "API"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "API",
+                  "DB"
+                ]
+              },
+              {
+                "fromFrame": 0,
+                "durationInFrames": 6,
+                "targets": [
+                  "API",
+                  "C"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "content": "Load the feed\n\nThe feed is the same path in reverse. The API reads the newest posts and sends a JSON list back to the client.\n\n- GET /feed\n- Newest first\n- Return an array",
+            "iconName": "Server",
+            "width": null,
+            "height": null,
+            "x": 1044,
+            "y": 148,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2160,
+        "durationInFrames": 360,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Two endpoints\n\nPOST /posts creates. GET /feed reads. That is enough for a first MVP.",
+            "iconName": "Sparkles",
+            "width": null,
+            "height": null,
+            "x": 200,
+            "y": 140,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 2520,
+        "durationInFrames": 180,
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "layoutPreset": "title_hero_and_canvas",
+        "elements": [
+          {
+            "type": "text",
+            "content": "Ship, then iterate\n\nA tiny app is not complete. It is just small enough to learn from real users.\n\n- Create accounts\n- Add likes\n- Add comments\n- Handle image uploads",
+            "iconName": "Users",
+            "width": null,
+            "height": null,
+            "x": 118,
+            "y": 124,
+            "animation": "fade"
+          }
+        ]
+      }
+    ],
+    "voice": [
+      {
+        "fromFrame": 300,
+        "durationInFrames": 300,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/1.mp3"
+      },
+      {
+        "fromFrame": 600,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/2.mp3"
+      },
+      {
+        "fromFrame": 960,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/3.mp3"
+      },
+      {
+        "fromFrame": 1320,
+        "durationInFrames": 420,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/4.mp3"
+      },
+      {
+        "fromFrame": 1740,
+        "durationInFrames": 420,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/5.mp3"
+      },
+      {
+        "fromFrame": 2160,
+        "durationInFrames": 360,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/6.mp3"
+      },
+      {
+        "fromFrame": 2520,
+        "durationInFrames": 180,
+        "staticPath": "audio-jobs/cmpcenr5j00041koqavm0zq4y/7.mp3"
+      }
+    ]
+  }
+}

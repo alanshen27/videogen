@@ -41,37 +41,77 @@ function chooseAnimationForTarget(target?: string): "fade" | "highlight" {
 }
 
 /**
- * Convert the scene's `focusBeats` (script-time, in seconds) into
- * frame-relative `diagramBeats` that the renderer can drive an animation
- * timeline from. Beats that don't target the diagram (or have no
- * `mermaidTargets`) are dropped.
+ * Convert the scene's `focusBeats` into frame-relative `diagramBeats` that
+ * the renderer can drive an animation timeline from.
+ *
+ * Timing interpretation is auto-detected per scene:
+ *   - **Scene-relative** (preferred): max(endSecond) ≤ sceneDurationSeconds
+ *     within ~5% slack. Beats sit in 0..sceneDuration. This is what the LLM
+ *     naturally emits, and what `PROMPT.md` documents.
+ *   - **Absolute** (legacy): otherwise — we subtract `sceneStartSecond`.
+ *
+ * If beats from a labelled walkthrough all collapse to the same frame
+ * (length-0 timeline) we redistribute them evenly across the scene as a
+ * defensive fallback so the highlight at least sequences through the nodes.
+ *
+ * Beats that don't target the diagram (or have no `mermaidTargets`) are
+ * dropped before timing conversion.
  */
 function buildDiagramBeats(
   focusBeats: SceneFocusBeat[],
   sceneStartSecond: number,
   sceneDurationFrames: number
 ): { fromFrame: number; durationInFrames: number; targets: string[] }[] {
-  const beats: {
-    fromFrame: number;
-    durationInFrames: number;
-    targets: string[];
-  }[] = [];
-  for (const fb of focusBeats) {
-    if (fb.target !== "diagram") continue;
-    if (!fb.mermaidTargets || fb.mermaidTargets.length === 0) continue;
-    const startRel = Math.max(0, fb.startSecond - sceneStartSecond);
-    const endRel = Math.max(startRel, fb.endSecond - sceneStartSecond);
-    const fromFrame = Math.round(startRel * FPS);
+  const diagramBeats = focusBeats.filter(
+    (fb) =>
+      fb.target === "diagram" &&
+      Array.isArray(fb.mermaidTargets) &&
+      fb.mermaidTargets.length > 0
+  );
+  if (diagramBeats.length === 0) return [];
+
+  const sceneDurationSeconds = sceneDurationFrames / FPS;
+  const maxEnd = Math.max(...diagramBeats.map((b) => b.endSecond));
+  const sceneRelative = maxEnd <= sceneDurationSeconds * 1.05;
+
+  const offset = sceneRelative ? 0 : sceneStartSecond;
+  const minBeatFrames = 12;
+
+  const beats = diagramBeats.map((fb) => {
+    const startRel = Math.max(0, fb.startSecond - offset);
+    const endRel = Math.max(startRel, fb.endSecond - offset);
+    const fromFrame = Math.min(
+      sceneDurationFrames - minBeatFrames,
+      Math.round(startRel * FPS)
+    );
     const endFrame = Math.min(
       sceneDurationFrames,
-      Math.max(fromFrame + 6, Math.round(endRel * FPS))
+      Math.max(fromFrame + minBeatFrames, Math.round(endRel * FPS))
     );
-    beats.push({
-      fromFrame,
-      durationInFrames: Math.max(6, endFrame - fromFrame),
+    return {
+      fromFrame: Math.max(0, fromFrame),
+      durationInFrames: Math.max(minBeatFrames, endFrame - fromFrame),
       targets: fb.mermaidTargets.slice(0, 12),
-    });
+    };
+  });
+
+  /* Defensive fallback: every beat collapsed to the same frame (the LLM
+   * sent garbage timings). Distribute them evenly across the scene so the
+   * highlight at least walks through the labelled nodes. */
+  const span =
+    Math.max(...beats.map((b) => b.fromFrame)) -
+    Math.min(...beats.map((b) => b.fromFrame));
+  if (span < minBeatFrames && beats.length > 1) {
+    const slot = Math.floor(sceneDurationFrames / beats.length);
+    return beats.map((b, i) => ({
+      fromFrame: i * slot,
+      durationInFrames: i === beats.length - 1
+        ? sceneDurationFrames - i * slot
+        : slot,
+      targets: b.targets,
+    }));
   }
+
   return beats;
 }
 
@@ -303,7 +343,7 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
       fromFrame,
       durationInFrames,
       background:
-        "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
       layoutPreset: "free",
       elements: [],
     };

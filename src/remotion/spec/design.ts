@@ -127,23 +127,25 @@ export const specTokens = {
 
   ink: {
     primary: "#fafafa",
-    muted: "#d4d4d8",
-    subtle: "#a1a1aa",
-    accent: "#a5b4fc",
-    accentSoft: "#c7d2fe",
+    muted: "#d6d3d0",
+    subtle: "#a09b96",
+    /* Warm coral accent — matches the brand mark's curved L on the dark canvas.
+     * Single accent, used sparingly. */
+    accent: "#d97c75",
+    accentSoft: "#e8a7a1",
     info: "#7dd3fc",
     warn: "#fcd34d",
     danger: "#fda4af",
   },
 
   surface: {
-    code: "rgba(10, 10, 12, 0.85)",
-    codeBorder: "rgba(255, 255, 255, 0.08)",
-    card: "rgba(20, 20, 24, 0.6)",
-    cardBorder: "rgba(255, 255, 255, 0.08)",
-    pill: "rgba(99, 102, 241, 0.08)",
-    iconTile: "rgba(99, 102, 241, 0.06)",
-    iconTileBorder: "rgba(129, 140, 248, 0.35)",
+    code: "rgba(14, 12, 11, 0.85)",
+    codeBorder: "rgba(255, 255, 255, 0.07)",
+    card: "rgba(26, 22, 20, 0.6)",
+    cardBorder: "rgba(255, 255, 255, 0.07)",
+    pill: "rgba(217, 124, 117, 0.08)",
+    iconTile: "rgba(217, 124, 117, 0.06)",
+    iconTileBorder: "rgba(217, 124, 117, 0.35)",
   },
 
   shadow: {
@@ -167,9 +169,10 @@ export const specTokens = {
     glow: accentGlow,
   },
 
-  /** Default page background — near-flat zinc with a faint indigo wash up top. */
+  /** Default page background — warm near-black canvas with a faint coral wash
+   * up top, echoing the brand mark on a charcoal sheet. */
   pageBackground:
-    "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+    "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
 } as const;
 
 export type FireshipDesign = typeof specTokens;

@@ -15,6 +15,7 @@ import { SceneTransition } from "./spec/SceneTransition";
 import fallbackSpec from "../../rem.json";
 import { normalizeLayoutPreset } from "../server/llm/layout-presets";
 import { specAnimations } from "./spec/Animations";
+import { BRAND_INTRO_FRAMES, BrandIntro } from "./spec/BrandIntro";
 import { RenderSpecElement } from "./spec/Elements";
 import { SceneChrome } from "./spec/SceneChrome";
 import { specTokens } from "./spec/design";
@@ -488,10 +489,14 @@ export const VideoFromSpec: React.FC<VideoFromSpecProps> = ({
           delayRenderRetries={3}
         />
       ) : null}
+      {/* Cold-open brand intro — segfault logo + wordmark. Plays before scene 1. */}
+      <Sequence from={0} durationInFrames={BRAND_INTRO_FRAMES}>
+        <BrandIntro />
+      </Sequence>
       {voice.map((seg, i) => (
         <Sequence
           key={`vo-${seg.staticPath}-${i}`}
-          from={seg.fromFrame}
+          from={seg.fromFrame + BRAND_INTRO_FRAMES}
           durationInFrames={seg.durationInFrames}
         >
           <Audio
@@ -528,7 +533,7 @@ export const VideoFromSpec: React.FC<VideoFromSpecProps> = ({
       {data.scenes.map((scene: Scene, sceneIdx: number) => (
         <Sequence
           key={sceneIdx}
-          from={scene.fromFrame}
+          from={scene.fromFrame + BRAND_INTRO_FRAMES}
           durationInFrames={scene.durationInFrames}
         >
           <SceneTransition

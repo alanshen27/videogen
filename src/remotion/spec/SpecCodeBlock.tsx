@@ -209,7 +209,7 @@ export function SpecCodeBlock({ code, lang }: SpecCodeBlockProps) {
             width: 4,
             height: 4,
             borderRadius: "50%",
-            background: "rgba(129, 140, 248, 0.6)",
+            background: "rgba(217, 124, 117, 0.65)",
           }}
         />
         <span

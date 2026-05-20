@@ -1,4 +1,4 @@
-# PROMPT.md — LLM brief for videogen
+# PROMPT.md — LLM brief for segfault
 
 This document is the source of truth for any LLM that generates scripts,
 storyboards, asset prompts, branded scene specs, or any other artifact that
@@ -14,12 +14,18 @@ strings to match.
 
 YouTube-style explainer videos: 60–180s, voice-narrated, dense with motion.
 Each video is composed scene-by-scene from a small set of templates and
-rendered by Remotion (React). The visual language is **diffs.com / Pierre /
-Linear / Vercel / Geist** — designy, restrained, monochrome with a single
-indigo accent. **Not** Fireship rainbow gradients. **Not** clipart.
+rendered by Remotion (React). The visual language is **warm-minimal**:
+a charcoal sheet with a single coral/terracotta accent and a paper-white
+block as the brand mark. Influences are diffs.com / Linear / Vercel / Geist
+for the type and density, but the palette is warmer and the accent is
+coral, not indigo. **Not** Fireship rainbow gradients. **Not** clipart.
 
 > Tagline for the brand: *"a developer-tool aesthetic explaining a
 > developer-tool concept."*
+
+> Brand mark: paper-white square + a curved coral L overlapping its
+> lower-left corner, on a charcoal canvas. Treat the L as the only true
+> colour in the system.
 
 ---
 
@@ -30,18 +36,19 @@ You should write content that flatters them, not that fights them.
 
 ### Surface
 
-- Background: near-flat charcoal (`#0a0a0c → #08080a`) with a faint indigo
-  wash up top. **Do not** propose colorful gradient scene backgrounds — they
-  get normalised to the flat token at render time.
-- Borders: 1px hairline `rgba(255,255,255,0.08)`. No drop shadows, no glows.
+- Background: warm near-flat charcoal (`#1a1614 → #141110`) with a faint
+  coral wash up top. **Do not** propose colourful gradient scene
+  backgrounds — they get normalised to the flat token at render time.
+- Borders: 1px hairline `rgba(255,248,240,0.08)`. No drop shadows, no glows.
 - Cards: `transparent` background with a hairline border. Active emphasis is
-  a faint indigo wash (`rgba(99,102,241,0.06)`) plus a brighter border.
+  a faint coral wash (`rgba(217,124,117,0.07)`) plus a brighter border.
 
 ### Color
 
-There is **one** accent: indigo (`#a5b4fc` / `#c7d2fe` / `rgba(129,140,248,*)`).
-Everything else is zinc grey or white. Do not introduce additional brand
-colors in your scene content; the renderer will ignore them.
+There is **one** accent: coral (`#d97c75` / `#e8a7a1` / `rgba(217,124,117,*)`).
+Everything else is warm zinc grey or paper white (`#fafafa`, `#f7f3ee`).
+Do not introduce additional brand colours in your scene content; the
+renderer will ignore them.
 
 ### Typography
 
@@ -54,7 +61,7 @@ colors in your scene content; the renderer will ignore them.
 ### Iconography
 
 - Icons come from **Lucide** only (`src/remotion/spec/icon-map.ts`).
-- They render at 1.6 stroke width, in indigo (`#c7d2fe`) inside a ghost
+- They render at 1.6 stroke width, in soft coral (`#e8a7a1`) inside a ghost
   tile — never filled with rainbow gradients.
 - **Do not decorate titles with icons.** Titles and stat callouts render as
   pure type. The renderer ignores `iconName` on `type: "text"` elements —
@@ -93,7 +100,7 @@ branded scene spec.
 | `image`                     | A real product / logo / screenshot is the cleanest visual.   |
 | `image_hero`                | Big image, short caption. Use for brand reveals.             |
 | `image_left`                | Image card paired with a text panel.                         |
-| `code_focus`                | Real code is central. Use rarely.                            |
+| `code_focus`                | Real code OR pseudo-code for an algorithm — use freely.      |
 | `stat_callout`              | Single huge number / word. Use sparingly for impact.         |
 | `quote`                     | Short pull-quote, optionally attributed.                     |
 
@@ -418,14 +425,48 @@ even when unused. Use the empty defaults shown.
   highlighting; specify the language with a leading fence
   (`` ```typescript `` … `` ``` ``) when the snippet isn't TypeScript so the
   highlighter picks the right grammar. Supported langs: typescript, tsx,
-  javascript, jsx, json, bash, python, go, rust, java, kotlin, swift, c,
-  cpp, csharp, sql, yaml, html, css, markdown.
+  javascript, jsx, python, go, rust, java, kotlin, swift, c, cpp, csharp,
+  sql, json, yaml, bash, html, css, markdown.
+
+  **Prefer pseudo-code for algorithm / concept beats.** Real syntax drags
+  attention to braces and imports the viewer doesn't care about. Pseudo-code
+  reads like the narration and stays on the idea. Use a fence that picks a
+  clean grammar (`` ```python `` is great for pseudo-code — indentation +
+  no semicolons + no types) and write declarative steps. Examples:
+
+  ```python
+  for request in incoming:
+      if cache.has(request.key):
+          return cache.get(request.key)
+      result = backend.fetch(request)
+      cache.set(request.key, result)
+      return result
+  ```
+
+  ```python
+  function rank(docs, query):
+      score = {}
+      for doc in docs:
+          score[doc] = tfidf(doc, query) + 0.3 * pagerank(doc)
+      return sorted(docs, key=score, descending=True)
+  ```
+
+  Reach for **real** code only when the syntax itself IS the point (a
+  specific React hook, a specific SQL clause, a Postgres index DDL). For
+  "how does this algorithm work?" beats, pseudo-code wins every time.
 
 ### Focus beats — driving animated diagrams
 
 `focusBeats` is the **animation timeline**. Each beat is `[startSecond,
 endSecond]` and points at one target. Beats with `target === "diagram"` are
 special: they drive the per-node highlight animation in the rendered graph.
+
+**Timings are SCENE-RELATIVE — always 0..sceneDurationSeconds.** If a
+scene runs for 8 seconds, the first beat starts at `0` and the last beat
+ends at or before `8`. Do **not** use absolute script seconds (don't write
+beat 1 starting at `12.4` because the scene starts at script second 12.4).
+The renderer auto-detects scene-relative vs absolute, but scene-relative
+is what you should emit.
 
 - `target`: one of `title | body | list | diagram | image | code`.
 - `mode`: `highlight` (default), `dim_others`, `pulse`, `zoom`, `trace`.
@@ -493,8 +534,8 @@ Patterns to avoid:
   feels like a slide deck. Mix in diagrams and images.
 - "Rainbow scene chips." Don't propose per-scene accent colors; we don't
   use them.
-- "Fake terminal" framing of normal explainers. Reserve `code_focus` for
-  real code.
+- "Fake terminal" framing of normal explainers. `code_focus` is for real
+  code OR pseudo-code; never use it as decorative chrome around prose.
 
 ---
 

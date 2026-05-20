@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import type { RemotionLayoutPresetId } from "../../server/llm/layout-presets";
 import { specTokens } from "./design";
 
@@ -13,10 +13,10 @@ type SceneChromeProps = {
 };
 
 /**
- * Shared visual frame for every scene — diffs.com-flavoured: hairline borders,
- * tabular mono scene counter top-right, quiet preset label bottom-left, no
- * gradients or neon. Background overlays are barely-there grain + soft top
- * indigo wash.
+ * Shared visual frame for every scene — warm-minimal: hairline borders, tabular
+ * mono scene counter top-right, quiet preset label bottom-left, no gradients or
+ * neon. Background overlays are barely-there grain + a soft coral top wash
+ * that echoes the brand mark on a charcoal sheet.
  */
 export function SceneChrome({
   sceneIndex,
@@ -53,7 +53,7 @@ export function SceneChrome({
 
   return (
     <AbsoluteFill>
-      {/* Faint indigo wash up top — the only real ambient color. */}
+      {/* Faint coral wash up top — the only real ambient color. */}
       <div
         aria-hidden
         style={{
@@ -61,7 +61,7 @@ export function SceneChrome({
           inset: 0,
           pointerEvents: "none",
           background:
-            "radial-gradient(ellipse 80% 45% at 50% 0%, rgba(129, 140, 248, 0.08) 0%, transparent 60%)",
+            "radial-gradient(ellipse 80% 45% at 50% 0%, rgba(217, 124, 117, 0.07) 0%, transparent 60%)",
           zIndex: 0,
         }}
       />
@@ -75,13 +75,13 @@ export function SceneChrome({
           zIndex: 0,
           opacity: 0.22,
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(244, 244, 245, 0.04) 1px, transparent 0)",
+            "radial-gradient(circle at 1px 1px, rgba(255, 248, 240, 0.04) 1px, transparent 0)",
           backgroundSize: isPortrait ? "24px 24px" : "32px 32px",
         }}
       />
       <div style={{ position: "absolute", inset: 100, zIndex: 1 }}>{children}</div>
 
-      {/* Brand mark, top-left — tiny indigo dot + lowercase wordmark in mono. */}
+      {/* Brand mark, top-left — segfault logo + lowercase wordmark in mono. */}
       <div
         aria-hidden
         style={{
@@ -95,13 +95,12 @@ export function SceneChrome({
           gap: 8,
         }}
       >
-        <span
+        <Img
+          src={staticFile("logo.png")}
           style={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: "#a5b4fc",
-            boxShadow: "0 0 8px rgba(165, 180, 252, 0.45)",
+            width: chipBase + 8,
+            height: chipBase + 8,
+            display: "block",
           }}
         />
         <span
@@ -113,7 +112,7 @@ export function SceneChrome({
             color: specTokens.ink.muted,
           }}
         >
-          videogen
+          segfault
         </span>
       </div>
 
@@ -158,7 +157,7 @@ export function SceneChrome({
               width: 4,
               height: 4,
               borderRadius: "50%",
-              background: "rgba(129, 140, 248, 0.7)",
+              background: "rgba(217, 124, 117, 0.75)",
             }}
           />
           <span
@@ -177,7 +176,7 @@ export function SceneChrome({
       ) : null}
 
       {/* Bottom progress strip — a Linear-style timeline that fills across the
-       * whole video. Past scenes are flat indigo, the current scene fills as
+       * whole video. Past scenes are filled coral, the current scene fills as
        * the playhead advances, future scenes sit as a faint hairline rail. */}
       <div
         aria-hidden
@@ -189,7 +188,7 @@ export function SceneChrome({
           height: 3,
           zIndex: 4,
           pointerEvents: "none",
-          background: "rgba(255, 255, 255, 0.04)",
+          background: "rgba(255, 248, 240, 0.04)",
         }}
       >
         <div
@@ -200,10 +199,11 @@ export function SceneChrome({
             bottom: 0,
             width: `${filledSegmentsLeft + activeSegmentFill}%`,
             background:
-              "linear-gradient(90deg, rgba(129, 140, 248, 0.55) 0%, #a5b4fc 100%)",
+              "linear-gradient(90deg, rgba(217, 124, 117, 0.6) 0%, #e8a7a1 100%)",
           }}
         />
       </div>
     </AbsoluteFill>
   );
 }
+

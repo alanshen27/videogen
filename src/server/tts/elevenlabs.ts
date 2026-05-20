@@ -154,7 +154,10 @@ export async function synthesizeElevenLabsVoiceFirst(options: {
     (a, b) => a.sceneNumber - b.sceneNumber
   );
   const { fps, jobId } = options;
-  const tailPadFrames = Math.max(12, Math.round(fps * 0.45));
+  /* Generous tail pad: ElevenLabs sometimes clips final phonemes by 100-300ms
+   * and the next scene cutting in mid-word reads as a "cut off" narration.
+   * 1.0s buffer is barely perceptible as silence but eliminates the chop. */
+  const tailPadFrames = Math.max(24, Math.round(fps * 1.0));
 
   const absDir = path.join(process.cwd(), "public", "audio-jobs", jobId);
   await fs.mkdir(absDir, { recursive: true });
@@ -247,10 +250,40 @@ export function applyVoiceFirstTimelineToSpec(
   const nTime = timeline.scenes.length;
   let from = 0;
   const scenes = spec.scenes.map((s, i) => {
-    const duration =
+    const newDuration =
       i < nTime ? timeline.scenes[i]!.durationInFrames : s.durationInFrames;
-    const row = { ...s, fromFrame: from, durationInFrames: duration };
-    from += duration;
+    const oldDuration = s.durationInFrames;
+    /* Rescale animated diagram beats so they walk through the nodes in sync
+     * with the (longer, voice-measured) narration. Without this rescale, the
+     * LLM's "imagined 6s scene" beats finish in the first 6s of a 15s scene
+     * and the highlight then sits stuck on the last node forever. */
+    const scale = oldDuration > 0 ? newDuration / oldDuration : 1;
+    const elements = s.elements.map((el) => {
+      if (el.type !== "mermaid") return el;
+      const beats = (
+        el as typeof el & {
+          diagramBeats?: {
+            fromFrame: number;
+            durationInFrames: number;
+            targets: string[];
+          }[];
+        }
+      ).diagramBeats;
+      if (!beats || beats.length === 0) return el;
+      const rescaled = beats.map((b) => ({
+        fromFrame: Math.round(b.fromFrame * scale),
+        durationInFrames: Math.max(12, Math.round(b.durationInFrames * scale)),
+        targets: b.targets,
+      }));
+      return { ...el, diagramBeats: rescaled };
+    });
+    const row = {
+      ...s,
+      fromFrame: from,
+      durationInFrames: newDuration,
+      elements,
+    };
+    from += newDuration;
     return row;
   });
 

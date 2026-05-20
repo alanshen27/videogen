@@ -296,7 +296,7 @@ export function SpecMermaid({ el }: { el: MermaidSceneEl }) {
         alignItems: "stretch",
         borderRadius: 14,
         border: "1px solid rgba(255,255,255,0.08)",
-        background: "#0a0a0c",
+        background: "#15110f",
       }}
     >
       <style type="text/css">{`
@@ -329,7 +329,7 @@ export function SpecMermaid({ el }: { el: MermaidSceneEl }) {
           background: transparent;
         }
         #${wrapId} svg .edgeLabel span {
-          background: #0a0a0c !important;
+          background: #15110f !important;
           color: #fafafa !important;
           padding: 3px 7px;
           border-radius: 4px;

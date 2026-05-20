@@ -46,35 +46,36 @@ import {
 } from "./mermaid-parse";
 
 /**
- * Pierre-/diffs.com-style palette: cool zinc greys, indigo accent, hairline
- * borders, ghost tiles. Colour is reserved for the single `active` emphasis.
+ * Warm-minimal palette: charcoal canvas, paper-white labels, single coral
+ * accent for the active beat (echoes the brand mark on dark sheet). Hairline
+ * borders, ghost tiles, no glows.
  */
 const DIAGRAM = {
   tileBg: "transparent",
-  tileBgActive: "rgba(99, 102, 241, 0.07)",
-  tileBorder: "rgba(255, 255, 255, 0.09)",
-  tileBorderActive: "rgba(129, 140, 248, 0.55)",
-  tileBorderMuted: "rgba(255, 255, 255, 0.05)",
-  iconColor: "#e4e4e7",
-  iconColorActive: "#c7d2fe",
-  iconColorMuted: "rgba(228, 228, 231, 0.4)",
+  tileBgActive: "rgba(217, 124, 117, 0.08)",
+  tileBorder: "rgba(255, 248, 240, 0.10)",
+  tileBorderActive: "rgba(217, 124, 117, 0.65)",
+  tileBorderMuted: "rgba(255, 248, 240, 0.05)",
+  iconColor: "#ece8e3",
+  iconColorActive: "#e8a7a1",
+  iconColorMuted: "rgba(236, 232, 227, 0.4)",
   labelColor: "#fafafa",
-  labelColorMuted: "rgba(228, 228, 231, 0.5)",
+  labelColorMuted: "rgba(236, 232, 227, 0.5)",
   /* Used for the small "dot" / status indicator inside each tile. */
-  dotDefault: "rgba(255, 255, 255, 0.25)",
-  dotActive: "#a5b4fc",
-  dotMuted: "rgba(255, 255, 255, 0.12)",
-  edge: "rgba(255, 255, 255, 0.14)",
-  edgeActive: "rgba(129, 140, 248, 0.65)",
-  edgeMuted: "rgba(255, 255, 255, 0.07)",
-  edgeLabelBg: "#0b0b0e",
-  edgeLabelBorder: "rgba(255, 255, 255, 0.09)",
-  edgeLabelColor: "#e4e4e7",
+  dotDefault: "rgba(255, 248, 240, 0.25)",
+  dotActive: "#d97c75",
+  dotMuted: "rgba(255, 248, 240, 0.12)",
+  edge: "rgba(255, 248, 240, 0.14)",
+  edgeActive: "rgba(217, 124, 117, 0.7)",
+  edgeMuted: "rgba(255, 248, 240, 0.07)",
+  edgeLabelBg: "#15110f",
+  edgeLabelBorder: "rgba(255, 248, 240, 0.09)",
+  edgeLabelColor: "#ece8e3",
   /* Subgraph / group chrome — dashed hairline rectangle + tiny mono label */
-  groupBorder: "rgba(255, 255, 255, 0.13)",
-  groupBg: "rgba(255, 255, 255, 0.015)",
-  groupLabelBg: "#0a0a0c",
-  groupLabelColor: "rgba(228, 228, 231, 0.65)",
+  groupBorder: "rgba(255, 248, 240, 0.13)",
+  groupBg: "rgba(255, 248, 240, 0.012)",
+  groupLabelBg: "#14100e",
+  groupLabelColor: "rgba(236, 232, 227, 0.65)",
 } as const;
 
 type LucideCmp = React.ComponentType<{

@@ -11,7 +11,7 @@
       {
         "fromFrame": 0,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.08) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(217, 124, 117, 0.08) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "cut",
         "sfx": [
@@ -33,7 +33,7 @@
       {
         "fromFrame": 120,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.07) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "split_text_left_canvas_right",
         "transition": "fade",
         "sfx": [
@@ -65,7 +65,7 @@
       {
         "fromFrame": 240,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.05) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.05) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "split_canvas_left_text_right",
         "transition": "push_left",
         "sfx": [
@@ -103,7 +103,7 @@
       {
         "fromFrame": 360,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(217, 124, 117, 0.07) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "scale_down",
         "sfx": [
@@ -125,7 +125,7 @@
       {
         "fromFrame": 480,
         "durationInFrames": 150,
-        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "push_up",
         "sfx": [
@@ -150,7 +150,7 @@
       {
         "fromFrame": 630,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "split_text_left_canvas_right",
         "transition": "fade",
         "sfx": [
@@ -185,7 +185,7 @@
       {
         "fromFrame": 750,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(217, 124, 117, 0.07) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "fade",
         "elements": [
@@ -204,7 +204,7 @@
       {
         "fromFrame": 870,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "split_dual_figure",
         "transition": "whip",
         "sfx": [
@@ -236,8 +236,8 @@
       {
         "fromFrame": 990,
         "durationInFrames": 150,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
-        "layoutPreset": "title_hero_and_canvas",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
         "transition": "push_left",
         "sfx": [
           { "name": "whoosh", "atFrame": 0, "volume": 0.5 }
@@ -258,7 +258,7 @@
       {
         "fromFrame": 1140,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "code_and_callouts",
         "transition": "fade",
         "sfx": [
@@ -294,7 +294,7 @@
       {
         "fromFrame": 1260,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(129, 140, 248, 0.07) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(217, 124, 117, 0.07) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "scale_down",
         "sfx": [
@@ -316,7 +316,7 @@
       {
         "fromFrame": 1380,
         "durationInFrames": 120,
-        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(129, 140, 248, 0.06) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #08080a 100%)",
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(217, 124, 117, 0.06) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
         "layoutPreset": "title_hero_and_canvas",
         "transition": "fade",
         "elements": [
