@@ -621,3 +621,24 @@ Patterns to avoid:
 If you're unsure whether to use a diagram or an image: **pick the image**.
 If you're unsure whether to use an image or a list: **pick the image with a
 short headline** (≤6 words, empty body). The renderer makes both look great.
+
+---
+
+## 11. YouTube metadata (title, description, Shorts)
+
+After render, the pipeline generates upload metadata (long-form + Shorts).
+
+**Long-form:** `title`, `description` (prose + light CTA), `tags` (no `#`).
+
+**Shorts pack (required):**
+
+- `shortsTitle` — hook-first, ≤60 chars.
+- `shortsDescription` — paste-ready shape:
+  1. One punchy sentence.
+  2. Blank line.
+  3. One line of hashtags only: `#python #graphs #shorts` (6–12 tags, always
+     include `#shorts`).
+- `hashtags` — same tags without `#` for tag fields / copy helpers.
+
+Vertical (`PORTRAIT`) or ≤60s videos are Shorts-first; landscape still gets a
+Shorts variant for cross-posting.

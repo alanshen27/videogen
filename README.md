@@ -107,7 +107,7 @@ src/
 5. **DOWNLOAD_REFERENCE_IMAGES** — Searches Google Images via SerpAPI, downloads images (if enabled)
 6. **GENERATE_SCENE_SPEC** — LLM chooses branded scene templates + focus beats per scene
 7. **GENERATE_REMOTION_SPEC** — Deterministic mapper converts scene spec to Remotion layout
-8. **GENERATE_METADATA** — YouTube title, description, tags, thumbnail prompt
+8. **GENERATE_METADATA** — YouTube title/description/tags + Shorts title, hashtag description, thumbnail prompt
 9. **RENDER_VIDEO** — Full MP4 render via Remotion (optional)
 10. **COMPLETE** — Job marked done
 

@@ -35,10 +35,27 @@ export function buildJobVideoEmailBody(payload: JobVideoEmailPayload): {
       ? payload.metadata.tags.join(", ")
       : "—";
 
+  const hashtagLine =
+    payload.metadata.hashtags?.length > 0
+      ? payload.metadata.hashtags
+          .map((t) => (t.startsWith("#") ? t : `#${t}`))
+          .join(" ")
+      : null;
+
   const summaryBlock = [
     `Topic: ${payload.topic}`,
     payload.hook ? `Hook: ${payload.hook}` : null,
     `Runtime: ${formatRuntime(payload.runtimeSeconds)} · ${payload.sceneCount} scenes`,
+    "",
+    "—— YouTube Shorts (paste into upload) ——",
+    `Title: ${payload.metadata.shortsTitle ?? payload.metadata.title}`,
+    "",
+    payload.metadata.shortsDescription ??
+      [payload.metadata.description, hashtagLine].filter(Boolean).join("\n\n"),
+    hashtagLine ? `Tags: ${hashtagLine}` : null,
+    "",
+    "—— Long-form ——",
+    `Title: ${payload.metadata.title}`,
     `Category: ${payload.metadata.category}`,
     `Language: ${payload.metadata.language}`,
     `Tags: ${tags}`,
@@ -60,7 +77,12 @@ export function buildJobVideoEmailBody(payload: JobVideoEmailPayload): {
   <h2 style="margin: 0 0 8px; font-size: 20px;">${escapeHtml(title)}</h2>
   <p style="margin: 0 0 16px; color: #6b6560;"><strong>Topic:</strong> ${escapeHtml(payload.topic)}</p>
   ${payload.hook ? `<p style="font-style: italic; color: #6b6560;">${escapeHtml(payload.hook)}</p>` : ""}
+  <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #d97c75;">YouTube Shorts</p>
+  <p style="margin: 0 0 8px;"><strong>Title:</strong> ${escapeHtml(payload.metadata.shortsTitle ?? title)}</p>
+  <div style="margin: 0 0 20px; padding: 16px; background: #f0ebe4; border-radius: 8px; white-space: pre-wrap; font-size: 14px;">${escapeHtml(payload.metadata.shortsDescription ?? payload.metadata.description)}</div>
+  <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #6b6560;">Long-form</p>
   <ul style="padding-left: 20px; color: #3d3835;">
+    <li><strong>Title:</strong> ${escapeHtml(payload.metadata.title)}</li>
     <li><strong>Runtime:</strong> ${escapeHtml(formatRuntime(payload.runtimeSeconds))} · ${payload.sceneCount} scenes</li>
     <li><strong>Category:</strong> ${escapeHtml(payload.metadata.category)}</li>
     <li><strong>Language:</strong> ${escapeHtml(payload.metadata.language)}</li>

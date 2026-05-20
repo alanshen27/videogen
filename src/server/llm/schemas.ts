@@ -256,9 +256,16 @@ export const RemotionSpecSchema = RemotionSpecGenerationSchema.extend({
 });
 
 export const MetadataSchema = z.object({
+  /** Long-form / standard YouTube upload */
   title: z.string(),
   description: z.string(),
   tags: z.array(z.string()),
+  /** YouTube Shorts upload pack (hook title + #hashtag description) */
+  shortsTitle: z.string(),
+  /** Paste-ready Shorts description: hook line(s), blank line, then `#tag #tag` line */
+  shortsDescription: z.string(),
+  /** Same tags as in shortsDescription, without `#` prefix */
+  hashtags: z.array(z.string()),
   thumbnailPrompt: z.string(),
   category: z.string(),
   language: z.string(),

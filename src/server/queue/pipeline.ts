@@ -36,6 +36,7 @@ import {
   type BrandedSceneSpec,
   type RemotionSpec,
 } from "../llm/schemas";
+import { buildMetadataPrompt } from "../llm/metadata-prompt";
 import { searchReferenceImages } from "../tools/search-images";
 import { downloadImage } from "../tools/download-image";
 import { env, isEmailDeliveryConfigured } from "../env";
@@ -555,10 +556,14 @@ Output valid JSON only.`,
     await log(jobId, "info", "Generating video metadata...");
 
     const metadata = await generateStructuredOutput({
-      prompt: `${prompt}\n\nSCRIPT:\n${JSON.stringify(script, null, 2)}\n\nGenerate YouTube video metadata including title, description, tags, thumbnail prompt, category, and language.\n\nPrefer thumbnail concepts built from bold typography plus symbolic icons or diagrams—not generic stock-photo setups unless photography is central to the topic.`,
+      prompt: buildMetadataPrompt(prompt, script, {
+        topic: job.topic,
+        durationSeconds: job.durationSeconds,
+        orientation: job.orientation as "LANDSCAPE" | "PORTRAIT",
+      }),
       schema: MetadataSchema,
       systemMessage: withBrand(
-        "You are a YouTube SEO expert. Output valid JSON only."
+        "You are a YouTube SEO expert for explainers and Shorts. Write paste-ready Shorts descriptions with a hashtag line (#tag #tag). Output valid JSON only."
       ),
       modelId: OPENAI_MODEL_SPEC_DESIGN,
     });
@@ -566,7 +571,11 @@ Output valid JSON only.`,
       await saveArtifact(jobId, "THUMBNAIL", { thumbnailPrompt: metadata.thumbnailPrompt });
     }
     await saveArtifact(jobId, "METADATA", metadata);
-    await log(jobId, "info", `Metadata created: "${metadata.title}"`);
+    await log(
+      jobId,
+      "info",
+      `Metadata created: "${metadata.title}" · Shorts: "${metadata.shortsTitle}"`
+    );
 
     if (videoPath && isEmailDeliveryConfigured()) {
       try {

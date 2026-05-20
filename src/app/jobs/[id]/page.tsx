@@ -27,6 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { MetadataArtifactView } from "@/components/metadata-artifact";
 
 function JsonViewer({ data }: { data: unknown }) {
   const [copied, setCopied] = useState(false);
@@ -317,9 +318,8 @@ export default function JobDetailPage({
         </TabsContent>
 
         <TabsContent value="metadata" className="mt-4">
-          <ArtifactPanel
+          <MetadataArtifactPanel
             artifacts={artifacts}
-            type="METADATA"
             loading={artifactsLoading}
           />
         </TabsContent>
@@ -363,6 +363,62 @@ export default function JobDetailPage({
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function MetadataArtifactPanel({
+  artifacts,
+  loading,
+}: {
+  artifacts?:
+    | {
+        id: string;
+        type: string;
+        contentJson: unknown;
+        filePath: string | null;
+        createdAt: Date;
+      }[]
+    | undefined;
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const filtered = (artifacts ?? []).filter((a) => a.type === "METADATA");
+
+  if (filtered.length === 0) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground">No metadata generated yet</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {filtered.map((artifact) => (
+        <div key={artifact.id}>
+          <MetadataArtifactView data={artifact.contentJson} />
+          <details className="mt-4">
+            <summary className="cursor-pointer text-xs text-muted-foreground">
+              Raw JSON
+            </summary>
+            <div className="mt-2">
+              <JsonViewer data={artifact.contentJson} />
+            </div>
+          </details>
+        </div>
+      ))}
     </div>
   );
 }
