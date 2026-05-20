@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { createWorker } from "../server/queue";
 import { executePipeline } from "../server/queue/pipeline";
 import { db } from "../server/db";
