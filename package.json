@@ -11,7 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "worker": "node --env-file=.env ./node_modules/tsx/dist/cli.mjs src/workers/videoWorker.ts"
+    "worker": "node ./node_modules/tsx/dist/cli.mjs src/workers/videoWorker.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.64",
