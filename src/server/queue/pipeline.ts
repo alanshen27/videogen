@@ -594,7 +594,7 @@ Output valid JSON only.`,
         await log(
           jobId,
           "info",
-          `Delivery email sent to ${env.NOTIFY_EMAIL}`
+          `Delivery email sent to ${env.EMAIL_TO}`
         );
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -604,7 +604,7 @@ Output valid JSON only.`,
       await log(
         jobId,
         "info",
-        "Email delivery skipped (set SMTP_* and NOTIFY_EMAIL in .env)"
+        "Email delivery skipped (set EMAIL_HOST, EMAIL_USER, EMAIL_PASS, EMAIL_TO in .env)"
       );
     }
 

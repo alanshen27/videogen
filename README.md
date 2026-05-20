@@ -31,12 +31,12 @@ cp .env .env.local
 #   OPENAI_API_KEY=sk-...
 #   DEEPSEEK_API_KEY=sk-... (optional fallback)
 #   SERPAPI_API_KEY=... (optional, Google Images via SerpAPI)
-#   SMTP_HOST=smtp.gmail.com (optional — emails finished MP4 to you)
-#   SMTP_PORT=587
-#   SMTP_USER=you@gmail.com
-#   SMTP_PASS=app-password
-#   SMTP_FROM=segfault <you@gmail.com>
-#   NOTIFY_EMAIL=you@gmail.com
+#   EMAIL_HOST=smtp.protonmail.ch (optional — emails finished MP4 to you)
+#   EMAIL_PORT=587
+#   EMAIL_USER=hello@example.com
+#   EMAIL_PASS=app-password
+#   EMAIL_TO=you@gmail.com
+#   EMAIL_FROM=optional — defaults to EMAIL_USER
 
 # 3. Set up the database
 npx prisma db push
@@ -134,6 +134,18 @@ src/
 | `DEEPSEEK_API_KEY` | No | DeepSeek API key (alternative LLM) |
 | `SERPAPI_API_KEY` | No | SerpAPI key for Google Images search |
 | `IMAGE_SEARCH_API_KEY` | No | Backward-compatible alias for image search key |
+| `EMAIL_HOST` | No | SMTP host for delivery emails when a job finishes |
+| `EMAIL_PORT` | No | SMTP port (default `587`) |
+| `EMAIL_USER` | No | SMTP login / default From address |
+| `EMAIL_PASS` | No | SMTP password |
+| `EMAIL_TO` | No | Inbox that receives finished MP4 + metadata |
+| `EMAIL_FROM` | No | Sender header; defaults to `EMAIL_USER` |
+
+### Deploying on Render
+
+- Set **`NODE_ENV=production`** on the web service (not `staging` / `development`). A non-standard value breaks `next build` during static prerender (`useContext` / `useState` null errors).
+- The `npm run build` script forces `NODE_ENV=production` for `next build`, but your dashboard env should still be `production` at runtime.
+- Optional: use `render.yaml` in this repo as a blueprint.
 
 ## MVP Limitations
 

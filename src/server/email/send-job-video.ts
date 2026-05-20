@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import nodemailer from "nodemailer";
 import type { VideoMetadata } from "../llm/schemas";
-import { env, isEmailDeliveryConfigured } from "../env";
+import { emailFromAddress, env, isEmailDeliveryConfigured } from "../env";
 
 const MAX_ATTACHMENT_BYTES = 24 * 1024 * 1024;
 
@@ -105,7 +105,7 @@ function escapeHtml(s: string): string {
 }
 
 /**
- * Email the rendered MP4 + metadata summary to NOTIFY_EMAIL.
+ * Email the rendered MP4 + metadata summary to EMAIL_TO.
  * No-op when SMTP is not configured. Throws on send failure.
  */
 export async function sendJobVideoEmail(
@@ -125,18 +125,18 @@ export async function sendJobVideoEmail(
   const { subject, text, html } = buildJobVideoEmailBody(payload);
 
   const transport = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
+    host: env.EMAIL_HOST,
+    port: env.EMAIL_PORT,
+    secure: env.EMAIL_PORT === 465,
     auth:
-      env.SMTP_USER && env.SMTP_PASS
-        ? { user: env.SMTP_USER, pass: env.SMTP_PASS }
+      env.EMAIL_USER && env.EMAIL_PASS
+        ? { user: env.EMAIL_USER, pass: env.EMAIL_PASS }
         : undefined,
   });
 
   await transport.sendMail({
-    from: env.SMTP_FROM,
-    to: env.NOTIFY_EMAIL,
+    from: emailFromAddress(),
+    to: env.EMAIL_TO,
     subject,
     text,
     html,

@@ -14,24 +14,29 @@ const envSchema = z.object({
     .string()
     .optional()
     .default("21m00Tcm4TlvDq8ikWAM"),
-  /** SMTP — optional; when set, completed renders are emailed to NOTIFY_EMAIL */
-  SMTP_HOST: z.string().optional().default(""),
-  SMTP_PORT: z.coerce.number().int().positive().optional().default(587),
-  SMTP_USER: z.string().optional().default(""),
-  SMTP_PASS: z.string().optional().default(""),
-  SMTP_FROM: z.string().optional().default(""),
-  /** Recipient inbox for finished videos */
-  NOTIFY_EMAIL: z.string().optional().default(""),
+  /** SMTP — optional; when set, completed renders are emailed to EMAIL_TO */
+  EMAIL_HOST: z.string().optional().default(""),
+  EMAIL_PORT: z.coerce.number().int().positive().optional().default(587),
+  EMAIL_USER: z.string().optional().default(""),
+  EMAIL_PASS: z.string().optional().default(""),
+  /** Sender address; defaults to EMAIL_USER when unset */
+  EMAIL_FROM: z.string().optional().default(""),
+  EMAIL_TO: z.string().optional().default(""),
 });
 
 export const env = envSchema.parse(process.env);
 
+/** Resolved From header — explicit EMAIL_FROM or the authenticated mailbox. */
+export function emailFromAddress(): string {
+  return env.EMAIL_FROM.trim() || env.EMAIL_USER.trim();
+}
+
 export function isEmailDeliveryConfigured(): boolean {
   return Boolean(
-    env.SMTP_HOST.trim() &&
-      env.SMTP_FROM.trim() &&
-      env.NOTIFY_EMAIL.trim() &&
-      env.SMTP_USER.trim() &&
-      env.SMTP_PASS.trim()
+    env.EMAIL_HOST.trim() &&
+      emailFromAddress() &&
+      env.EMAIL_TO.trim() &&
+      env.EMAIL_USER.trim() &&
+      env.EMAIL_PASS.trim()
   );
 }
