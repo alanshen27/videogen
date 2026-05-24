@@ -311,6 +311,19 @@ export const SceneFocusBeatSchema = z.object({
   caption: z.string(),
   /** Mermaid node/class IDs for this beat (use [] when not applicable). */
   mermaidTargets: z.array(z.string()),
+  /**
+   * Verbatim phrase from this scene's `narration` that should trigger this beat.
+   *
+   * When set, the renderer anchors the beat to the exact frame the narrator
+   * speaks this phrase (via ElevenLabs character-level alignment). When the
+   * phrase is missing — or the TTS model didn't return alignment data —
+   * we fall back to `startSecond`/`endSecond`.
+   *
+   * Use a short, unique substring (3–6 words) that you can find inside
+   * `narration`. Empty string means "no cue, use timing instead".
+   * OpenAI structured outputs require every property to be present.
+   */
+  cueText: z.string(),
 });
 
 export const BrandedSceneSchema = z.object({

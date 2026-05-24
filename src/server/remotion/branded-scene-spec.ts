@@ -7,6 +7,26 @@ import type {
 } from "../llm/schemas";
 import type { BrandedSceneTemplate, SceneFocusBeat } from "../llm/schemas";
 import { parseMermaidFlowchart } from "../../remotion/spec/mermaid-parse";
+import {
+  findPhraseStartSeconds,
+  type CharacterAlignment,
+} from "../tts/elevenlabs";
+
+/**
+ * Per-scene voice timing that the builder can use to anchor beats to the
+ * actual spoken audio. When supplied for a scene we:
+ *   1. Use `durationFrames` as the scene's length (instead of LLM timings)
+ *   2. Use `alignment` + `focusBeat.cueText` to compute the exact frame a
+ *      diagram highlight or list reveal should fire on.
+ *   3. Fall back to legacy `startSecond`/`endSecond` math for any beat
+ *      without a cue, and for any scene without alignment data.
+ */
+export type SceneVoiceTiming = {
+  durationFrames: number;
+  alignment: CharacterAlignment | null;
+  /** Narration as the TTS actually spoke it (post-sanitize). */
+  narration: string;
+};
 
 type RemotionSpecGeneration = Omit<RemotionSpec, "voice">;
 type RemotionElement = RemotionSpecGeneration["scenes"][number]["elements"][number];
@@ -57,10 +77,47 @@ function chooseAnimationForTarget(target?: string): "fade" | "highlight" {
  * Beats that don't target the diagram (or have no `mermaidTargets`) are
  * dropped before timing conversion.
  */
+/**
+ * Time (seconds) of a phrase inside scene narration:
+ *   1. From ElevenLabs character alignment when available — most accurate.
+ *   2. From character-position-as-fraction-of-narration * measured
+ *      duration when no alignment — better than nothing, accounts for
+ *      where the phrase sits in the spoken line.
+ *   3. `null` when narration/phrase don't line up at all.
+ */
+function resolveCueSeconds(
+  cueText: string,
+  voice: SceneVoiceTiming | undefined,
+  sceneDurationFrames: number,
+  searchFromChar: number
+): { startSeconds: number; endCharIndex: number } | null {
+  const phrase = (cueText || "").trim();
+  if (!phrase) return null;
+
+  if (voice?.alignment) {
+    const hit = findPhraseStartSeconds(voice.alignment, phrase, searchFromChar);
+    if (hit) return hit;
+  }
+
+  /* Alignment unavailable — best-effort fraction-of-text fallback. */
+  const narration = voice?.narration ?? "";
+  if (!narration) return null;
+  const lower = narration.toLowerCase();
+  const needle = phrase.toLowerCase();
+  const idx = lower.indexOf(needle, searchFromChar);
+  if (idx < 0) return null;
+  const ratio = idx / Math.max(1, narration.length);
+  return {
+    startSeconds: ratio * (sceneDurationFrames / FPS),
+    endCharIndex: idx + needle.length,
+  };
+}
+
 function buildDiagramBeats(
   focusBeats: SceneFocusBeat[],
   sceneStartSecond: number,
-  sceneDurationFrames: number
+  sceneDurationFrames: number,
+  voice: SceneVoiceTiming | undefined
 ): { fromFrame: number; durationInFrames: number; targets: string[] }[] {
   const diagramBeats = focusBeats.filter(
     (fb) =>
@@ -70,12 +127,67 @@ function buildDiagramBeats(
   );
   if (diagramBeats.length === 0) return [];
 
+  const minBeatFrames = 12;
+
+  /* Phase 1 — try to anchor every beat to the exact spoken cue. */
+  let cursor = 0;
+  const cueAnchored: ({ frame: number; targets: string[] } | null)[] =
+    diagramBeats.map((fb) => {
+      const cue = resolveCueSeconds(
+        fb.cueText ?? "",
+        voice,
+        sceneDurationFrames,
+        cursor
+      );
+      if (!cue) return null;
+      cursor = cue.endCharIndex;
+      return {
+        frame: Math.max(
+          0,
+          Math.min(
+            sceneDurationFrames - minBeatFrames,
+            Math.round(cue.startSeconds * FPS)
+          )
+        ),
+        targets: fb.mermaidTargets.slice(0, 12),
+      };
+    });
+
+  /* Reject the cue-anchored timeline if too few beats matched — falling
+   * back to even-distribution looks better than one node landing right
+   * and the rest stacked at frame 0. */
+  const cueHits = cueAnchored.filter((b) => b !== null).length;
+  const cueQualityOk = cueHits >= Math.ceil(diagramBeats.length / 2);
+
+  if (cueQualityOk && voice?.alignment) {
+    /* Successive beats may not be monotonic if the LLM listed them out of
+     * narration order. Sort, then back-fill any nulls between hits. */
+    const filledFrames: number[] = cueAnchored.map((b, i) =>
+      b ? b.frame : Math.round((i / diagramBeats.length) * sceneDurationFrames)
+    );
+    /* Enforce monotonic ascending: a later beat can't fire before an earlier one. */
+    for (let i = 1; i < filledFrames.length; i++) {
+      if (filledFrames[i]! < filledFrames[i - 1]! + minBeatFrames) {
+        filledFrames[i] = filledFrames[i - 1]! + minBeatFrames;
+      }
+    }
+    /* Each beat holds until the next beat starts (or the scene ends). */
+    return filledFrames.map((from, i) => {
+      const nextFrom = filledFrames[i + 1] ?? sceneDurationFrames;
+      return {
+        fromFrame: Math.min(from, sceneDurationFrames - minBeatFrames),
+        durationInFrames: Math.max(minBeatFrames, nextFrom - from),
+        targets: diagramBeats[i]!.mermaidTargets.slice(0, 12),
+      };
+    });
+  }
+
+  /* Legacy path: build beats from LLM-supplied startSecond/endSecond. */
   const sceneDurationSeconds = sceneDurationFrames / FPS;
   const maxEnd = Math.max(...diagramBeats.map((b) => b.endSecond));
   const sceneRelative = maxEnd <= sceneDurationSeconds * 1.05;
 
   const offset = sceneRelative ? 0 : sceneStartSecond;
-  const minBeatFrames = 12;
 
   const beats = diagramBeats.map((fb) => {
     const startRel = Math.max(0, fb.startSecond - offset);
@@ -199,7 +311,8 @@ function buildListBeats(
   sceneStartSecond: number,
   sceneDurationFrames: number,
   listItems: string[],
-  narration: string
+  narration: string,
+  voice: SceneVoiceTiming | undefined
 ): ListRevealBeat[] {
   if (listItems.length === 0) return [];
 
@@ -211,6 +324,62 @@ function buildListBeats(
   const listFocus = focusBeats
     .filter((fb) => fb.target === "list")
     .sort((a, b) => a.startSecond - b.startSecond);
+
+  /* Phase 1 — use cueText when present. This is the highest-fidelity path:
+   * the LLM tells us "reveal bullet 2 when the narrator says 'Postgres'",
+   * and we find that exact frame in the alignment data. */
+  if (voice && listFocus.length > 0) {
+    let cursor = 0;
+    const cueResolved: (ListRevealBeat | null)[] = listFocus.map((fb, orderIdx) => {
+      const itemIndex = parseListItemIndex(fb.mermaidTargets, orderIdx);
+      const cue = resolveCueSeconds(
+        fb.cueText ?? "",
+        voice,
+        sceneDurationFrames,
+        cursor
+      );
+      if (!cue) return null;
+      cursor = cue.endCharIndex;
+      return {
+        itemIndex,
+        fromFrame: Math.min(
+          sceneDurationFrames - 9,
+          Math.max(hold, Math.round(cue.startSeconds * FPS))
+        ),
+      };
+    });
+    const hits = cueResolved.filter((b) => b !== null).length;
+    if (hits >= Math.ceil(listFocus.length / 2)) {
+      /* Backfill any unresolved beats from narration-keyword heuristic. */
+      const derived = deriveListBeatsFromNarration(
+        narration,
+        listItems,
+        sceneDurationFrames,
+        hold
+      );
+      const byIndex = new Map<number, ListRevealBeat>();
+      for (const b of cueResolved) {
+        if (b && !byIndex.has(b.itemIndex)) byIndex.set(b.itemIndex, b);
+      }
+      return listItems.map((_, itemIndex) => {
+        const authored = byIndex.get(itemIndex);
+        if (authored) return authored;
+        const fallback = derived.find((b) => b.itemIndex === itemIndex);
+        return (
+          fallback ?? {
+            itemIndex,
+            fromFrame: Math.min(
+              sceneDurationFrames - 9,
+              hold +
+                Math.round(
+                  (itemIndex / listItems.length) * (sceneDurationFrames - hold)
+                )
+            ),
+          }
+        );
+      });
+    }
+  }
 
   if (listFocus.length === 0) {
     return deriveListBeatsFromNarration(
@@ -346,6 +515,14 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
   options?: {
     imageByScene?: Map<number, string>;
     orientation?: RemotionOrientation;
+    /**
+     * Per-scene-index (0-based) voice timing from ElevenLabs. When supplied:
+     *   - scene durations are the measured MP3 duration (+ tail pad)
+     *   - diagram/list beats anchor to spoken phrases via `focusBeat.cueText`
+     *   - the downstream `applyVoiceFirstTimelineToSpec` becomes a no-op
+     *     for durations (it still attaches `voice[]` segments)
+     */
+    voiceTimingsBySceneIndex?: Record<number, SceneVoiceTiming | null>;
   }
 ): RemotionSpecGeneration {
   const orientation = options?.orientation ?? "LANDSCAPE";
@@ -353,20 +530,38 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
   const portrait = orientation === "PORTRAIT";
   let fromFrame = 0;
 
+  /* Map sceneNumber → voice timing. The script orders scenes by
+   * `sceneNumber`, and the voice timeline indexes them in script order, so
+   * the 0-based index in the voiceTimings record corresponds to the
+   * 0-based position in the sorted script. */
+  const orderedScript = [...script.scenes].sort(
+    (a, b) => a.sceneNumber - b.sceneNumber
+  );
+  const voiceBySceneNumber = new Map<number, SceneVoiceTiming>();
+  if (options?.voiceTimingsBySceneIndex) {
+    for (let i = 0; i < orderedScript.length; i++) {
+      const t = options.voiceTimingsBySceneIndex[i];
+      if (t) voiceBySceneNumber.set(orderedScript[i]!.sceneNumber, t);
+    }
+  }
+
   const scenes: RemotionSpecGeneration["scenes"] = sceneSpec.scenes.map((scene) => {
     const scriptScene = script.scenes.find(
       (s) => s.sceneNumber === scene.sceneNumber
     );
     const sceneStartSecond = scriptScene?.startSecond ?? 0;
-    const durationInFrames = toFrames(
-      sceneDurationSecondsFromScript(script, scene.sceneNumber)
-    );
+    const voice = voiceBySceneNumber.get(scene.sceneNumber);
+    /* Voice-first scene length wins when we have measured audio. */
+    const durationInFrames = voice
+      ? voice.durationFrames
+      : toFrames(sceneDurationSecondsFromScript(script, scene.sceneNumber));
     const primaryFocus = scene.focusBeats[0]?.target;
     const emphasisAnimation = chooseAnimationForTarget(primaryFocus);
     const diagramBeats = buildDiagramBeats(
       scene.focusBeats,
       sceneStartSecond,
-      durationInFrames
+      durationInFrames,
+      voice
     );
 
     const listItemsForScene = (scene.listItems ?? [])
@@ -379,7 +574,8 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
             sceneStartSecond,
             durationInFrames,
             listItemsForScene,
-            scriptScene?.narration?.trim() ?? ""
+            voice?.narration?.trim() ?? scriptScene?.narration?.trim() ?? "",
+            voice
           )
         : [];
 

@@ -432,6 +432,7 @@ even when unused. Use the empty defaults shown.
       mode: "highlight",
       caption: "",
       mermaidTargets: [],
+      cueText: "",                       // "" for title hold; required for diagram/list beats
     },
   ],
 }
@@ -500,6 +501,14 @@ is what you should emit.
 - `caption`: short on-screen cue (or `""`).
 - `mermaidTargets`: array of node IDs (matching IDs from `diagramMermaid`)
   that should be lit up during this beat. Everything else dims to muted.
+- **`cueText`**: verbatim 2–6 word substring from this scene's `narration`
+  that triggers the beat. The server runs ElevenLabs character-level
+  alignment on the narration MP3, finds your `cueText` in what the TTS
+  actually spoke, and fires the beat on the **exact** frame those words
+  are uttered. This is what makes diagrams feel reactive to the voice
+  instead of "close-but-not-quite." Use `cueText: ""` only for purely
+  visual beats (e.g. a 0–1s `target: "title"` hold) where timing genuinely
+  doesn't matter — the LLM-supplied `startSecond` becomes the fallback.
 
 **Diagram walkthrough pattern.** When narrating a flow node-by-node,
 author one `focusBeats` row per spoken beat, and have each one point at
@@ -509,40 +518,47 @@ the node(s) currently being discussed:
 {
   "template": "left_diagram_right_text",
   "diagramMermaid": "flowchart LR\n  U[\"User\"] --> G[\"Gateway\"]\n  G --> A[\"Auth\"]\n  A --> Q[(\"Queue\")]\n  Q --> W[\"Worker\"]\n  W --> DB[(\"Postgres\")]",
+  "narration": "A request hits the gateway, then auth checks it, then the queue picks it up and writes to Postgres.",
   "focusBeats": [
-    { "startSecond": 0,   "endSecond": 1.4, "target": "title",   "mode": "highlight", "caption": "",        "mermaidTargets": [] },
-    { "startSecond": 1.4, "endSecond": 3.0, "target": "diagram", "mode": "highlight", "caption": "request", "mermaidTargets": ["U", "G"] },
-    { "startSecond": 3.0, "endSecond": 4.6, "target": "diagram", "mode": "highlight", "caption": "auth",    "mermaidTargets": ["A"] },
-    { "startSecond": 4.6, "endSecond": 6.2, "target": "diagram", "mode": "highlight", "caption": "queue",   "mermaidTargets": ["Q", "W"] },
-    { "startSecond": 6.2, "endSecond": 8.0, "target": "diagram", "mode": "highlight", "caption": "persist", "mermaidTargets": ["DB"] }
+    { "startSecond": 0,   "endSecond": 1.4, "target": "title",   "mode": "highlight", "caption": "",        "mermaidTargets": [],          "cueText": "" },
+    { "startSecond": 1.4, "endSecond": 3.0, "target": "diagram", "mode": "highlight", "caption": "request", "mermaidTargets": ["U", "G"], "cueText": "request hits the gateway" },
+    { "startSecond": 3.0, "endSecond": 4.6, "target": "diagram", "mode": "highlight", "caption": "auth",    "mermaidTargets": ["A"],       "cueText": "auth checks it" },
+    { "startSecond": 4.6, "endSecond": 6.2, "target": "diagram", "mode": "highlight", "caption": "queue",   "mermaidTargets": ["Q", "W"], "cueText": "queue picks it up" },
+    { "startSecond": 6.2, "endSecond": 8.0, "target": "diagram", "mode": "highlight", "caption": "persist", "mermaidTargets": ["DB"],      "cueText": "Postgres" }
   ]
 }
 ```
 
-This produces an animated diagram: at second 1.4 the renderer highlights
-`U` and `G` (everything else dims), at second 3.0 it shifts to `A`, etc.
-Narration timing should line up — when you say "the request hits the auth
-service", that's when the `["A"]` beat should be active.
+This produces an animated diagram driven by the actual voice: the
+`["U","G"]` highlight fires the frame the narrator says "request hits the
+gateway", `["A"]` fires on "auth checks it", etc. The `startSecond`/
+`endSecond` values are only a fallback for when alignment data isn't
+available — `cueText` is what makes the diagram reactive.
 
 Rules:
 - `mermaidTargets` IDs must match the IDs in `diagramMermaid` exactly.
-- Keep beats short (1–2.5 seconds each) — viewers track one move at a time.
-- Always cover the full scene. The last beat holds to the end of the scene.
-- Use `mermaidTargets: []` on non-diagram beats; the renderer ignores them.
+- `cueText` MUST be an exact substring of `narration` (case-insensitive). If
+  you can't find the right phrase, **rewrite narration** to include it.
+- Keep cues short (2–6 words) and unique within the scene — long phrases
+  reduce the chance of a match.
+- Cover the full flow. The last beat holds to the end of the scene.
+- Use `mermaidTargets: []` and `cueText: ""` on non-diagram beats; the
+  renderer ignores them.
 
 ### List reveals — bullets in sync with voice
 
-ElevenLabs gives us **one MP3 per scene** (total duration), not word-level
-timestamps. List items still sync to narration via scene-relative `focusBeats`:
+ElevenLabs `with-timestamps` gives us per-character timing for the
+narration MP3, so list items can be revealed on the exact word that
+introduces them — not on a fixed-second guess.
 
 - `template: "list"` must include **2–4 `listItems`** — never headline-only.
 - Show the headline first (`target: "title"` beat ~0–1s), then reveal each
   bullet when the VO mentions it (`target: "list"`).
 - One `focusBeats` row per list item. Put the 0-based item index in
   `mermaidTargets` as a string, e.g. `["0"]`, `["1"]`, `["2"]`.
-- `startSecond` / `endSecond` are scene-relative and should match when that
-  bullet is spoken in `narration`. After voice synthesis, the renderer rescales
-  beats to the measured MP3 length (same as diagram hops).
+- Set `cueText` to the spoken phrase that introduces that bullet — typically
+  2–4 words copied straight out of `narration`. The bullet appears on that
+  frame. `startSecond`/`endSecond` remain a fallback.
 
 ```jsonc
 {
@@ -550,17 +566,18 @@ timestamps. List items still sync to narration via scene-relative `focusBeats`:
   "headline": "Three checks before deploy",
   "body": "",
   "listItems": ["Migrations applied", "Feature flags off", "Rollback tested"],
+  "narration": "First, migrations applied to the live database. Then feature flags off for the new path. Finally, rollback tested by replaying yesterday's traffic.",
   "focusBeats": [
-    { "startSecond": 0,   "endSecond": 1.0, "target": "title", "mode": "highlight", "caption": "", "mermaidTargets": [] },
-    { "startSecond": 1.0, "endSecond": 2.2, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["0"] },
-    { "startSecond": 2.2, "endSecond": 3.4, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["1"] },
-    { "startSecond": 3.4, "endSecond": 4.8, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["2"] }
+    { "startSecond": 0,   "endSecond": 1.0, "target": "title", "mode": "highlight", "caption": "", "mermaidTargets": [],    "cueText": "" },
+    { "startSecond": 1.0, "endSecond": 2.2, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["0"], "cueText": "migrations applied" },
+    { "startSecond": 2.2, "endSecond": 3.4, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["1"], "cueText": "feature flags off" },
+    { "startSecond": 3.4, "endSecond": 4.8, "target": "list",  "mode": "highlight", "caption": "", "mermaidTargets": ["2"], "cueText": "rollback tested" }
   ]
 }
 ```
 
 If list beats are omitted, the builder aligns reveals to keywords in
-`narration` — less accurate than explicit beats.
+`narration` — works, but less accurate than explicit cued beats.
 
 ---
 
