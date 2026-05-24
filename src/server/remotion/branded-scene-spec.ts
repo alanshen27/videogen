@@ -7,6 +7,7 @@ import type {
 } from "../llm/schemas";
 import type { BrandedSceneTemplate, SceneFocusBeat } from "../llm/schemas";
 import { parseMermaidFlowchart } from "../../remotion/spec/mermaid-parse";
+import { sanitizeInlineSvg } from "../tools/svg-sanitize";
 
 type RemotionSpecGeneration = Omit<RemotionSpec, "voice">;
 type RemotionElement = RemotionSpecGeneration["scenes"][number]["elements"][number];
@@ -321,6 +322,12 @@ function pickIcon(sceneText: string): RemotionLucideIconName {
   return "Sparkles";
 }
 
+function pathToStaticContent(p: string): string {
+  const idx = p.lastIndexOf("/public/");
+  if (idx >= 0) return p.slice(idx + "/public/".length);
+  return p;
+}
+
 function staticImageContent(
   sceneNumber: number,
   fallback: string,
@@ -328,9 +335,51 @@ function staticImageContent(
 ): string {
   const p = imageByScene?.get(sceneNumber);
   if (!p) return fallback;
-  const idx = p.lastIndexOf("/public/");
-  if (idx >= 0) return p.slice(idx + "/public/".length);
-  return p;
+  return pathToStaticContent(p);
+}
+
+/**
+ * Materialise the ordered fallback list for a given scene. The renderer
+ * walks this on `<Img onError>`. Excludes the primary `content` URL
+ * (caller already wired that as the first src).
+ */
+function staticImageCandidates(
+  sceneNumber: number,
+  imageCandidatesByScene?: Map<number, string[]>
+): string[] {
+  const list = imageCandidatesByScene?.get(sceneNumber);
+  if (!list || list.length === 0) return [];
+  return list.map(pathToStaticContent);
+}
+
+/**
+ * Helper: build a `type: "image"` element with the runtime-fallback
+ * candidates wired in. All image-template branches below use this so
+ * the renderer gets a consistent shape.
+ */
+function buildImageElement(
+  sceneNumber: number,
+  fallback: string,
+  imageByScene: Map<number, string> | undefined,
+  imageCandidatesByScene: Map<number, string[]> | undefined,
+  pos: { x: number; y: number },
+  animation: RemotionElement["animation"]
+): RemotionElement {
+  const candidates = staticImageCandidates(
+    sceneNumber,
+    imageCandidatesByScene
+  );
+  return {
+    type: "image",
+    content: staticImageContent(sceneNumber, fallback, imageByScene),
+    iconName: null,
+    width: null,
+    height: null,
+    x: pos.x,
+    y: pos.y,
+    animation,
+    ...(candidates.length > 0 ? { imageCandidates: candidates } : {}),
+  };
 }
 
 function sceneIconName(scene: {
@@ -345,6 +394,8 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
   script: Script,
   options?: {
     imageByScene?: Map<number, string>;
+    /** Ordered alternative paths per scene for runtime image-onError recovery. */
+    imageCandidatesByScene?: Map<number, string[]>;
     orientation?: RemotionOrientation;
   }
 ): RemotionSpecGeneration {
@@ -427,16 +478,14 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
     const sceneIcon = sceneIconName(scene);
 
     const visualElement: RemotionElement = preferImage
-      ? {
-          type: "image",
-          content: downloadedImage,
-          iconName: null,
-          width: null,
-          height: null,
-          x: visualRightX,
-          y: 180,
-          animation: emphasisAnimation,
-        }
+      ? buildImageElement(
+          scene.sceneNumber,
+          downloadedImage,
+          options?.imageByScene,
+          options?.imageCandidatesByScene,
+          { x: visualRightX, y: 180 },
+          emphasisAnimation
+        )
       : scene.diagramMermaid
         ? {
             type: "mermaid",
@@ -464,20 +513,14 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
               y: 182,
               animation: emphasisAnimation,
             }
-          : {
-              type: "image",
-              content: staticImageContent(
-                scene.sceneNumber,
-                scene.imageSearchQuery ?? "",
-                options?.imageByScene
-              ),
-              iconName: null,
-              width: null,
-              height: null,
-              x: visualRightX,
-              y: 180,
-              animation: emphasisAnimation,
-            };
+          : buildImageElement(
+              scene.sceneNumber,
+              scene.imageSearchQuery ?? "",
+              options?.imageByScene,
+              options?.imageCandidatesByScene,
+              { x: visualRightX, y: 180 },
+              emphasisAnimation
+            );
 
     const textElement: RemotionElement = {
       type: "text",
@@ -539,39 +582,27 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
             y: 88,
             content: scene.headline,
           },
-          {
-            type: "image",
-            content: staticImageContent(
-              scene.sceneNumber,
-              scene.imageSearchQuery ?? "",
-              options?.imageByScene
-            ),
-            iconName: null,
-            width: null,
-            height: null,
-            x: 180,
-            y: 224,
-            animation: emphasisAnimation,
-          },
+          buildImageElement(
+            scene.sceneNumber,
+            scene.imageSearchQuery ?? "",
+            options?.imageByScene,
+            options?.imageCandidatesByScene,
+            { x: 180, y: 224 },
+            emphasisAnimation
+          ),
         ];
         break;
       case "image_left":
         sceneOut.layoutPreset = "split_canvas_left_text_right";
         sceneOut.elements = [
-          {
-            type: "image",
-            content: staticImageContent(
-              scene.sceneNumber,
-              scene.imageSearchQuery ?? "",
-              options?.imageByScene
-            ),
-            iconName: null,
-            width: null,
-            height: null,
-            x: 102,
-            y: 182,
-            animation: emphasisAnimation,
-          },
+          buildImageElement(
+            scene.sceneNumber,
+            scene.imageSearchQuery ?? "",
+            options?.imageByScene,
+            options?.imageCandidatesByScene,
+            { x: 102, y: 182 },
+            emphasisAnimation
+          ),
           {
             ...textElement,
             x: rightTextX,
@@ -582,20 +613,14 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
       case "image":
         sceneOut.layoutPreset = "diagram_focus_sidebar";
         sceneOut.elements = [
-          {
-            type: "image",
-            content: staticImageContent(
-              scene.sceneNumber,
-              scene.imageSearchQuery ?? "",
-              options?.imageByScene
-            ),
-            iconName: null,
-            width: null,
-            height: null,
-            x: 170,
-            y: 190,
-            animation: emphasisAnimation,
-          },
+          buildImageElement(
+            scene.sceneNumber,
+            scene.imageSearchQuery ?? "",
+            options?.imageByScene,
+            options?.imageCandidatesByScene,
+            { x: 170, y: 190 },
+            emphasisAnimation
+          ),
           {
             ...textElement,
             x: 1210,
@@ -646,6 +671,90 @@ export function buildYoutubeRemotionSpecFromBrandedScenes(
           },
         ];
         break;
+      case "svg_hero": {
+        const sanitized = sanitizeInlineSvg(scene.inlineSvg ?? "");
+        sceneOut.layoutPreset = "title_hero_and_canvas";
+        if (!sanitized) {
+          /* Sanitizer rejected the SVG — fall back to image_hero so the scene
+           * still has a visual instead of an empty pane. */
+          sceneOut.elements = [
+            {
+              ...textElement,
+              x: 120,
+              y: 88,
+              content: scene.headline,
+            },
+            buildImageElement(
+              scene.sceneNumber,
+              scene.imageSearchQuery ?? "",
+              options?.imageByScene,
+              options?.imageCandidatesByScene,
+              { x: 180, y: 224 },
+              emphasisAnimation
+            ),
+          ];
+        } else {
+          sceneOut.elements = [
+            {
+              ...textElement,
+              x: 120,
+              y: 88,
+              content: scene.headline,
+            },
+            {
+              type: "svg",
+              content: sanitized,
+              iconName: null,
+              width: 1240,
+              height: 540,
+              x: 180,
+              y: 224,
+              animation: emphasisAnimation,
+            },
+          ];
+        }
+        break;
+      }
+      case "svg_left": {
+        const sanitized = sanitizeInlineSvg(scene.inlineSvg ?? "");
+        sceneOut.layoutPreset = "split_canvas_left_text_right";
+        if (!sanitized) {
+          sceneOut.elements = [
+            buildImageElement(
+              scene.sceneNumber,
+              scene.imageSearchQuery ?? "",
+              options?.imageByScene,
+              options?.imageCandidatesByScene,
+              { x: 102, y: 182 },
+              emphasisAnimation
+            ),
+            {
+              ...textElement,
+              x: rightTextX,
+              y: 170,
+            },
+          ];
+        } else {
+          sceneOut.elements = [
+            {
+              type: "svg",
+              content: sanitized,
+              iconName: null,
+              width: 760,
+              height: 520,
+              x: 102,
+              y: 182,
+              animation: emphasisAnimation,
+            },
+            {
+              ...textElement,
+              x: rightTextX,
+              y: 170,
+            },
+          ];
+        }
+        break;
+      }
       default:
         sceneOut.elements = [
           {

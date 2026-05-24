@@ -39,6 +39,8 @@ import {
 import { buildMetadataPrompt } from "../llm/metadata-prompt";
 import { searchReferenceImages } from "../tools/search-images";
 import { downloadImage } from "../tools/download-image";
+import { extractBrandSlug, fetchSimpleIconSvg } from "../tools/simple-icons";
+import { sanitizeInlineSvg } from "../tools/svg-sanitize";
 import { env, isEmailDeliveryConfigured } from "../env";
 import { sendJobVideoEmail } from "../email/send-job-video";
 import {
@@ -346,7 +348,13 @@ Output valid JSON only.`,
       await updateProgress(jobId, 55, "ASSETS");
       await log(jobId, "info", "Downloading reference images...");
 
-      const downloadedImages: { sceneNumber: number; filePath: string }[] = [];
+      const downloadedImages: {
+        sceneNumber: number;
+        /** Primary image path or SVG markup (svg: prefix). */
+        filePath: string;
+        /** Ordered fallback paths to try if the primary fails at runtime. */
+        candidates: string[];
+      }[] = [];
       let rasterCandidates = assetList.filter(
         (a) => a.needsRasterImage && a.searchQuery.trim().length > 0
       );
@@ -372,6 +380,53 @@ Output valid JSON only.`,
             "info",
             `Image search start: scene=${asset.sceneNumber}, query="${asset.searchQuery}"`
           );
+
+          /* 1. Try SimpleIcons first when the query looks like a brand/logo
+           *    request. Vector mark is sharper than any Google Images hit. */
+          const brandSlug = extractBrandSlug(asset.searchQuery);
+          if (brandSlug) {
+            try {
+              const svgRaw = await fetchSimpleIconSvg(brandSlug);
+              const sanitized = svgRaw ? sanitizeInlineSvg(svgRaw) : null;
+              if (sanitized) {
+                /* Persist alongside other downloads so artifacts/spec see a
+                 * uniform shape. We write the sanitized SVG to disk and the
+                 * renderer treats `.svg` paths via the existing image pipe. */
+                const fs = await import("fs/promises");
+                const path = await import("path");
+                const dir = path.join(process.cwd(), "public", "reference-images");
+                await fs.mkdir(dir, { recursive: true });
+                const filename = `scene-${asset.sceneNumber}-${Date.now()}-brand-${brandSlug}.svg`;
+                const filePath = path.join(dir, filename);
+                await fs.writeFile(filePath, sanitized);
+                await log(
+                  jobId,
+                  "info",
+                  `Used SimpleIcons mark for scene ${asset.sceneNumber}: slug=${brandSlug}, path=${filePath}`
+                );
+                downloadedImages.push({
+                  sceneNumber: asset.sceneNumber,
+                  filePath,
+                  candidates: [],
+                });
+                continue;
+              } else if (svgRaw) {
+                await log(
+                  jobId,
+                  "warn",
+                  `SimpleIcons returned SVG for slug=${brandSlug} but sanitizer rejected it; falling through to image search`
+                );
+              }
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : String(err);
+              await log(
+                jobId,
+                "warn",
+                `SimpleIcons lookup failed (slug=${brandSlug}): ${msg}`
+              );
+            }
+          }
+
           const results = await searchReferenceImages(asset.searchQuery);
           await log(
             jobId,
@@ -389,36 +444,62 @@ Output valid JSON only.`,
             continue;
           }
 
-          let downloaded: string | null = null;
-          for (let attempt = 0; attempt < Math.min(results.length, 4); attempt++) {
+          /* 2. Try up to 6 candidates (was 4). Keep every successful one as
+           *    a runtime fallback so the renderer can recover from broken
+           *    URLs / 404s without going to a placeholder card. */
+          const primaryPaths: string[] = [];
+          const evalSummaries: string[] = [];
+          const maxAttempts = Math.min(results.length, 6);
+          for (let attempt = 0; attempt < maxAttempts; attempt++) {
             const candidate = results[attempt];
             const filename = `scene-${asset.sceneNumber}-${Date.now()}-${attempt}.jpg`;
             try {
-              const filePath = await downloadImage(candidate.url, filename);
-              downloaded = filePath;
+              const result = await downloadImage(candidate.url, filename, {
+                evaluate: true,
+              });
+              primaryPaths.push(result.filePath);
+              if (result.eval && result.eval.ok) {
+                evalSummaries.push(
+                  `${candidate.source}:${result.eval.probe.format}@${result.eval.probe.width}x${result.eval.probe.height}`
+                );
+              }
               await log(
                 jobId,
                 "info",
-                `Downloaded image for scene ${asset.sceneNumber} via ${candidate.source} (attempt ${attempt + 1}): ${filePath}`
+                `Downloaded image for scene ${asset.sceneNumber} via ${candidate.source} (attempt ${attempt + 1}): ${result.filePath}`
               );
-              break;
+              /* Stop after we have at least 2 good candidates \u2014 1 primary
+               * + 1 fallback is enough for runtime recovery and we don't
+               * want to spend bandwidth on 6 images per scene. */
+              if (primaryPaths.length >= 2) break;
             } catch (err) {
               const msg = err instanceof Error ? err.message : String(err);
               await log(
                 jobId,
                 "warn",
-                `Image download attempt ${attempt + 1}/${Math.min(results.length, 4)} failed for scene ${asset.sceneNumber} (${candidate.source}): ${msg}`
+                `Image candidate ${attempt + 1}/${maxAttempts} rejected for scene ${asset.sceneNumber} (${candidate.source}): ${msg}`
               );
             }
           }
 
-          if (downloaded) {
-            downloadedImages.push({ sceneNumber: asset.sceneNumber, filePath: downloaded });
+          if (primaryPaths.length > 0) {
+            downloadedImages.push({
+              sceneNumber: asset.sceneNumber,
+              filePath: primaryPaths[0]!,
+              candidates: primaryPaths.slice(1),
+            });
+            if (evalSummaries.length > 0) {
+              await log(
+                jobId,
+                "info",
+                `Scene ${asset.sceneNumber} accepted images: ${evalSummaries.join(", ")}`
+              );
+            }
           } else {
             await log(
               jobId,
               "warn",
-              `All ${Math.min(results.length, 4)} image download attempts failed for scene ${asset.sceneNumber}.`
+              `All ${maxAttempts} image candidates rejected for scene ${asset.sceneNumber}.`
             );
           }
         } catch (err) {
@@ -427,7 +508,12 @@ Output valid JSON only.`,
       }
 
       for (const img of downloadedImages) {
-        await saveArtifact(jobId, "IMAGE", { sceneNumber: img.sceneNumber }, img.filePath);
+        await saveArtifact(
+          jobId,
+          "IMAGE",
+          { sceneNumber: img.sceneNumber, candidates: img.candidates },
+          img.filePath
+        );
       }
     }
 
@@ -456,6 +542,7 @@ Output valid JSON only.`,
       orderBy: { createdAt: "asc" },
     });
     const imageByScene = new Map<number, string>();
+    const imageCandidatesByScene = new Map<number, string[]>();
     for (const artifact of downloadedImageArtifacts) {
       const sceneNumber =
         typeof artifact.contentJson === "object" &&
@@ -465,6 +552,21 @@ Output valid JSON only.`,
           : Number.NaN;
       if (Number.isFinite(sceneNumber) && artifact.filePath) {
         imageByScene.set(sceneNumber, artifact.filePath);
+        /* Candidates are extra fallback paths to try on runtime image
+         * load failure. Stored as part of the artifact contentJson. */
+        const candidates =
+          typeof artifact.contentJson === "object" &&
+          artifact.contentJson !== null &&
+          "candidates" in artifact.contentJson &&
+          Array.isArray(
+            (artifact.contentJson as { candidates?: unknown }).candidates
+          )
+            ? ((artifact.contentJson as { candidates: unknown[] })
+                .candidates.filter((c): c is string => typeof c === "string"))
+            : [];
+        if (candidates.length > 0) {
+          imageCandidatesByScene.set(sceneNumber, candidates);
+        }
       }
     }
 
@@ -473,6 +575,7 @@ Output valid JSON only.`,
       script,
       {
         imageByScene,
+        imageCandidatesByScene,
         orientation: job.orientation as "LANDSCAPE" | "PORTRAIT",
       }
     );

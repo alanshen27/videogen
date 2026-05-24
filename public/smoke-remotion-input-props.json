@@ -4,7 +4,7 @@
       "width": 1920,
       "height": 1080,
       "fps": 30,
-      "durationInFrames": 1500,
+      "durationInFrames": 1800,
       "elementPlacement": "split_text_left_window_right"
     },
     "scenes": [
@@ -15,7 +15,11 @@
         "layoutPreset": "title_hero_and_canvas",
         "transition": "cut",
         "sfx": [
-          { "name": "thunk", "atFrame": 0, "volume": 0.5 }
+          {
+            "name": "thunk",
+            "atFrame": 0,
+            "volume": 0.5
+          }
         ],
         "elements": [
           {
@@ -37,7 +41,11 @@
         "layoutPreset": "split_text_left_canvas_right",
         "transition": "fade",
         "sfx": [
-          { "name": "whoosh", "atFrame": 0, "volume": 0.5 }
+          {
+            "name": "whoosh",
+            "atFrame": 0,
+            "volume": 0.5
+          }
         ],
         "elements": [
           {
@@ -69,7 +77,11 @@
         "layoutPreset": "split_canvas_left_text_right",
         "transition": "push_left",
         "sfx": [
-          { "name": "whoosh", "atFrame": 0, "volume": 0.6 }
+          {
+            "name": "whoosh",
+            "atFrame": 0,
+            "volume": 0.6
+          }
         ],
         "elements": [
           {
@@ -82,10 +94,37 @@
             "y": 160,
             "animation": "highlight",
             "diagramBeats": [
-              { "fromFrame": 0, "durationInFrames": 30, "targets": ["Client"] },
-              { "fromFrame": 30, "durationInFrames": 30, "targets": ["Client", "ALB"] },
-              { "fromFrame": 60, "durationInFrames": 30, "targets": ["API"] },
-              { "fromFrame": 90, "durationInFrames": 30, "targets": ["Cache", "PG", "S3"] }
+              {
+                "fromFrame": 0,
+                "durationInFrames": 30,
+                "targets": [
+                  "Client"
+                ]
+              },
+              {
+                "fromFrame": 30,
+                "durationInFrames": 30,
+                "targets": [
+                  "Client",
+                  "ALB"
+                ]
+              },
+              {
+                "fromFrame": 60,
+                "durationInFrames": 30,
+                "targets": [
+                  "API"
+                ]
+              },
+              {
+                "fromFrame": 90,
+                "durationInFrames": 30,
+                "targets": [
+                  "Cache",
+                  "PG",
+                  "S3"
+                ]
+              }
             ]
           },
           {
@@ -107,7 +146,11 @@
         "layoutPreset": "title_hero_and_canvas",
         "transition": "scale_down",
         "sfx": [
-          { "name": "ding", "atFrame": 12, "volume": 0.6 }
+          {
+            "name": "ding",
+            "atFrame": 12,
+            "volume": 0.6
+          }
         ],
         "elements": [
           {
@@ -129,10 +172,26 @@
         "layoutPreset": "title_hero_and_canvas",
         "transition": "push_up",
         "sfx": [
-          { "name": "pop", "atFrame": 8, "volume": 0.4 },
-          { "name": "pop", "atFrame": 18, "volume": 0.4 },
-          { "name": "pop", "atFrame": 28, "volume": 0.4 },
-          { "name": "pop", "atFrame": 38, "volume": 0.4 }
+          {
+            "name": "pop",
+            "atFrame": 8,
+            "volume": 0.4
+          },
+          {
+            "name": "pop",
+            "atFrame": 18,
+            "volume": 0.4
+          },
+          {
+            "name": "pop",
+            "atFrame": 28,
+            "volume": 0.4
+          },
+          {
+            "name": "pop",
+            "atFrame": 38,
+            "volume": 0.4
+          }
         ],
         "elements": [
           {
@@ -154,10 +213,26 @@
         "layoutPreset": "split_text_left_canvas_right",
         "transition": "fade",
         "sfx": [
-          { "name": "type", "atFrame": 8, "volume": 0.5 },
-          { "name": "type", "atFrame": 12, "volume": 0.5 },
-          { "name": "type", "atFrame": 16, "volume": 0.5 },
-          { "name": "type", "atFrame": 20, "volume": 0.5 }
+          {
+            "name": "type",
+            "atFrame": 8,
+            "volume": 0.5
+          },
+          {
+            "name": "type",
+            "atFrame": 12,
+            "volume": 0.5
+          },
+          {
+            "name": "type",
+            "atFrame": 16,
+            "volume": 0.5
+          },
+          {
+            "name": "type",
+            "atFrame": 20,
+            "volume": 0.5
+          }
         ],
         "elements": [
           {
@@ -191,7 +266,7 @@
         "elements": [
           {
             "type": "text",
-            "content": "\"The fastest endpoint is the one that doesn't run.\"\n— internal SRE channel, 2024",
+            "content": "\"The fastest endpoint is the one that doesn't run.\"\n\u2014 internal SRE channel, 2024",
             "iconName": null,
             "width": null,
             "height": null,
@@ -208,7 +283,11 @@
         "layoutPreset": "split_dual_figure",
         "transition": "whip",
         "sfx": [
-          { "name": "whoosh", "atFrame": 0, "volume": 0.7 }
+          {
+            "name": "whoosh",
+            "atFrame": 0,
+            "volume": 0.7
+          }
         ],
         "elements": [
           {
@@ -240,7 +319,11 @@
         "layoutPreset": "split_canvas_left_text_right",
         "transition": "push_left",
         "sfx": [
-          { "name": "whoosh", "atFrame": 0, "volume": 0.5 }
+          {
+            "name": "whoosh",
+            "atFrame": 0,
+            "volume": 0.5
+          }
         ],
         "elements": [
           {
@@ -262,11 +345,31 @@
         "layoutPreset": "code_and_callouts",
         "transition": "fade",
         "sfx": [
-          { "name": "type", "atFrame": 6, "volume": 0.4 },
-          { "name": "type", "atFrame": 10, "volume": 0.4 },
-          { "name": "type", "atFrame": 14, "volume": 0.4 },
-          { "name": "type", "atFrame": 18, "volume": 0.4 },
-          { "name": "type", "atFrame": 22, "volume": 0.4 }
+          {
+            "name": "type",
+            "atFrame": 6,
+            "volume": 0.4
+          },
+          {
+            "name": "type",
+            "atFrame": 10,
+            "volume": 0.4
+          },
+          {
+            "name": "type",
+            "atFrame": 14,
+            "volume": 0.4
+          },
+          {
+            "name": "type",
+            "atFrame": 18,
+            "volume": 0.4
+          },
+          {
+            "name": "type",
+            "atFrame": 22,
+            "volume": 0.4
+          }
         ],
         "elements": [
           {
@@ -298,7 +401,11 @@
         "layoutPreset": "title_hero_and_canvas",
         "transition": "scale_down",
         "sfx": [
-          { "name": "ding", "atFrame": 12, "volume": 0.7 }
+          {
+            "name": "ding",
+            "atFrame": 12,
+            "volume": 0.7
+          }
         ],
         "elements": [
           {
@@ -322,12 +429,74 @@
         "elements": [
           {
             "type": "text",
-            "content": "What we'd cut next\n\n1. The **6ms** TLS handshake — keep-alive longer\n2. The **22ms** Postgres wait — add a read replica\n3. The **7ms** shipback — flush headers earlier",
+            "content": "What we'd cut next\n\n1. The **6ms** TLS handshake \u2014 keep-alive longer\n2. The **22ms** Postgres wait \u2014 add a read replica\n3. The **7ms** shipback \u2014 flush headers earlier",
             "iconName": null,
             "width": null,
             "height": null,
             "x": 120,
             "y": 120,
+            "animation": "fade"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1500,
+        "durationInFrames": 150,
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(217, 124, 117, 0.08) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "transition": "fade",
+        "elements": [
+          {
+            "type": "svg",
+            "content": "<svg viewBox=\"0 0 800 500\">\n  <defs>\n    <linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0%\" stop-color=\"#221b18\"/>\n      <stop offset=\"100%\" stop-color=\"#15110f\"/>\n    </linearGradient>\n  </defs>\n  <rect x=\"0\" y=\"0\" width=\"800\" height=\"500\" rx=\"18\" fill=\"url(#bg)\"/>\n  <rect x=\"60\" y=\"180\" width=\"180\" height=\"120\" rx=\"14\" stroke=\"#cfc8c2\" stroke-width=\"1.5\" fill=\"#1a1614\"/>\n  <text x=\"150\" y=\"248\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"22\" fill=\"#f4ede5\">Client</text>\n  <polyline points=\"240,240 380,240 374,232 380,240 374,248\" stroke=\"#d97c75\" stroke-width=\"2\" fill=\"none\"/>\n  <text x=\"310\" y=\"222\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"14\" fill=\"#cfc8c2\">HTTPS</text>\n  <rect x=\"380\" y=\"180\" width=\"180\" height=\"120\" rx=\"14\" stroke=\"#d97c75\" stroke-width=\"2\" fill=\"#1a1614\"/>\n  <text x=\"470\" y=\"248\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"22\" fill=\"#f4ede5\">Edge</text>\n  <polyline points=\"560,240 700,240 694,232 700,240 694,248\" stroke=\"#d97c75\" stroke-width=\"2\" fill=\"none\"/>\n  <text x=\"630\" y=\"222\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"14\" fill=\"#cfc8c2\">RPC</text>\n  <rect x=\"700\" y=\"180\" width=\"80\" height=\"120\" rx=\"14\" stroke=\"#cfc8c2\" stroke-width=\"1.5\" fill=\"#1a1614\"/>\n  <text x=\"740\" y=\"248\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"20\" fill=\"#f4ede5\">DB</text>\n  <text x=\"400\" y=\"380\" text-anchor=\"middle\" font-family=\"ui-sans-serif\" font-size=\"18\" fill=\"#cfc8c2\">One TLS handshake, one RPC, one query.</text>\n</svg>",
+            "iconName": null,
+            "width": 760,
+            "height": 520,
+            "x": 102,
+            "y": 182,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Anatomy of a request\n\nClient terminates TLS at the edge, edge does one RPC to the service, service does one Postgres query.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1010,
+            "y": 170,
+            "animation": "highlight"
+          }
+        ]
+      },
+      {
+        "fromFrame": 1650,
+        "durationInFrames": 150,
+        "background": "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(217, 124, 117, 0.08) 0%, transparent 60%), linear-gradient(180deg, #1a1614 0%, #141110 100%)",
+        "layoutPreset": "split_canvas_left_text_right",
+        "transition": "push_left",
+        "elements": [
+          {
+            "type": "image",
+            "content": "https://this-host-does-not-exist.example.com/broken-primary.jpg",
+            "imageCandidates": [
+              "https://this-also-broken.example.com/img.jpg",
+              "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800"
+            ],
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 102,
+            "y": 182,
+            "animation": "fade"
+          },
+          {
+            "type": "text",
+            "content": "Image fallback chain\n\nFirst two URLs 404. The renderer walks `imageCandidates` and lands on the third.",
+            "iconName": null,
+            "width": null,
+            "height": null,
+            "x": 1010,
+            "y": 200,
             "animation": "fade"
           }
         ]

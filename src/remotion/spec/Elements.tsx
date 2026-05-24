@@ -1426,11 +1426,36 @@ export function SpecIcon({
   );
 }
 
+/**
+ * Resolve a stored content path or URL into something `<Img src>` accepts.
+ * Local paths under `public/` become Remotion `staticFile` URLs; remote
+ * URLs and absolute /-paths pass through unchanged.
+ */
+function resolveImageSrc(raw: string): string {
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  if (raw.startsWith("/public/")) return staticFile(raw.slice("/public/".length));
+  if (raw.startsWith("public/")) return staticFile(raw.slice("public/".length));
+  if (raw.startsWith("/")) return raw;
+  return staticFile(raw);
+}
+
 export function SpecImage({ el }: { el: SceneEl }) {
   const raw = el.content?.trim() ?? "";
-  const [broken, setBroken] = React.useState(false);
+  /* Ordered fallback URLs attached by the spec builder. The renderer walks
+   * this list on `<Img onError>` so a 404 on the primary doesn't leave the
+   * scene blank — it just tries the next candidate. Only when every
+   * candidate fails do we show the placeholder card. */
+  const candidates = (el as SceneEl & { imageCandidates?: string[] })
+    .imageCandidates;
+  const allSources = React.useMemo(() => {
+    return [raw, ...(candidates ?? [])].filter(
+      (s): s is string => Boolean(s)
+    );
+  }, [raw, candidates]);
+  const [srcIndex, setSrcIndex] = React.useState(0);
+  const exhausted = srcIndex >= allSources.length;
 
-  if (!raw || broken) {
+  if (!raw || exhausted) {
     return (
       <div
         style={{
@@ -1458,15 +1483,8 @@ export function SpecImage({ el }: { el: SceneEl }) {
     );
   }
 
-  const src = raw.startsWith("http://") || raw.startsWith("https://")
-    ? raw
-    : raw.startsWith("/public/")
-      ? staticFile(raw.slice("/public/".length))
-      : raw.startsWith("public/")
-        ? staticFile(raw.slice("public/".length))
-        : raw.startsWith("/")
-          ? raw
-          : staticFile(raw);
+  const currentRaw = allSources[srcIndex]!;
+  const src = resolveImageSrc(currentRaw);
 
   /* Logos/screenshots/diagrams need to breathe — `contain` keeps the whole
    * asset visible (no cropping a logo in half). The dark backdrop reads well
@@ -1488,8 +1506,8 @@ export function SpecImage({ el }: { el: SceneEl }) {
     >
       <Img
         src={src}
-        alt={raw.slice(0, 120)}
-        onError={() => setBroken(true)}
+        alt={currentRaw.slice(0, 120)}
+        onError={() => setSrcIndex((i) => i + 1)}
         style={{
           maxWidth: "100%",
           maxHeight: "100%",
@@ -1499,6 +1517,63 @@ export function SpecImage({ el }: { el: SceneEl }) {
         }}
       />
     </div>
+  );
+}
+
+/**
+ * Render LLM-authored inline SVG. The markup arrives already sanitized by
+ * the server (allowlist of tags/attrs, no scripts). We wrap it in a sized
+ * box and let the SVG's viewBox + preserveAspectRatio handle scaling.
+ *
+ * If the markup ends up empty (sanitizer rejected everything) we render a
+ * neutral placeholder card instead of a missing element.
+ */
+export function SpecSvg({ el }: { el: SceneEl }) {
+  const raw = el.content?.trim() ?? "";
+  const width = el.width ?? 640;
+  const height = el.height ?? 400;
+
+  if (!raw || !raw.includes("<svg")) {
+    return (
+      <div
+        style={{
+          width,
+          height,
+          borderRadius: 14,
+          border: "1px solid rgba(255,255,255,0.08)",
+          color: specTokens.ink.subtle,
+          fontFamily: specTokens.sans,
+          fontSize: 13,
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#15110f",
+          textAlign: "center",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        }}
+      >
+        svg unavailable
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        width,
+        height,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: specTokens.ink.primary,
+      }}
+      /* Markup is sanitized server-side via sanitizeInlineSvg() — only an
+       * allowlist of tags/attrs survives, no scripts, no external refs. */
+      dangerouslySetInnerHTML={{ __html: raw }}
+    />
   );
 }
 
@@ -1543,6 +1618,8 @@ export function RenderSpecElement({
       );
     case "chart":
       return <SpecChart content={el.content} />;
+    case "svg":
+      return <SpecSvg el={el} />;
     default:
       return null;
   }
