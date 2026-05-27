@@ -122,12 +122,14 @@ you are diagram-hopping inside that scene.
 | `code_focus`                | Real code OR pseudo-code for an algorithm — use freely.      |
 | `stat_callout`              | Single huge number / word. Use sparingly for impact.         |
 | `quote`                     | Short pull-quote, optionally attributed.                     |
+| `svg_left`                  | LLM-drawn SVG illustration on the left, narration right. Use for sketches, annotated arrows over icons, timeline drawings, hand-drawn explainers — when a flowchart would be overkill and a stock photo would feel generic. |
+| `svg_hero`                  | LLM-drawn SVG, centered + large. Use for a single iconic illustration that carries the scene. |
 
 **Vary the template every scene** — never the same template twice in a row.
 Three diagram *templates* in a row is boring unless the middle one is a
 diagram-hop (same graph, new `mermaidTargets`). A typical **90s / ~20-scene**
 arc might read: `stat_callout → list → image_hero → left_diagram_right_text
-(diagram-hop 8s) → image → list → right_diagram_left_text → stat_callout →
+(diagram-hop 8s) → svg_left → list → right_diagram_left_text → stat_callout →
 quote → image_left → list → …` — many quick beats, one longer hop scene.
 
 ---
@@ -158,6 +160,79 @@ When a scene needs a visual, the renderer picks **in this order**:
   with a tight `imageSearchQuery`, and leave `diagramMermaid` empty.
 - **Lists for "the three pillars of X."** Don't draw a diagram for
   enumerated concepts — that's a `list`.
+- **Brand marks come from SimpleIcons, not Google Images.** When
+  `imageSearchQuery` reads like `<brand> logo` / `<brand> icon` (e.g.
+  `React logo`, `Postgres icon`, `AWS mark`), the pipeline tries the
+  SimpleIcons CDN first and gets back a crisp vector — far better than
+  any Shutterstock thumbnail. Just write the brand name + `logo` / `icon`.
+- **SVG when an illustration would beat a photo.** If you'd reach for a
+  whiteboard marker — annotated arrows over a node, a hand-drawn timeline,
+  a sketch of a stack — use `svg_left` / `svg_hero` and write the SVG
+  in `inlineSvg` (see §4.5). The renderer sanitizes it server-side.
+
+---
+
+### 4.5. Writing `inlineSvg`
+
+You may emit inline SVG to draw illustrations the renderer can't otherwise
+make — sketch-style figures, annotated diagrams that aren't a Mermaid
+flowchart, custom timelines, hand-drawn arrows over labels. The server
+runs every SVG through a strict allowlist sanitizer before render, so
+**hostile markup is silently dropped** — don't waste characters on
+defenses; just stick to the safe subset.
+
+**Allowed elements:** `svg`, `g`, `defs`, `path`, `rect`, `circle`,
+`ellipse`, `line`, `polyline`, `polygon`, `text`, `tspan`, `title`,
+`desc`, `linearGradient`, `radialGradient`, `stop`, `clipPath`, `mask`,
+`pattern`, `filter`, `feGaussianBlur`, `feOffset`, `feMerge`,
+`feMergeNode`, `feFlood`, `feComposite`, `feColorMatrix`,
+`feBlend`, `feMorphology`, `marker`, `use`, `symbol`.
+
+**Hard-banned:** `<script>`, `<foreignObject>`, `<style>`, `<iframe>`,
+`<image href="external">`, `<a>`, and any element with `on*` event
+handlers, inline `style=` attributes, `javascript:` URLs, or `url(http…)`
+references. If the sanitizer can't fully scrub the markup it returns
+nothing and the scene falls back to a stock image — write a clean SVG
+the first time.
+
+**Drawing rules (so it matches the rest of the design):**
+- Use `viewBox="0 0 800 500"` for `svg_left`, `viewBox="0 0 1200 540"`
+  for `svg_hero`. Don't set explicit `width` / `height`.
+- Outlines: `stroke="#d97c75"` (accent) or `stroke="#cfc8c2"` (neutral),
+  `fill="none"`, `stroke-width="2"` (accent), `stroke-width="1.5"`
+  (neutral). Use the accent stroke for the thing being emphasised.
+- Filled shapes: `fill="#221b18"` for cards, `fill="#d97c75"` for
+  highlights, `fill="#f4ede5"` for "ink" callouts. Avoid arbitrary brand
+  colours.
+- Labels: `<text>` with `font-family="ui-sans-serif"`,
+  `font-size="20"`, `fill="#f4ede5"`. For axis / muted labels,
+  `font-size="14"` and `fill="#cfc8c2"`. Keep labels in English.
+- Arrows: a `<polyline>` plus a small triangle. Don't reach for
+  `<marker>` unless you need it.
+
+**Example (svg_left, "request lifecycle"):**
+
+```svg
+<svg viewBox="0 0 800 500">
+  <rect x="40" y="200" width="160" height="100" rx="14"
+    stroke="#cfc8c2" stroke-width="1.5" fill="#221b18"/>
+  <text x="120" y="256" text-anchor="middle"
+    font-family="ui-sans-serif" font-size="20" fill="#f4ede5">Client</text>
+  <polyline points="200,250 360,250 354,242 360,250 354,258"
+    stroke="#d97c75" stroke-width="2" fill="none"/>
+  <text x="280" y="232" text-anchor="middle"
+    font-family="ui-sans-serif" font-size="14" fill="#cfc8c2">HTTPS</text>
+  <rect x="360" y="200" width="160" height="100" rx="14"
+    stroke="#d97c75" stroke-width="2" fill="#221b18"/>
+  <text x="440" y="256" text-anchor="middle"
+    font-family="ui-sans-serif" font-size="20" fill="#f4ede5">Edge</text>
+  <!-- second arrow + box continue here... -->
+</svg>
+```
+
+Set `inlineSvg` to **`""`** (empty string) on every scene whose template
+is **not** `svg_left` / `svg_hero`. Don't leave stale SVG hanging around
+on image / diagram scenes.
 
 ---
 
@@ -424,6 +499,7 @@ even when unused. Use the empty defaults shown.
   diagramMermaid: "flowchart LR\n...", // "" when no diagram
   imageSearchQuery: "",                // "" when no image
   codeSnippet: "",                     // "" when template !== "code_focus"
+  inlineSvg: "",                       // "" when template !== "svg_*"
   focusBeats: [
     {
       startSecond: 0,

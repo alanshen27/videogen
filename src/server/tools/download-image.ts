@@ -1,13 +1,37 @@
 import * as path from "path";
 import * as fs from "fs/promises";
 import { existsSync } from "fs";
+import { evaluateImageBuffer, type ImageEvalResult } from "./image-eval";
 
 const IMAGES_DIR = path.join(process.cwd(), "public", "reference-images");
 
+export type DownloadOptions = {
+  /** Run the image evaluator (size/aspect/format) and reject failures. */
+  evaluate?: boolean;
+  /** Custom min dims if needed (e.g., logos can be smaller). */
+  minWidth?: number;
+  minHeight?: number;
+  minBytes?: number;
+};
+
+export type DownloadResult = {
+  filePath: string;
+  eval: ImageEvalResult | null;
+};
+
+/**
+ * Download an image URL, write it to `public/reference-images/<filename>`,
+ * and (optionally) evaluate the bytes for likely-junk patterns.
+ *
+ * On evaluator failure the file is deleted and we throw so the caller can
+ * try the next candidate. On success the returned path is what the spec
+ * builder should use.
+ */
 export async function downloadImage(
   url: string,
-  filename: string
-): Promise<string> {
+  filename: string,
+  opts: DownloadOptions = {}
+): Promise<DownloadResult> {
   if (!existsSync(IMAGES_DIR)) {
     await fs.mkdir(IMAGES_DIR, { recursive: true });
   }
@@ -15,7 +39,7 @@ export async function downloadImage(
   const filePath = path.join(IMAGES_DIR, filename);
 
   if (existsSync(filePath)) {
-    return filePath;
+    return { filePath, eval: null };
   }
 
   try {
@@ -46,8 +70,24 @@ export async function downloadImage(
       throw new Error(`Wrong content-type: ${contentType}`);
     }
 
+    /* Run the heuristic evaluator on bytes BEFORE persisting so we don't
+     * litter the disk with rejects. */
+    let evalResult: ImageEvalResult | null = null;
+    if (opts.evaluate !== false) {
+      evalResult = evaluateImageBuffer(buffer, {
+        minWidth: opts.minWidth,
+        minHeight: opts.minHeight,
+        minBytes: opts.minBytes,
+      });
+      if (!evalResult.ok) {
+        throw new Error(
+          `Image rejected by evaluator: ${evalResult.reason} (probe: ${evalResult.probe.format} ${evalResult.probe.width}x${evalResult.probe.height}, ${evalResult.probe.byteLength}B)`
+        );
+      }
+    }
+
     await fs.writeFile(filePath, buffer);
-    return filePath;
+    return { filePath, eval: evalResult };
   } catch (error) {
     throw new Error(
       `Image download failed: ${error instanceof Error ? error.message : "Unknown error"}`

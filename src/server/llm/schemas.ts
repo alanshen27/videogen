@@ -148,6 +148,14 @@ export const RemotionElementSchema = z.object({
     "icon",
     "mermaid",
     "chart",
+    /**
+     * `svg`: inline SVG markup. The LLM writes the SVG; the server runs it
+     * through a strict allowlist sanitizer (no scripts, no event handlers,
+     * no external refs). Use for hand-drawn-looking diagrams, sketch
+     * illustrations, annotated arrows over icons, things that aren't a
+     * Mermaid flowchart and aren't a stock photo.
+     */
+    "svg",
   ]),
   content: z.string(),
   iconName: z.union([LucideIconNameSchema, z.null()]),
@@ -198,6 +206,13 @@ export const RemotionElementSchema = z.object({
       })
     )
     .optional(),
+  /**
+   * Optional internal-only field — ordered fallback URLs for `image`
+   * elements. The renderer tries `content` first, then walks this array
+   * on each `<Img onError>`. Last resort: a designed placeholder card.
+   * Server-set from the search/eval pipeline; not produced by the LLM.
+   */
+  imageCandidates: z.array(z.string()).optional(),
 });
 
 export const RemotionSceneSchema = z.object({
@@ -283,6 +298,15 @@ export const BrandedSceneTemplateSchema = z.enum([
   "stat_callout",
   /** Pull-quote layout — short body, optionally attributed. */
   "quote",
+  /**
+   * Inline SVG illustration on the left, narration text on the right.
+   * Reach for this when a diagram isn't a flowchart and a stock photo would
+   * feel generic: sketches, annotated arrows over icons, timeline drawings,
+   * hand-drawn-style explainers. The SVG is in `inlineSvg`.
+   */
+  "svg_left",
+  /** Inline SVG illustration as a hero (centered, large). */
+  "svg_hero",
 ]);
 
 export const SceneFocusModeSchema = z.enum([
@@ -324,6 +348,23 @@ export const BrandedSceneSchema = z.object({
   diagramMermaid: z.string(),
   imageSearchQuery: z.string(),
   codeSnippet: z.string(),
+  /**
+   * Inline SVG markup for `svg_left` / `svg_hero` templates. Empty when
+   * the template doesn't use SVG. The renderer sanitizes this server-side
+   * (allowlist of tags/attrs, no scripts, no external refs) so the LLM can
+   * emit creative drawings without becoming an XSS vector.
+   *
+   * The LLM should:
+   *   - Use viewBox "0 0 800 500" (or similar landscape ratio)
+   *   - Stick to vector primitives: path / circle / rect / line / polyline / text
+   *   - Use the brand palette: stroke="#d97c75" for accents, stroke="#cfc8c2" for
+   *     neutrals, fill="none" for outlines, no hard-coded brand colors of others.
+   *   - Add labels via <text> with font-family="ui-sans-serif" font-size="20"
+   *     fill="#f4ede5". Keep text in English.
+   *   - No <script>, no <foreignObject>, no <image href="external">, no event
+   *     handlers (on*).
+   */
+  inlineSvg: z.string(),
   focusBeats: z.array(SceneFocusBeatSchema),
 });
 
